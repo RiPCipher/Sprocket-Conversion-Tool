@@ -1,0 +1,587 @@
+[gd_scene load_steps=17 format=3 uid="uid://dn1wf6k3cte06"]
+
+[ext_resource type="Script" path="res://Script/Main.gd" id="1_v2331"]
+[ext_resource type="Script" path="res://Script/BlueprintConverter.gd" id="2_bbq5s"]
+[ext_resource type="Script" path="res://Script/ConfigManager.gd" id="3_nsb7e"]
+[ext_resource type="Shader" path="res://Textures/Sprocket/HotSteel.gdshader" id="4_dp8xd"]
+[ext_resource type="Texture2D" uid="uid://cho3phoianmbx" path="res://Textures/Sprocket/Sprocket_Icon.png" id="4_njnvp"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_on7rp"]
+shader = ExtResource("4_dp8xd")
+shader_parameter/glow_intensity = 0.6
+shader_parameter/heat_level = 0.7
+shader_parameter/pulse_speed = 1.0
+shader_parameter/pulse_amplitude = 0.18
+
+[sub_resource type="Animation" id="Animation_bt3eo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:pivot_offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(20, 20)]
+}
+
+[sub_resource type="Animation" id="Animation_sd4cv"]
+resource_name = "Spin"
+length = 30.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:pivot_offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(20, 20), Vector2(20, 20)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r1wue"]
+_data = {
+"RESET": SubResource("Animation_bt3eo"),
+"Spin": SubResource("Animation_sd4cv")
+}
+
+[sub_resource type="Gradient" id="Gradient_jpgft"]
+colors = PackedColorArray(1, 0.509804, 0.254902, 0.517647, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_futdp"]
+gradient = SubResource("Gradient_jpgft")
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 1)
+metadata/_snap_enabled = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_selected"]
+bg_color = Color(0.15, 0.15, 0.17, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
+bg_color = Color(0.25, 0.25, 0.3, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.35, 0.4, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ettxk"]
+bg_color = Color(0.25098, 0.34902, 0.521569, 0.901961)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_primary_button_normal"]
+bg_color = Color(0.25, 0.35, 0.52, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.45, 0.65, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progressbar_bg"]
+bg_color = Color(0.15, 0.15, 0.18, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.2, 0.25, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="OBJBlueprintConverter" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v2331")
+
+[node name="Convert" type="Node" parent="."]
+script = ExtResource("2_bbq5s")
+
+[node name="ConfigManager" type="Node" parent="."]
+script = ExtResource("3_nsb7e")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Gear" type="Control" parent="Background"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Icon" type="TextureRect" parent="Background/Gear"]
+material = SubResource("ShaderMaterial_on7rp")
+layout_mode = 0
+offset_left = 91.0
+offset_top = 43.0
+offset_right = 131.0
+offset_bottom = 83.0
+scale = Vector2(3, 3)
+pivot_offset = Vector2(20, 20)
+texture = ExtResource("4_njnvp")
+expand_mode = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Background/Gear/Icon"]
+libraries = {
+"": SubResource("AnimationLibrary_r1wue")
+}
+
+[node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon"]
+show_behind_parent = true
+position = Vector2(20.3333, 20.3333)
+scale = Vector2(0.333333, 0.333333)
+texture = SubResource("GradientTexture2D_futdp")
+
+[node name="MainPanel" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderSection" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_direction = 1
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/HeaderSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 28
+text = "Sprocket Conversion Tool"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.75, 1)
+theme_override_font_sizes/font_size = 16
+text = "Import and export models"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/side_margin = 10
+theme_override_font_sizes/font_size = 14
+theme_override_styles/tab_selected = SubResource("StyleBoxFlat_tab_selected")
+tab_alignment = 1
+current_tab = 0
+
+[node name="OBJ to Blueprint" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.701961, 0.8, 1, 1)
+text = "Input"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input OBJ File:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/InputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="BlueprintOutputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/BlueprintOutputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.701961, 0.8, 1, 1)
+text = "Output"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/BlueprintOutputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PathLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/BlueprintOutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Blueprint Output:"
+
+[node name="BlueprintPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/BlueprintOutputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+editable = false
+
+[node name="BrowseBlueprintOutput" type="Button" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/BlueprintOutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="LimitsSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.701961, 0.8, 1, 1)
+text = "Limits"
+
+[node name="LimitsCheckbox" type="CheckBox" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection"]
+layout_mode = 2
+button_pressed = true
+text = "Enforce a safe complexity limit "
+
+[node name="LimitsGrid" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="VertexLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Max Vertices:"
+
+[node name="VertexLimitInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "8000"
+alignment = 1
+
+[node name="VertexNote" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="FaceLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Max Faces:"
+
+[node name="FaceLimitInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "4000"
+alignment = 1
+
+[node name="FaceNote" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="EdgeLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Max Edges:"
+
+[node name="EdgeLimitInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "12000"
+alignment = 1
+
+[node name="EdgeNote" type="Label" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer/LimitsSection/LimitsGrid"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer"]
+layout_mode = 2
+
+[node name="ConvertButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/OBJ to Blueprint/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_ettxk")
+text = "   Convert OBJ to Blueprint   "
+
+[node name="Blueprint to OBJ" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Input"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input Blueprint File:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/InputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Select blueprint file to convert"
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="OutputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/OutputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Output"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/OutputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="OutputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/OutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Output OBJ File:"
+
+[node name="OutputPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/OutputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Save OBJ file to..."
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer/OutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer"]
+layout_mode = 2
+
+[node name="ConvertButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Blueprint to OBJ/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
+text = "   Convert Blueprint to OBJ   "
+
+[node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="FilepathSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Filepaths"
+
+[node name="BlueprintFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/BlueprintFilepath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = ".Blueprint File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/BlueprintFilepath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set the path where Blueprints are saved and loaded"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/BlueprintFilepath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="ObjFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/ObjFilepath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = ".Obj File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/ObjFilepath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set the path where Obj's are saved and loaded"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/ObjFilepath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="SaveSettingsButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
+text = "   Save Settings   "
+
+[node name="StatusSection" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainPanel/VBoxContainer/StatusSection"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progressbar_bg")
+value = 72.3
+show_percentage = false
+
+[node name="PercentLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection/ProgressBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+text = "72%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+text = "Ready"
+autowrap_mode = 3
