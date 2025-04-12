@@ -17,7 +17,11 @@ var default_blueprint_path = ""
 var settings = {
 	"paths": {
 		"obj_dir": "",
-		"blueprint_dir": ""
+		"blueprint_dir": "",
+		"preview_dir": ""
+	},
+	"preview": {
+		"auto_preview": true
 	},
 	"limits": {
 		"enforce_limits": true,
@@ -42,33 +46,48 @@ func _ready():
 	var exe_path = OS.get_executable_path()
 	var exe_dir = exe_path.get_base_dir()
 	
-	#load the existing config to check if paths already exist
+	# Load the existing config to check if paths already exist
 	load_config()
 	
-	# Only create default Blueprints folder if no blueprint_dir is set in config
+	# Setup blueprint directory
 	var blueprint_dir_from_config = get_saved_path("blueprint_dir")
 	var blueprints_dir = exe_dir + "/Blueprints"
 	
 	if blueprint_dir_from_config.is_empty():
-		# Only create the default folder if it doesn't exist and no path is configured
+		# Create the default folder if it doesn't exist
 		if !DirAccess.dir_exists_absolute(blueprints_dir):
-			# Try to create it
 			DirAccess.make_dir_recursive_absolute(blueprints_dir)
+		
+		# Set the default path in the config
+		set_saved_path("blueprint_dir", blueprints_dir)
 	
-	# Store default path but don't use for automatic population
+	# Store default path
 	default_blueprint_path = blueprints_dir
 	
-	# Only create default Objects folder if no obj_dir is set in config
+	# Setup OBJ directory 
 	var obj_dir_from_config = get_saved_path("obj_dir")
 	var objects_dir = exe_dir + "/Objects"
 	
 	if obj_dir_from_config.is_empty():
-		# Only create the default folder if it doesn't exist and no path is configured
+		# Create the default folder if it doesn't exist
 		if !DirAccess.dir_exists_absolute(objects_dir):
-			# Try to create it
 			DirAccess.make_dir_recursive_absolute(objects_dir)
+		
+		# Set the default path in the config
+		set_saved_path("obj_dir", objects_dir)
 	
 	default_obj_path = objects_dir
+	
+	# Setup Preview directory
+	var preview_dir_from_config = get_saved_path("preview_dir")
+	var preview_dir = exe_dir + "/Preview"
+	
+	if preview_dir_from_config.is_empty():
+		# Set the default path in the config
+		set_saved_path("preview_dir", exe_dir)
+	
+	# Save config with defaults
+	save_config()
 
 # Save config
 func save_config() -> bool:
@@ -85,6 +104,10 @@ func save_config() -> bool:
 	# Save UI settings
 	for key in settings.ui:
 		config.set_value("ui", key, settings.ui[key])
+	
+	# Save preview settings
+	for key in settings.preview:
+		config.set_value("preview", key, settings.preview[key])
 	
 	# Save
 	var error = config.save(CONFIG_FILE_PATH)
@@ -132,6 +155,12 @@ func load_config() -> bool:
 	for key in settings.ui:
 		if config.has_section_key("ui", key):
 			settings.ui[key] = config.get_value("ui", key, settings.ui[key])
+			
+	# Load preview settings
+	if config.has_section("preview"):
+		for key in settings.preview:
+			if config.has_section_key("preview", key):
+				settings.preview[key] = config.get_value("preview", key, settings.preview[key])
 	
 	emit_signal("config_loaded")
 	return true
@@ -169,3 +198,11 @@ func get_last_tab() -> int:
 # Set the last tab index
 func set_last_tab(tab_index: int) -> void:
 	settings.ui.last_tab = tab_index
+	
+# Get auto preview setting
+func get_auto_preview() -> bool:
+	return settings.preview.auto_preview if settings.preview.has("auto_preview") else true
+
+# Set auto preview setting
+func set_auto_preview(value: bool) -> void:
+	settings.preview.auto_preview = value
