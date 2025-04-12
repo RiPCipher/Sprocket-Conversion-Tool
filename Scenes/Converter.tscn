@@ -1,10 +1,10 @@
-[gd_scene load_steps=17 format=3 uid="uid://dn1wf6k3cte06"]
+[gd_scene load_steps=20 format=3 uid="uid://dn1wf6k3cte06"]
 
-[ext_resource type="Script" path="res://Script/Main.gd" id="1_v2331"]
-[ext_resource type="Script" path="res://Script/BlueprintConverter.gd" id="2_bbq5s"]
-[ext_resource type="Script" path="res://Script/ConfigManager.gd" id="3_nsb7e"]
-[ext_resource type="Shader" path="res://Textures/Sprocket/HotSteel.gdshader" id="4_dp8xd"]
-[ext_resource type="Texture2D" uid="uid://cho3phoianmbx" path="res://Textures/Sprocket/Sprocket_Icon.png" id="4_njnvp"]
+[ext_resource type="Script" uid="uid://b8mqtsyrexhp1" path="res://Script/Main.gd" id="1_v2331"]
+[ext_resource type="Script" uid="uid://uxmr5cs3pgdq" path="res://Script/BlueprintConverter.gd" id="2_bbq5s"]
+[ext_resource type="Script" uid="uid://cijvk3n8hecpv" path="res://Script/ConfigManager.gd" id="3_nsb7e"]
+[ext_resource type="Shader" uid="uid://gn5jsag0jtt4" path="res://Textures/2D/HotSteel.gdshader" id="4_dp8xd"]
+[ext_resource type="Texture2D" uid="uid://xwqxqd3kpjxv" path="res://Textures/2D/Gear.png" id="5_6dhoo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_on7rp"]
 shader = ExtResource("4_dp8xd")
@@ -71,8 +71,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_r1wue"]
 _data = {
-"RESET": SubResource("Animation_bt3eo"),
-"Spin": SubResource("Animation_sd4cv")
+&"RESET": SubResource("Animation_bt3eo"),
+&"Spin": SubResource("Animation_sd4cv")
 }
 
 [sub_resource type="Gradient" id="Gradient_jpgft"]
@@ -119,6 +119,16 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_spfi6"]
+sky_cover_modulate = Color(0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_lft5e"]
+sky_material = SubResource("ProceduralSkyMaterial_spfi6")
+
+[sub_resource type="Environment" id="Environment_pn0qj"]
+sky = SubResource("Sky_lft5e")
+tonemap_white = 2.38
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progressbar_bg"]
 bg_color = Color(0.15, 0.15, 0.18, 0.7)
 border_width_left = 1
@@ -162,18 +172,18 @@ offset_bottom = 40.0
 [node name="Icon" type="TextureRect" parent="Background/Gear"]
 material = SubResource("ShaderMaterial_on7rp")
 layout_mode = 0
-offset_left = 91.0
+offset_left = 140.0
 offset_top = 43.0
-offset_right = 131.0
+offset_right = 180.0
 offset_bottom = 83.0
 scale = Vector2(3, 3)
 pivot_offset = Vector2(20, 20)
-texture = ExtResource("4_njnvp")
+texture = ExtResource("5_6dhoo")
 expand_mode = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Background/Gear/Icon"]
 libraries = {
-"": SubResource("AnimationLibrary_r1wue")
+&"": SubResource("AnimationLibrary_r1wue")
 }
 
 [node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon"]
@@ -230,9 +240,10 @@ theme_override_constants/side_margin = 10
 theme_override_font_sizes/font_size = 14
 theme_override_styles/tab_selected = SubResource("StyleBoxFlat_tab_selected")
 tab_alignment = 1
-current_tab = 0
+current_tab = 2
 
 [node name="OBJ to Blueprint" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -473,6 +484,121 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
 text = "   Convert Blueprint to OBJ   "
 
+[node name="Model Preview" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview"]
+layout_mode = 2
+
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Input"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input File:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Select File to Preview"
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+msaa_3d = 2
+screen_space_aa = 1
+use_debanding = true
+size = Vector2i(1072, 340)
+render_target_update_mode = 4
+
+[node name="3DView" type="Camera3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+
+[node name="model_root" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.79209)
+
+[node name="World" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.84469)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+environment = SubResource("Environment_pn0qj")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World" groups=["Lighting"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.58359, 2.78797)
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World" groups=["Lighting"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.5337, 2.78797)
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World" groups=["Lighting"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3854, 8.03738)
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World" groups=["Lighting"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.3854, -2.47157)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_direction = 3
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+value = 0.7
+scrollable = false
+tick_count = 1
+
+[node name="BrightnessLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Background Brightness"
+
+[node name="HSlider2" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 0.1
+max_value = 2.0
+step = 0.01
+value = 1.0
+scrollable = false
+
+[node name="LightingLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Light Brightness"
+
 [node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
 visible = false
 layout_mode = 2
@@ -480,7 +606,7 @@ theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
 theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings"]
 layout_mode = 2
@@ -534,6 +660,46 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
 text = "Browse..."
+
+[node name="PreviewFilePath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Preview File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set the path where you'll load previews from"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_button_normal")
+text = "Browse..."
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Defaults"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Auto-preview loaded files
+"
 
 [node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
 layout_mode = 2
