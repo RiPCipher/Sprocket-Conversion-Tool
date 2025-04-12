@@ -1,5 +1,8 @@
 extends Control
 
+# Preview Constants
+const DEFAULT_MATERIAL = preload("res://Textures/3D/Default.tres")
+
 # Config Manager
 @onready var config_manager = $ConfigManager
 
@@ -37,6 +40,21 @@ extends Control
 @onready var user_obj_path = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/ObjFilepath/PathInput
 @onready var browse_blueprint_path = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/BlueprintFilepath/BrowseButton
 @onready var browse_obj_path = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/ObjFilepath/BrowseButton
+@onready var auto_preview_checkbox = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/CheckButton
+@onready var user_preview_path = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath/PathInput
+@onready var browse_preview_path = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath/BrowseButton
+
+# UI Elements - Preview
+@onready var browse_preview_files_path = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer/PathInput"
+@onready var browse_preview_files = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer/BrowseButton"
+@onready var subviewport_container = $MainPanel/VBoxContainer/TabContainer/"Model Preview"/VBoxContainer/SubViewportContainer
+@onready var subviewport = $MainPanel/VBoxContainer/TabContainer/"Model Preview"/VBoxContainer/SubViewportContainer/SubViewport
+@onready var model_root = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/model_root"
+@onready var camera = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/3DView"
+@onready var world_environment = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/WorldEnvironment"
+@onready var brightness_slider = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HSlider"
+@onready var world_node = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"
+@onready var lighting_slider = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HSlider2"
 
 # Animation 
 @onready var sprocket_animation_player = $Background/Gear/Icon/AnimationPlayer
@@ -46,6 +64,21 @@ var file_dialog_obj: FileDialog
 var file_dialog_blueprint: FileDialog
 var file_dialog_output: FileDialog
 var file_dialog_blueprint_output: FileDialog
+var file_dialog_preview: FileDialog
+
+# Camera Control Variables
+var is_rotating = false
+var last_mouse_pos = Vector2()
+var rotation_sensitivity = 0.005 
+var camera_zoom_speed = 0.5
+var camera_min_distance = 0.5
+var camera_max_distance = 20.0
+var camera_bounds_radius = 15.0
+var constraint_margin = 0.5
+var orbit_pivot_point = Vector3.ZERO
+var target_zoom_distance = 5.0
+var current_zoom_distance = 5.0
+var zoom_smoothing = 10.0
 
 func _ready():
 	# Set window size and position
@@ -85,6 +118,17 @@ func _ready():
 	browse_obj_path.connect("pressed", Callable(self, "_on_settings_obj_browse_pressed"))
 	if settings_save_button:
 		settings_save_button.connect("pressed", Callable(self, "_on_save_settings_pressed"))
+	if auto_preview_checkbox:
+		auto_preview_checkbox.connect("toggled", Callable(self, "_on_auto_preview_toggled"))
+	if browse_preview_path:
+		browse_preview_path.connect("pressed", Callable(self, "_on_settings_preview_browse_pressed"))
+		
+	# Connect buttons - Preview
+	browse_preview_files.connect("pressed", Callable(self, "_on_browse_preview_files_pressed"))
+	brightness_slider.value = world_environment.environment.background_energy_multiplier
+	brightness_slider.connect("value_changed", Callable(self, "_on_brightness_slider_changed"))
+	lighting_slider.connect("value_changed", Callable(self, "_on_lighting_slider_changed"))
+	
 	
 	# Initialize limits settings
 	_setup_limits_settings()
@@ -99,12 +143,53 @@ func _ready():
 	# Ensure placeholders are updated after everything is initialized
 	call_deferred("_update_all_placeholder_texts")
 	
+	# Setup model preview camera controls
+	_setup_model_preview_controls()
+	
 	# Starts Spin Animation
 	sprocket_animation_player.play("Spin")
-	
+
+func _process(delta):
+	# Only handle controls when the preview tab is active
+	if $MainPanel/VBoxContainer/TabContainer.current_tab == 2:
+		# Existing code
+		_handle_keyboard_navigation(delta)
+		
+		# Apply smooth zoom
+		var pivot_point = model_root.global_position
+		var current_distance = camera.global_position.distance_to(pivot_point)
+		
+		if abs(current_distance - target_zoom_distance) > 0.01:
+			current_distance = lerp(current_distance, target_zoom_distance, delta * zoom_smoothing)
+			
+			# Get direction from pivot to camera
+			var direction = (camera.global_position - pivot_point).normalized()
+			
+			# Update camera position
+			camera.global_position = pivot_point + direction * current_distance
+		
+		_constrain_camera_to_bounds()
+
+func _input(event):
+	# Only handle inputs when on the preview tab
+	if $MainPanel/VBoxContainer/TabContainer.current_tab != 2:
+		return
+		
+	# Zoom with mouse wheel
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_zoom_camera(-camera_zoom_speed)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_zoom_camera(camera_zoom_speed)
+
 func _on_tab_changed(tab_index):
-	# Save the last tab index to config
 	config_manager.set_last_tab(tab_index)
+	
+	if tab_index == 2: 
+		if model_root.get_child_count() == 0:
+			camera.position = Vector3(0, 0, 5)
+			camera.look_at(Vector3.ZERO, Vector3.UP)
+			model_root.position = Vector3.ZERO
 
 func _on_config_loaded():
 	# Load saved paths
@@ -137,6 +222,15 @@ func _on_config_loaded():
 	if user_blueprint_path:
 		blueprint_dir = config_manager.get_saved_path("blueprint_dir")
 		user_blueprint_path.text = blueprint_dir
+	
+	# Set preview settings
+	if auto_preview_checkbox:
+		auto_preview_checkbox.button_pressed = config_manager.get_auto_preview()
+
+	# Load preview path
+	if user_preview_path:
+		var preview_dir = config_manager.get_saved_path("preview_dir")
+		user_preview_path.text = preview_dir
 	
 	# Update all placeholder texts
 	_update_all_placeholder_texts()
@@ -189,10 +283,6 @@ func _on_limits_toggled(button_pressed):
 		vertex_limit_input.text = str(limits.vertex_limit)
 		face_limit_input.text = str(limits.face_limit)
 		edge_limit_input.text = str(limits.edge_limit)
-	
-	# Save the setting // Annoying to save every toggle
-	#config_manager.settings.limits.enforce_limits = button_pressed
-	#config_manager.save_config()
 
 # Update whether limit fields are editable
 func _update_limit_fields_editable(editable: bool):
@@ -274,7 +364,23 @@ func _setup_file_dialogs():
 		file_dialog_blueprint_output.current_dir = blueprint_dir
 	
 	add_child(file_dialog_blueprint_output)
+	
+	# Preview File Dialogs
+	file_dialog_preview = FileDialog.new()
+	file_dialog_preview.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	file_dialog_preview.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog_preview.filters = PackedStringArray(["*.obj ; OBJ Files", "*.blueprint ; Blueprint Files"])
+	file_dialog_preview.title = "Select File to Preview"
+	file_dialog_preview.connect("file_selected", Callable(self, "_on_preview_file_selected"))
+	file_dialog_preview.min_size = Vector2(600, 500)
+	
+	# Set initial directory from config
+	var preview_dir = config_manager.get_saved_path("preview_dir")
+	if !preview_dir.is_empty() && DirAccess.dir_exists_absolute(preview_dir):
+		file_dialog_preview.current_dir = preview_dir
 
+	add_child(file_dialog_preview)
+	
 # OBJ to Blueprint UI handlers
 func _on_browse_obj_pressed():
 	# Update from latest settings
@@ -292,6 +398,14 @@ func _on_obj_file_selected(path):
 	# Save the directory path
 	config_manager.save_last_directory("obj_dir", path)
 	
+	# Auto-preview if enabled
+	if config_manager.get_auto_preview():
+		display_obj_model(path)
+		
+		# If on the preview tab, update the preview path field
+		if $MainPanel/VBoxContainer/TabContainer.current_tab == 2:
+			browse_preview_files_path.text = path
+	
 	# Auto-populate the blueprint output path
 	var blueprint_dir = config_manager.get_saved_path("blueprint_dir")
 	if blueprint_dir.is_empty():
@@ -300,7 +414,7 @@ func _on_obj_file_selected(path):
 	var blueprint_path_input = $MainPanel/VBoxContainer/TabContainer/"OBJ to Blueprint"/VBoxContainer/BlueprintOutputSection/HBoxContainer/BlueprintPathInput
 	blueprint_path_input.text = blueprint_dir + "/" + path.get_file().get_basename() + ".blueprint"
 	
-	# Auto-populate the output file path for Blueprint to OBJ (if empty)
+	# Auto-populate the output file path for Blueprint to OBJ
 	if blueprint_output_path.text.is_empty():
 		blueprint_output_path.text = path.get_base_dir() + "/" + path.get_file().get_basename() + ".obj"
 
@@ -354,6 +468,14 @@ func _on_blueprint_file_selected(path):
 	if obj_dir.is_empty():
 		obj_dir = path.get_base_dir()
 	
+	# Auto-preview if enabled
+	if config_manager.get_auto_preview():
+		display_blueprint_model(path)
+		
+		# If on the preview tab, update the preview path field
+		if $MainPanel/VBoxContainer/TabContainer.current_tab == 2:
+			browse_preview_files_path.text = path
+	
 	blueprint_output_path.text = obj_dir + "/" + path.get_file().get_basename() + ".obj"
 
 func _on_output_file_selected(path):
@@ -374,6 +496,16 @@ func _on_save_settings_pressed():
 		config_manager.set_saved_path("obj_dir", obj_path)
 	if !blueprint_path.is_empty():
 		config_manager.set_saved_path("blueprint_dir", blueprint_path)
+		
+	# Save preview settings
+	if auto_preview_checkbox:
+		config_manager.set_auto_preview(auto_preview_checkbox.button_pressed)
+
+	# Save preview path
+	var preview_path = user_preview_path.text if user_preview_path else ""
+	if !preview_path.is_empty():
+		config_manager.set_saved_path("preview_dir", preview_path)
+	
 	
 	# Get and save limit values
 	var limits = {
@@ -521,12 +653,6 @@ func _on_conversion_complete(result):
 	elif result.has("output_path"):
 		# OBJ to Blueprint conversion complete
 		var message = "Success: OBJ converted and saved to " + result.output_path + "\n"
-		
-		# Add mesh statistics if available // Annoying UI Scaling + Unneeded Data
-		#if result.has("vertex_count"):
-			#message += "\nVertex count: " + str(result.vertex_count)
-			#message += "\nFace count: " + str(result.face_count)
-			#message += "\nEdge count: " + str(result.edge_count)
 			
 		status_label.text = message
 	else:
@@ -581,7 +707,7 @@ func _on_settings_blueprint_dir_selected(path):
 	# Update the config immediately
 	config_manager.set_saved_path("blueprint_dir", path)
 	
-	# Also update the Blueprint Output field directly
+	# update the Blueprint Output field directly
 	blueprint_dir_path.text = path
 
 func _on_settings_obj_dir_selected(path):
@@ -596,3 +722,457 @@ func _connect_tab_changed_signal():
 		tab_container.connect("tab_changed", Callable(self, "_on_tab_changed"))
 	else:
 		push_error("TabContainer node not found")
+
+## Previewer ##
+
+func _on_auto_preview_toggled(button_pressed):
+	# Update the auto-preview setting in the config
+	config_manager.set_auto_preview(button_pressed)
+
+func _on_settings_preview_browse_pressed():
+	var dialog = FileDialog.new()
+	dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.title = "Select Preview Directory"
+	dialog.connect("dir_selected", Callable(self, "_on_settings_preview_dir_selected"))
+	dialog.min_size = Vector2(600, 500)
+	add_child(dialog)
+	dialog.popup_centered_ratio(0.7)
+
+func _on_settings_preview_dir_selected(path):
+	user_preview_path.text = path
+	# Update the config immediately
+	config_manager.set_saved_path("preview_dir", path)
+
+func _on_browse_preview_files_pressed():
+	# Update from latest settings
+	var preview_dir = config_manager.get_saved_path("preview_dir")
+	if !preview_dir.is_empty() && DirAccess.dir_exists_absolute(preview_dir):
+		file_dialog_preview.current_dir = preview_dir
+	
+	file_dialog_preview.popup_centered_ratio(0.7)
+
+func _on_preview_file_selected(path):
+	browse_preview_files_path.text = path
+	status_label.text = "Preview file selected: " + path.get_file()
+	
+	# Save the directory path
+	config_manager.save_last_directory("preview_dir", path)
+	
+	# Determine file type and display
+	if path.ends_with(".obj"):
+		display_obj_model(path)
+	elif path.ends_with(".blueprint"):
+		display_blueprint_model(path)
+	else:
+		status_label.text = "Unsupported file format for preview"
+
+func _setup_model_preview_controls():
+	if subviewport_container:
+		subviewport_container.gui_input.connect(_on_viewport_gui_input)
+	
+	# Initialize orbit pivot point to model position
+	orbit_pivot_point = model_root.global_position
+
+func _on_viewport_gui_input(event):
+	if event is InputEventMouseButton:
+		# Left button rotates Camera around model
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			is_rotating = event.pressed
+			last_mouse_pos = event.position
+			# Update pivot point to current model position when starting orbit
+			if event.pressed:
+				orbit_pivot_point = model_root.global_position
+	
+	elif event is InputEventMouseMotion and is_rotating:
+		var delta = event.position - last_mouse_pos
+		last_mouse_pos = event.position
+		
+		if event.button_mask & MOUSE_BUTTON_MASK_LEFT:
+			# Orbit the camera around the model
+			_orbit_camera(delta)
+
+# OBJ Models
+func display_obj_model(obj_path):
+	# Clear existing models
+	for child in model_root.get_children():
+		child.queue_free()
+	
+	# Read OBJ file
+	var file = FileAccess.open(obj_path, FileAccess.READ)
+	if file == null:
+		status_label.text = "Failed to open OBJ file for preview"
+		return
+	
+	# Parse OBJ data
+	var vertices = []
+	var faces = []
+	
+	while not file.eof_reached():
+		var line = file.get_line().strip_edges()
+		
+		if line.begins_with("v "):
+			var parts = line.split(" ", false)
+			if parts.size() >= 4:
+				vertices.append(Vector3(
+					float(parts[1]),
+					float(parts[2]),
+					float(parts[3])
+				))
+		elif line.begins_with("f "):
+			var parts = line.split(" ", false)
+			if parts.size() >= 4: # Handle quads
+				var face = []
+				for i in range(1, parts.size()):
+					var vert_parts = parts[i].split("/")
+					face.append(int(vert_parts[0]) - 1)
+				faces.append(face)
+	
+	file.close()
+	
+	# Validate the model data
+	if vertices.size() < 3 or faces.size() < 1:
+		status_label.text = "Invalid OBJ file: Not enough geometry"
+		return
+	
+	# Create mesh data
+	var surface_array = []
+	surface_array.resize(Mesh.ARRAY_MAX)
+	
+	# Convert vertices to PackedVector3Array
+	var packed_vertices = PackedVector3Array()
+	var packed_indices = PackedInt32Array()
+	
+	# Add each vertex to the array
+	for v in vertices:
+		packed_vertices.append(v)
+	
+	# Create triangle faces from potentially n-gons
+	for f in faces:
+		for i in range(1, f.size() - 1):
+			packed_indices.append(f[0])
+			packed_indices.append(f[i])
+			packed_indices.append(f[i+1])
+	
+	# Create normals
+	var packed_normals = PackedVector3Array()
+	packed_normals.resize(packed_vertices.size())
+	
+	# Initialize all normals
+	for i in range(packed_normals.size()):
+		packed_normals[i] = Vector3(0, 0, 0)
+	
+	# Calculate face normals and assign to vertices
+	for i in range(0, packed_indices.size(), 3):
+		var a = packed_vertices[packed_indices[i]]
+		var b = packed_vertices[packed_indices[i+1]] 
+		var c = packed_vertices[packed_indices[i+2]]
+		
+		var normal = (b - a).cross(c - a)
+		if normal.length() > 0.0001:
+			normal = normal.normalized()
+		else:
+			normal = Vector3(0, 1, 0)
+			
+		# Add this normal to all vertices of this face
+		packed_normals[packed_indices[i]] += normal
+		packed_normals[packed_indices[i+1]] += normal
+		packed_normals[packed_indices[i+2]] += normal
+	
+	# Normalize all vertex normals
+	for i in range(packed_normals.size()):
+		if packed_normals[i].length() > 0.0001:
+			packed_normals[i] = packed_normals[i].normalized()
+		else:
+			packed_normals[i] = Vector3(0, 1, 0)
+	
+	# Create basic UVs based on normalized position
+	var packed_uvs = PackedVector2Array()
+	packed_uvs.resize(packed_vertices.size())
+	
+	# Find bounding box for UV normalization
+	var min_pos = Vector3(INF, INF, INF)
+	var max_pos = Vector3(-INF, -INF, -INF)
+	
+	for v in packed_vertices:
+		min_pos.x = min(min_pos.x, v.x)
+		min_pos.y = min(min_pos.y, v.y)
+		min_pos.z = min(min_pos.z, v.z)
+		max_pos.x = max(max_pos.x, v.x)
+		max_pos.y = max(max_pos.y, v.y)
+		max_pos.z = max(max_pos.z, v.z)
+	
+	# Generate UVs based on XZ coordinates
+	for i in range(packed_vertices.size()):
+		var v = packed_vertices[i]
+		var size_x = max_pos.x - min_pos.x
+		var size_z = max_pos.z - min_pos.z
+		
+		if size_x < 0.0001: size_x = 1.0
+		if size_z < 0.0001: size_z = 1.0
+		
+		var u = (v.x - min_pos.x) / size_x
+		var v_coord = (v.z - min_pos.z) / size_z
+		
+		packed_uvs[i] = Vector2(u, v_coord)
+	
+	# Assign arrays to surface
+	surface_array[Mesh.ARRAY_VERTEX] = packed_vertices
+	surface_array[Mesh.ARRAY_NORMAL] = packed_normals
+	surface_array[Mesh.ARRAY_TEX_UV] = packed_uvs
+	surface_array[Mesh.ARRAY_INDEX] = packed_indices
+	
+	# Create mesh
+	var mesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	
+	# Create mesh instance
+	var mesh_instance = MeshInstance3D.new()
+	mesh_instance.mesh = mesh
+	model_root.add_child(mesh_instance)
+	
+	# Create a material instance
+	var material = DEFAULT_MATERIAL.duplicate()
+	
+	# Disable backface culling / for Debugging
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	
+	# Apply material
+	mesh_instance.set_surface_override_material(0, material)
+	
+	# Center the model
+	var aabb = mesh_instance.get_aabb()
+	model_root.position = -aabb.position - aabb.size/2
+	
+	# Set up camera
+	var model_size = aabb.size.length()
+	camera.global_position = Vector3(0, 0, model_size * 1.5)
+	camera.look_at(model_root.global_position)
+	
+	status_label.text = "OBJ model loaded: " + obj_path.get_file()
+
+func display_blueprint_model(blueprint_path):
+	# Clear existing model
+	for child in model_root.get_children():
+		child.queue_free()
+	
+	# Read blueprint file
+	var file = FileAccess.open(blueprint_path, FileAccess.READ)
+	if file == null:
+		status_label.text = "Failed to open blueprint file for preview"
+		return
+	
+	var json_string = file.get_as_text()
+	file.close()
+	
+	# Parse JSON
+	var json = JSON.new()
+	var error = json.parse(json_string)
+	if error != OK:
+		status_label.text = "Failed to parse blueprint JSON"
+		return
+	
+	var blueprint_data = json.get_data()
+	
+	# Validate blueprint format
+	if !blueprint_data.has("mesh") or !blueprint_data.mesh.has("vertices") or !blueprint_data.mesh.has("faces"):
+		status_label.text = "Invalid blueprint format"
+		return
+	
+	# Extract mesh data
+	var flat_vertices = blueprint_data.mesh.vertices
+	var faces = blueprint_data.mesh.faces
+	
+	# Create vertex array
+	var packed_vertices = PackedVector3Array()
+	for i in range(0, flat_vertices.size(), 3):
+		if i + 2 < flat_vertices.size():
+			packed_vertices.append(Vector3(
+				flat_vertices[i],
+				flat_vertices[i+1],
+				flat_vertices[i+2]
+			))
+	
+	# Create index array from faces
+	var packed_indices = PackedInt32Array()
+	
+	for face in faces:
+		if face.has("v"):
+			if face.v.size() == 3: # Triangle
+				packed_indices.append(face.v[0])
+				packed_indices.append(face.v[1])
+				packed_indices.append(face.v[2])
+			elif face.v.size() == 4: # Quad
+				# First triangle
+				packed_indices.append(face.v[0])
+				packed_indices.append(face.v[1])
+				packed_indices.append(face.v[2])
+				# Second triangle
+				packed_indices.append(face.v[0])
+				packed_indices.append(face.v[2])
+				packed_indices.append(face.v[3])
+	
+	# If no valid faces, exit
+	if packed_indices.size() < 3:
+		status_label.text = "Blueprint contains no valid geometry"
+		return
+	
+	# Create normals
+	var packed_normals = PackedVector3Array()
+	packed_normals.resize(packed_vertices.size())
+	
+	# Initialize all normals
+	for i in range(packed_normals.size()):
+		packed_normals[i] = Vector3(0, 0, 0)
+	
+	# Calculate face normals and assign to vertices
+	for i in range(0, packed_indices.size(), 3):
+		var a = packed_vertices[packed_indices[i]]
+		var b = packed_vertices[packed_indices[i+1]] 
+		var c = packed_vertices[packed_indices[i+2]]
+		
+		var normal = (b - a).cross(c - a)
+		if normal.length() > 0.0001:
+			normal = normal.normalized()
+		else:
+			normal = Vector3(0, 1, 0)
+			
+		# Add this normal to all vertices of this face
+		packed_normals[packed_indices[i]] += normal
+		packed_normals[packed_indices[i+1]] += normal
+		packed_normals[packed_indices[i+2]] += normal
+	
+	# Normalize all vertex normals
+	for i in range(packed_normals.size()):
+		if packed_normals[i].length() > 0.0001:
+			packed_normals[i] = packed_normals[i].normalized()
+		else:
+			packed_normals[i] = Vector3(0, 1, 0)
+	
+	# Create UVs
+	var packed_uvs = PackedVector2Array()
+	packed_uvs.resize(packed_vertices.size())
+	
+	# Find bounding box for UV normalization
+	var min_pos = Vector3(INF, INF, INF)
+	var max_pos = Vector3(-INF, -INF, -INF)
+	
+	for v in packed_vertices:
+		min_pos.x = min(min_pos.x, v.x)
+		min_pos.y = min(min_pos.y, v.y)
+		min_pos.z = min(min_pos.z, v.z)
+		max_pos.x = max(max_pos.x, v.x)
+		max_pos.y = max(max_pos.y, v.y)
+		max_pos.z = max(max_pos.z, v.z)
+	
+	# Generate UVs based on XZ coordinates
+	for i in range(packed_vertices.size()):
+		var v = packed_vertices[i]
+		var size_x = max_pos.x - min_pos.x
+		var size_z = max_pos.z - min_pos.z
+		
+		if size_x < 0.0001: size_x = 1.0
+		if size_z < 0.0001: size_z = 1.0
+		
+		var u = (v.x - min_pos.x) / size_x
+		var v_coord = (v.z - min_pos.z) / size_z
+		
+		packed_uvs[i] = Vector2(u, v_coord)
+	
+	# Create mesh arrays
+	var surface_array = []
+	surface_array.resize(Mesh.ARRAY_MAX)
+	surface_array[Mesh.ARRAY_VERTEX] = packed_vertices
+	surface_array[Mesh.ARRAY_NORMAL] = packed_normals
+	surface_array[Mesh.ARRAY_TEX_UV] = packed_uvs
+	surface_array[Mesh.ARRAY_INDEX] = packed_indices
+	
+	# Create mesh
+	var mesh = ArrayMesh.new()
+	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_array)
+	
+	# Create mesh instance
+	var mesh_instance = MeshInstance3D.new()
+	mesh_instance.mesh = mesh
+	model_root.add_child(mesh_instance)
+	
+	# Create material instance
+	var material = DEFAULT_MATERIAL.duplicate()
+	
+	# Disable backface culling for debugging
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	
+	# Apply material
+	mesh_instance.set_surface_override_material(0, material)
+	
+	# Center the model
+	var aabb = mesh_instance.get_aabb()
+	model_root.position = -aabb.position - aabb.size/2
+	
+	# Set up camera
+	var model_size = aabb.size.length()
+	camera.global_position = Vector3(0, 0, model_size * 1.5)
+	camera.look_at(model_root.global_position)
+	
+	status_label.text = "Blueprint model loaded: " + blueprint_path.get_file()
+
+func _orbit_camera(delta):
+	# Create rotation transforms
+	var rotation_y = Quaternion(Vector3.UP, -delta.x * rotation_sensitivity)
+	var camera_right = camera.global_transform.basis.x
+	var rotation_x = Quaternion(camera_right, -delta.y * rotation_sensitivity)
+	
+	# Get relative position to pivot point
+	var relative_pos = camera.global_position - orbit_pivot_point
+	
+	# Apply rotations
+	relative_pos = rotation_y * relative_pos
+	relative_pos = rotation_x * relative_pos
+	
+	# Set new camera position
+	camera.global_position = orbit_pivot_point + relative_pos
+	
+	# Make camera look at pivot point
+	camera.look_at(orbit_pivot_point)
+
+func _handle_keyboard_navigation(delta):
+	orbit_pivot_point = model_root.global_position
+	
+	# Handl;e Vertical orbit with W/S
+	if Input.is_key_pressed(KEY_W):
+		var orbit_delta = Vector2(0.0, 7.0)
+		_orbit_camera(orbit_delta)
+	if Input.is_key_pressed(KEY_S):
+		var orbit_delta = Vector2(0.0, -7.0)
+		_orbit_camera(orbit_delta)
+	# Handle horizontal orbit with A/D
+	if Input.is_key_pressed(KEY_A):
+		var orbit_delta = Vector2(7.0, 0.0)
+		_orbit_camera(orbit_delta)
+	if Input.is_key_pressed(KEY_D):
+		var orbit_delta = Vector2(-7.0, 0.0)
+		_orbit_camera(orbit_delta)
+
+func _zoom_camera(zoom_amount):
+	target_zoom_distance = clamp(target_zoom_distance + zoom_amount, camera_min_distance, camera_max_distance)
+
+func _constrain_camera_to_bounds():
+	var camera_pos = camera.global_position
+	var model_pos = model_root.global_position
+	
+	# Calculate direction and distance
+	var to_camera = camera_pos - model_pos
+	var distance = to_camera.length()
+	
+	# If outside bounds, move back to boundary
+	if distance > camera_bounds_radius - constraint_margin:
+		camera.global_position = model_pos + to_camera.normalized() * (camera_bounds_radius - constraint_margin)
+
+func _on_brightness_slider_changed(value):
+	if world_environment and world_environment.environment:
+		world_environment.environment.background_energy_multiplier = value
+
+func _on_lighting_slider_changed(value):
+	var lights = get_tree().get_nodes_in_group("Lighting")
+	for light in lights:
+		light.light_energy = value
