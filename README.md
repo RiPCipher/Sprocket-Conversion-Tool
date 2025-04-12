@@ -9,7 +9,8 @@
 - Simply save the part you'd like to modify as a plate structure, open tool, navigate to "Blueprint to OBJ" and select your file.
   If you set a custom filepath in the settings, it will auto-fill the output path and set the OBJ name to the blueprints name.
 - Same instructions when going from OBJ to Blueprint, with the exception of the limits toggle that will let you know if you're importing a high-poly model that might affect performance.
-
+- The Previewer can load both .obj and .blueprint files and display them prior to actual import/export. 
+  A toggle to auto-preview loaded models is located in the settings.
 
 Caveats:
 - It doesnt retain armor values when exporting to .obj
