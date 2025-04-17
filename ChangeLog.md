@@ -10,3 +10,6 @@ Changes for 0.3:
 		Added toggle to auto-load file into preview mode
 - UI:
 		Cleaned up rotating sprocket icon to look a little newer / Added a slight background glow
+
+Changes for 0.3.1:
+- Implemented fix that caused models to not convert correctly
