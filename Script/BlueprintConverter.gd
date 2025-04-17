@@ -128,8 +128,7 @@ func convert_OBJToBlueprint(obj_path: String, blueprint_name: String, blueprint_
 	return {"status": "processing"}
 
 # Process OBJ to Blueprint in worker thread
-func _process_obj_to_blueprint(obj_path: String, blueprint_name: String, blueprint_dir: String,
-							  vertex_limit: int, face_limit: int, edge_limit: int) -> Dictionary:
+func _process_obj_to_blueprint(obj_path: String, blueprint_name: String, blueprint_dir: String, vertex_limit: int, face_limit: int, edge_limit: int) -> Dictionary:
 	_update_progress(0.1)
 	
 	# Read OBJ file
@@ -238,7 +237,7 @@ func _process_obj_to_blueprint(obj_path: String, blueprint_name: String, bluepri
 		var face_size = min(face.size(), 4)
 		
 		for i in range(face_size):
-			face_vertices.append(face[i])
+			face_vertices.append(int(face[i]))
 		
 		# Set properties based on face type
 		var is_triangle = face_size == 3
@@ -405,11 +404,11 @@ func _process_obj_to_blueprint(obj_path: String, blueprint_name: String, bluepri
 			output_file.store_line("      {")
 			
 			if is_triangle:
-				output_file.store_line('        "v": [' + str(face.v[0]) + ", " + str(face.v[1]) + ", " + str(face.v[2]) + "],")
-				output_file.store_line('        "t": [' + str(face.t[0]) + ", " + str(face.t[1]) + ", " + str(face.t[2]) + "],")
+				output_file.store_line('        "v": [' + str(int(face.v[0])) + ", " + str(int(face.v[1])) + ", " + str(int(face.v[2])) + "],")
+				output_file.store_line('        "t": [' + str(int(face.t[0])) + ", " + str(int(face.t[1])) + ", " + str(int(face.t[2])) + "],")
 			else:
-				output_file.store_line('        "v": [' + str(face.v[0]) + ", " + str(face.v[1]) + ", " + str(face.v[2]) + ", " + str(face.v[3]) + "],")
-				output_file.store_line('        "t": [' + str(face.t[0]) + ", " + str(face.t[1]) + ", " + str(face.t[2]) + ", " + str(face.t[3]) + "],")
+				output_file.store_line('        "v": [' + str(int(face.v[0])) + ", " + str(int(face.v[1])) + ", " + str(int(face.v[2])) + ", " + str(int(face.v[3])) + "],")
+				output_file.store_line('        "t": [' + str(int(face.t[0])) + ", " + str(int(face.t[1])) + ", " + str(int(face.t[2])) + ", " + str(int(face.t[3])) + "],")
 			
 			output_file.store_line('        "tm": ' + str(face.tm) + ",")
 			output_file.store_line('        "te": ' + str(face.te))
@@ -559,9 +558,9 @@ func _process_blueprint_to_obj(blueprint_path: String, output_path: String) -> D
 	for i in range(faces.size()):
 		var face = faces[i]
 		if face.v.size() == 3:
-			obj_lines.append("f " + str(face.v[0] + 1) + " " + str(face.v[1] + 1) + " " + str(face.v[2] + 1))
+			obj_lines.append("f " + str(int(face.v[0]) + 1) + " " + str(int(face.v[1]) + 1) + " " + str(int(face.v[2]) + 1))
 		elif face.v.size() == 4:
-			obj_lines.append("f " + str(face.v[0] + 1) + " " + str(face.v[1] + 1) + " " + str(face.v[2] + 1) + " " + str(face.v[3] + 1))
+			obj_lines.append("f " + str(int(face.v[0]) + 1) + " " + str(int(face.v[1]) + 1) + " " + str(int(face.v[2]) + 1) + " " + str(int(face.v[3]) + 1))
 		
 		# Update progress
 		if i % 10000 == 0:
