@@ -423,7 +423,7 @@ func _on_browse_conversion_output_pressed():
 	var input_path = conversion_input_path.text.strip_edges()
 	if !input_path.is_empty():
 		var extension = input_path.get_extension().to_lower()
-		var output_dir = config_manager.get_conversion_dir()
+		var output_dir = config_manager.get_output_dir()
 		
 		if extension == "obj":
 			if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
@@ -521,7 +521,12 @@ func _on_convert_file_pressed():
 		_set_buttons_enabled(true)
 		return
 	
-	var options = {}
+	var options = {
+		"include_materials": false,
+		"include_normals": false,
+		"calculate_normals": true, 
+		"smooth_shading": false
+	}
 	
 	var input_extension = input_path.get_extension().to_lower()
 	var output_extension = output_path.get_extension().to_lower()
