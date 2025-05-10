@@ -82,13 +82,6 @@ func _ready():
 			DirAccess.make_dir_recursive_absolute(output_dir)
 		set_saved_path("output_dir", output_dir)
 	
-	#if conversion_dir_from_config.is_empty():
-		##Create Folder
-		#if !DirAccess.dir_exists_absolute(default_dir):
-			#DirAccess.make_dir_recursive_absolute(default_dir)
-		#
-		#set_saved_path("conversion_dir", default_dir)
-	
 	default_conversion_path = default_dir
 	
 	var preview_dir_from_config = get_saved_path("preview_dir")

@@ -61,11 +61,14 @@ func _process_conversion(task):
 	_apply_transformations(model_data, task.options)
 
 	emit_signal("conversion_progress", 0.6)
-	print("60%")
+	print("60% - About to save with format: " + task.target_format)
+	print("Available export formats: " + str(_format_registry.get_supported_export_extensions()))
+
 
 	var save_result = _format_registry.save(model_data, task.target_path, task.target_format, task.options)
-	print("65%")
+	print("65% - Save result: " + str(save_result))
 	if not save_result.success:
+		print("ERROR during export: " + save_result.error)
 		result.error = save_result.error
 		emit_signal("conversion_error", result.error)
 		_finalize_conversion()
