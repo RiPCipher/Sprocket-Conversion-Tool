@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://7s28nhwycyv8"]
+
+[ext_resource type="Script" uid="uid://wo583kvnnsed" path="res://Script/Main/WorldGrid.gd" id="1_037w4"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_037w4"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_26fma"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_igovm"]
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_n4ft2"]
+
+[node name="WorldGrid" type="Node3D"]
+script = ExtResource("1_037w4")
+primary_grid_color = Color(0.5, 0.5, 0.5, 0.8)
+secondary_grid_color = Color(0.3, 0.3, 0.3, 0.5)
+z_axis_color = Color(0.299107, 0.297811, 1, 1)
+
+[node name="GridMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("ImmediateMesh_037w4")
+
+[node name="XAxis" type="MeshInstance3D" parent="."]
+mesh = SubResource("ImmediateMesh_26fma")
+
+[node name="YAxis" type="MeshInstance3D" parent="."]
+mesh = SubResource("ImmediateMesh_igovm")
+
+[node name="ZAxis" type="MeshInstance3D" parent="."]
+mesh = SubResource("ImmediateMesh_n4ft2")

@@ -1,0 +1,137 @@
+[gd_scene load_steps=6 format=3 uid="uid://do1hoi86qemi1"]
+
+[ext_resource type="Script" uid="uid://r7kq4cp735dg" path="res://Script/UI/BrowserWindow.gd" id="1_s60xn"]
+[ext_resource type="Texture2D" uid="uid://cyblx3w2t2bbt" path="res://Textures/2D/Settings/Icons/LeftArrow16px.png" id="2_ayhgc"]
+[ext_resource type="Texture2D" uid="uid://cpciim37qgoxc" path="res://Textures/2D/Settings/Icons/RightArrow16px.png" id="3_v548x"]
+[ext_resource type="Texture2D" uid="uid://b4bmlufwda4t6" path="res://Textures/2D/Settings/Icons/UpArrow16px.png" id="4_mim6l"]
+[ext_resource type="Texture2D" uid="uid://dgexo6yaxl8vs" path="res://Textures/2D/Settings/Icons/ReloadArrow16px.png" id="5_gnndi"]
+
+[node name="Window" type="Window"]
+position = Vector2i(0, 36)
+size = Vector2i(800, 500)
+script = ExtResource("1_s60xn")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 800.0
+offset_bottom = 500.0
+theme_override_constants/separation = -1
+
+[node name="SearchSection" type="PanelContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 59)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SearchSection"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="VBoxContainer/SearchSection/HBoxContainer"]
+custom_minimum_size = Vector2(10.275, 0)
+layout_mode = 2
+
+[node name="LastPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+icon = ExtResource("2_ayhgc")
+
+[node name="NextPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+icon = ExtResource("3_v548x")
+
+[node name="ParentFolder" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+icon = ExtResource("4_mim6l")
+
+[node name="PathLabel" type="Label" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+text = "Path:"
+
+[node name="OptionButton" type="OptionButton" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/SearchSection/HBoxContainer"]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+text = "wddqwdqwdqwdqwdqwdqwdq"
+
+[node name="Refresh" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+tooltip_text = "Currently does nothing "
+icon = ExtResource("5_gnndi")
+
+[node name="FileListContainer" type="PanelContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 350)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/FileListContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="FileList" type="ItemList" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+allow_reselect = true
+wraparound_items = false
+same_column_width = true
+fixed_icon_size = Vector2i(16, 16)
+
+[node name="Spacing2" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="UserSection" type="PanelContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 77.99)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/UserSection"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="TopSpacing" type="Control" parent="VBoxContainer/UserSection/VBoxContainer"]
+custom_minimum_size = Vector2(0, 3.38)
+layout_mode = 2
+
+[node name="FileNameSection" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+layout_mode = 2
+text = "File:"
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2
+
+[node name="ValidExtension" type="OptionButton" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="Select" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = " Select "
+
+[node name="Cancel" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = " Cancel "

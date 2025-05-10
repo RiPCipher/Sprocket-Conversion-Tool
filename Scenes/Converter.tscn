@@ -1,0 +1,814 @@
+[gd_scene load_steps=28 format=3 uid="uid://dn1wf6k3cte06"]
+
+[ext_resource type="Script" uid="uid://b8mqtsyrexhp1" path="res://Script/Main/Main.gd" id="1_v2331"]
+[ext_resource type="Script" uid="uid://cijvk3n8hecpv" path="res://Script/Utilities/ConfigManager.gd" id="3_nsb7e"]
+[ext_resource type="Shader" uid="uid://gn5jsag0jtt4" path="res://Textures/2D/Shaders/HotSteel.gdshader" id="4_dp8xd"]
+[ext_resource type="Texture2D" uid="uid://xwqxqd3kpjxv" path="res://Textures/2D/Gear.png" id="5_6dhoo"]
+[ext_resource type="Script" uid="uid://xkqvo42gik8e" path="res://Script/Utilities/Utility.gd" id="5_fiwj2"]
+[ext_resource type="Script" uid="uid://b7ku71428fvl0" path="res://Script/UI/UIManager.gd" id="7_ditv3"]
+[ext_resource type="Texture2D" uid="uid://sc15jb0ul2q5" path="res://Textures/2D/Settings/Icons/Wireframe_View_20x20.png" id="9_qlaan"]
+[ext_resource type="Texture2D" uid="uid://dg31o5roymxhh" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png" id="10_7he56"]
+[ext_resource type="Texture2D" uid="uid://f0naq12wblro" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png" id="10_30d8k"]
+[ext_resource type="Texture2D" uid="uid://gyimbv63hkmg" path="res://Textures/2D/Settings/Icons/Mixed_View_20x20.png" id="10_tb4ts"]
+[ext_resource type="Texture2D" uid="uid://can37hwf3rnk8" path="res://Textures/2D/Settings/Icons/Cut_View_20x20.png" id="11_mqb3m"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_on7rp"]
+shader = ExtResource("4_dp8xd")
+shader_parameter/glow_intensity = 0.6
+shader_parameter/heat_level = 0.7
+shader_parameter/pulse_speed = 1.0
+shader_parameter/pulse_amplitude = 0.18
+
+[sub_resource type="Animation" id="Animation_bt3eo"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:pivot_offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(20, 20)]
+}
+
+[sub_resource type="Animation" id="Animation_sd4cv"]
+resource_name = "Spin"
+length = 30.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:pivot_offset")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(20, 20), Vector2(20, 20)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_r1wue"]
+_data = {
+&"RESET": SubResource("Animation_bt3eo"),
+&"Spin": SubResource("Animation_sd4cv")
+}
+
+[sub_resource type="Gradient" id="Gradient_jpgft"]
+colors = PackedColorArray(1, 0.509804, 0.254902, 0.517647, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_futdp"]
+gradient = SubResource("Gradient_jpgft")
+width = 80
+height = 80
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 1)
+metadata/_snap_enabled = true
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qlaan"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_primary_button_normal"]
+bg_color = Color(0.25, 0.35, 0.52, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.45, 0.65, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_spfi6"]
+sky_cover_modulate = Color(0, 0, 0, 1)
+
+[sub_resource type="Sky" id="Sky_lft5e"]
+sky_material = SubResource("ProceduralSkyMaterial_spfi6")
+
+[sub_resource type="Environment" id="Environment_pn0qj"]
+sky = SubResource("Sky_lft5e")
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_sky_contribution = 0.7
+ambient_light_energy = 0.8
+tonemap_mode = 2
+tonemap_exposure = 1.4
+tonemap_white = 3.0
+ssr_fade_in = 0.974703
+ssr_fade_out = 0.450626
+ssr_depth_tolerance = 0.01
+ssao_enabled = true
+ssao_power = 0.989631
+ssao_detail = 5.0
+ssil_enabled = true
+ssil_intensity = 1.2
+sdfgi_enabled = true
+sdfgi_use_occlusion = true
+sdfgi_cascades = 3
+sdfgi_min_cell_size = 5.0
+sdfgi_energy = 0.5
+sdfgi_normal_bias = -2.5
+glow_levels/1 = 10.88
+glow_levels/2 = 9.17
+glow_levels/3 = 2.1
+glow_levels/4 = 0.9
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fiwj2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tb4ts"]
+bg_color = Color(0.212305, 0.212305, 0.212305, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_30d8k"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mqb3m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progressbar_bg"]
+bg_color = Color(0.15, 0.15, 0.18, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.2, 0.25, 0.5)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="OBJBlueprintConverter" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_v2331")
+
+[node name="ConfigManager" type="Node" parent="."]
+script = ExtResource("3_nsb7e")
+
+[node name="Utility" type="Node" parent="."]
+script = ExtResource("5_fiwj2")
+
+[node name="UIManager" type="Node" parent="."]
+script = ExtResource("7_ditv3")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Gear" type="Control" parent="Background"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Icon" type="TextureRect" parent="Background/Gear"]
+material = SubResource("ShaderMaterial_on7rp")
+layout_mode = 0
+offset_left = 140.0
+offset_top = 43.0
+offset_right = 180.0
+offset_bottom = 83.0
+scale = Vector2(3, 3)
+pivot_offset = Vector2(20, 20)
+texture = ExtResource("5_6dhoo")
+expand_mode = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Background/Gear/Icon"]
+libraries = {
+&"": SubResource("AnimationLibrary_r1wue")
+}
+
+[node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon"]
+show_behind_parent = true
+position = Vector2(20.3333, 20.3333)
+scale = Vector2(0.333333, 0.333333)
+texture = SubResource("GradientTexture2D_futdp")
+
+[node name="Version" type="Label" parent="."]
+layout_mode = 2
+offset_left = 371.0
+offset_top = 84.0
+offset_right = 397.0
+offset_bottom = 97.0
+theme_override_font_sizes/font_size = 9
+text = "v0.4.4"
+
+[node name="MainPanel" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderSection" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_direction = 1
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/HeaderSection"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Sprocket Conversion Tool"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Import and export models"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/tab_hovered = SubResource("StyleBoxEmpty_qlaan")
+tab_alignment = 1
+current_tab = 1
+
+[node name="Conversion" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Input"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input File:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Select input file to convert"
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="OutputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Output"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="OutputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Output File:"
+
+[node name="OutputPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Save output file to..."
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+layout_mode = 2
+
+[node name="ConvertButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+custom_minimum_size = Vector2(157.875, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
+text = "Convert"
+
+[node name="Model Preview" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview"]
+layout_mode = 2
+
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 307
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Input"
+
+[node name="TextureButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 10
+tooltip_text = "*Work in Progress"
+action_mode = 0
+texture_normal = ExtResource("10_7he56")
+texture_pressed = ExtResource("10_7he56")
+texture_hover = ExtResource("10_30d8k")
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2/TextureButton"]
+layout_mode = 2
+offset_left = -130.0
+offset_top = -1.0
+offset_right = -4.0
+offset_bottom = 19.0
+theme_override_font_sizes/font_size = 14
+text = "Previewer Settings"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input File:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+placeholder_text = "Select File to Preview"
+editable = false
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+msaa_3d = 2
+screen_space_aa = 1
+use_debanding = true
+size = Vector2i(700, 389)
+render_target_update_mode = 4
+
+[node name="3DView" type="Camera3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00127649, -2.38419e-07, 0.0135078)
+
+[node name="model_root" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+
+[node name="World" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.84469)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+environment = SubResource("Environment_pn0qj")
+
+[node name="Omni-Lights" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.07571, 2.788)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+
+[node name="OmniLight3D4" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.39051, 2.78797)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+
+[node name="OmniLight3D2" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.44097)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+
+[node name="OmniLight3D3" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.24074)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+
+[node name="OmniLight3D5" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.83701, 0, 2.663)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+
+[node name="OmniLight3D6" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85335, 0, 2.663)
+light_color = Color(0.645582, 0.628607, 0.636899, 1)
+light_specular = 0.0
+shadow_bias = 5.041
+shadow_normal_bias = 1.235
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+custom_minimum_size = Vector2(130, 0)
+layout_direction = 3
+layout_mode = 2
+alignment = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 170)
+layout_direction = 2
+layout_mode = 2
+
+[node name="Control" type="Control" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 1.935)
+layout_mode = 2
+
+[node name="HSlider" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_auto_translate_mode = 2
+max_value = 1.0
+step = 0.01
+value = 0.7
+scrollable = false
+tick_count = 1
+
+[node name="BrightnessLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "Background Brightness"
+
+[node name="HSlider2" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+min_value = 0.01
+max_value = 1.0
+step = 0.01
+value = 0.3
+scrollable = false
+
+[node name="LightingLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "Light Brightness"
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxEmpty_fiwj2")
+
+[node name="Button" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+tooltip_text = "Recenters the camera
+to the center of the world, 
+while accounting for the models size
+"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_tb4ts")
+text = " Recenter Camera "
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 20)
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="spacer" type="Control" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(23.05, 0)
+layout_mode = 2
+
+[node name="Button" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "Wireframe Toggle"
+toggle_mode = true
+icon = ExtResource("9_qlaan")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Button2" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "Wireframe Overlay"
+toggle_mode = true
+icon = ExtResource("10_tb4ts")
+icon_alignment = 1
+expand_icon = true
+
+[node name="Button3" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+tooltip_text = "Internal View
+*Work in progress"
+toggle_mode = true
+icon = ExtResource("11_mqb3m")
+icon_alignment = 1
+expand_icon = true
+
+[node name="CheckButton3" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_styles/hover = SubResource("StyleBoxEmpty_30d8k")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_mqb3m")
+
+[node name="WorldGridLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/CheckButton3"]
+layout_mode = 2
+offset_left = -55.0
+offset_top = 5.0
+offset_right = -0.169998
+offset_bottom = 19.0
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "World Grid"
+
+[node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+metadata/_tab_index = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="FilepathSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+tooltip_text = "Advanced Settings Menu"
+theme_override_constants/separation = 587
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Filepaths"
+
+[node name="TextureButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+tooltip_text = "*Work in progress"
+action_mode = 0
+texture_normal = ExtResource("10_7he56")
+texture_pressed = ExtResource("10_7he56")
+texture_hover = ExtResource("10_30d8k")
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer/TextureButton"]
+layout_mode = 2
+offset_left = -126.705
+offset_top = -0.795
+offset_right = -0.950005
+offset_bottom = 19.205
+theme_override_font_sizes/font_size = 14
+text = "Advanced Settings"
+
+[node name="InputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Input File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set default path for loading files"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="OutputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Output File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set default path for saving files"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="PreviewFilePath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Preview File Path:"
+
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Set the path where you'll load previews from"
+
+[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Browse..."
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Preview Settings"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
+layout_direction = 2
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Auto-preview loaded files"
+
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "
+"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Wireframe Color:"
+
+[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Model Color:"
+
+[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+
+[node name="OtherSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
+text = "Other Settings"
+
+[node name="GridContainer" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings"]
+layout_mode = 2
+theme_override_constants/h_separation = 15
+columns = 2
+
+[node name="Theme" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/GridContainer"]
+layout_mode = 2
+text = "Theme:"
+
+[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/GridContainer"]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+layout_mode = 2
+
+[node name="SaveSettingsButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
+text = "   Save Settings   "
+
+[node name="StatusSection" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ProgressBar" type="ProgressBar" parent="MainPanel/VBoxContainer/StatusSection"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progressbar_bg")
+value = 72.3
+show_percentage = false
+
+[node name="PercentLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection/ProgressBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+text = "72%"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatusLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection"]
+custom_minimum_size = Vector2(1, 1)
+layout_mode = 2
+text = "Ready"
+autowrap_mode = 3
