@@ -372,13 +372,13 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 			uv_lines.append("vt " + str(uv.x) + " " + str(1.0 - uv.y))
 		output_lines.append("\n".join(uv_lines))
 	
-	if export_options.get("include_normals", true) and normals.size() > 0:
+	if export_options.get("include_normals", false) and normals.size() > 0:
 		var normal_lines = []
 		for n in normals:
 			normal_lines.append("vn " + str(n.x) + " " + str(n.y) + " " + str(n.z))
 		output_lines.append("\n".join(normal_lines))
 	
-	if export_options.get("include_materials", true) and model_data.materials.size() > 0:
+	if export_options.get("include_materials", false) and model_data.materials.size() > 0:
 		var mtl_filename = file_path.get_file().get_basename() + ".mtl"
 		output_lines.append("mtllib " + mtl_filename)
 		
