@@ -421,31 +421,24 @@ func _on_browse_conversion_output_pressed():
 	current_browser_operation = "conversion_output"
 	
 	var input_path = conversion_input_path.text.strip_edges()
-	if !input_path.is_empty():
+	var current_output_path = conversion_output_path.text.strip_edges()
+	var initial_filename = ""
+	
+	if !current_output_path.is_empty():
+		initial_filename = current_output_path.get_file()
+	elif !input_path.is_empty():
+		var basename = input_path.get_file().get_basename()
 		var extension = input_path.get_extension().to_lower()
-		var output_dir = config_manager.get_output_dir()
-		
 		if extension == "obj":
-			if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
-				_show_browser(BrowserMode.SAVE_FILE, output_dir, PackedStringArray(["*.blueprint"]))
-			else:
-				_show_browser(BrowserMode.SAVE_FILE, input_path.get_base_dir(), PackedStringArray(["*.blueprint"]))
+			initial_filename = basename + ".blueprint"
 		elif extension == "blueprint":
-			if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
-				_show_browser(BrowserMode.SAVE_FILE, output_dir, PackedStringArray(["*.obj"]))
-			else:
-				_show_browser(BrowserMode.SAVE_FILE, input_path.get_base_dir(), PackedStringArray(["*.obj"]))
-		else:
-			if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
-				_show_browser(BrowserMode.SAVE_FILE, output_dir, PackedStringArray(["*.obj", "*.blueprint"]))
-			else:
-				_show_browser(BrowserMode.SAVE_FILE, "", PackedStringArray(["*.obj", "*.blueprint"]))
+			initial_filename = basename + ".obj"
+	
+	var output_dir = config_manager.get_output_dir()
+	if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
+		_show_browser(BrowserMode.SAVE_FILE, output_dir, PackedStringArray(["*.blueprint"]), initial_filename)
 	else:
-		var output_dir = config_manager.get_output_dir()
-		if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
-			_show_browser(BrowserMode.SAVE_FILE, output_dir, PackedStringArray(["*.obj", "*.blueprint"]))
-		else:
-			_show_browser(BrowserMode.SAVE_FILE, "", PackedStringArray(["*.obj", "*.blueprint"]))
+		_show_browser(BrowserMode.SAVE_FILE, input_path.get_base_dir(), PackedStringArray(["*.blueprint"]), initial_filename)
 
 func _on_conversion_output_file_selected(path):
 	conversion_output_path.text = path
