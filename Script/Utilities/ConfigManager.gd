@@ -52,7 +52,7 @@ func _init():
 	var exe_path = OS.get_executable_path()
 	var exe_dir = exe_path.get_base_dir()
 	CONFIG_FILE_PATH = exe_dir + "/tool_settings.cfg"
-	print("Config file location: " + CONFIG_FILE_PATH)
+	Debug.log("Config file location: " + CONFIG_FILE_PATH)
 
 func _ready():
 	# Get executable directory for defaults
@@ -113,7 +113,7 @@ func save_config() -> bool:
 	# Save
 	var error = config.save(CONFIG_FILE_PATH)
 	if error == OK:
-		print("Config saved successfully to: " + CONFIG_FILE_PATH)
+		Debug.log("Config saved successfully to: " + CONFIG_FILE_PATH)
 		emit_signal("config_saved")
 		return true
 	
@@ -124,7 +124,7 @@ func load_config() -> bool:
 	var config = ConfigFile.new()
 	
 	if not FileAccess.file_exists(CONFIG_FILE_PATH):
-		print("No config file found at: " + CONFIG_FILE_PATH + ", using empty settings")
+		Debug.log("No config file found at: " + CONFIG_FILE_PATH + ", using empty settings")
 		# No existing config - use empty settings
 		emit_signal("config_loaded")
 		return false
@@ -135,7 +135,7 @@ func load_config() -> bool:
 		emit_signal("config_loaded")
 		return false
 	
-	print("Config loaded from: " + CONFIG_FILE_PATH)
+	Debug.log("Config loaded from: " + CONFIG_FILE_PATH)
 	
 	for key in settings.paths:
 		if config.has_section_key("paths", key):

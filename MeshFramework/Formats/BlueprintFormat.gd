@@ -33,7 +33,7 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	model_data.set_metadata("source_path", file_path)
 	
 	var blueprint_type = "standard"
-	print("BlueprintFormat: Using standard blueprint handler")
+	Debug.log("BlueprintFormat: Using standard blueprint handler")
 	
 	var import_options = get_default_import_options()
 	for key in options:
@@ -76,11 +76,11 @@ func _detect_blueprint_type(file_path: String) -> String:
 	
 	if typeof(data) == TYPE_DICTIONARY:
 		if data.has("header") and data.has("blueprints") and data.has("objects") and data.has("meshes"):
-			print("BlueprintFormat: Detected vehicle blueprint structure")
+			Debug.log("BlueprintFormat: Detected vehicle blueprint structure")
 			
 			if data.has("header"):
 				if data.header.has("class") or data.header.has("era") or data.header.has("gameVersion"):
-					print("BlueprintFormat: Confirmed as vehicle blueprint")
+					Debug.log("BlueprintFormat: Confirmed as vehicle blueprint")
 					return "vehicle"
 	
 	return "standard"

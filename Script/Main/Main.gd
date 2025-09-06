@@ -236,7 +236,7 @@ func _on_files_dropped(files):
 		var extension = file_path.get_extension().to_lower()
 		var tab = tab_container.current_tab
 		
-		print("File dropped: ", file_path)
+		Debug.log("File dropped: ", file_path)
 		
 		if tab == 1:  # Preview tab
 			if extension == "obj" or extension == "blueprint":
@@ -424,8 +424,10 @@ func _on_browse_conversion_output_pressed():
 	var current_output_path = conversion_output_path.text.strip_edges()
 	var initial_filename = ""
 	
+	# Get the suggested filename from the current output path if it exists
 	if !current_output_path.is_empty():
 		initial_filename = current_output_path.get_file()
+	# Otherwise, generate one from the input path
 	elif !input_path.is_empty():
 		var basename = input_path.get_file().get_basename()
 		var extension = input_path.get_extension().to_lower()

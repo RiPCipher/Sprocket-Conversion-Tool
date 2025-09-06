@@ -168,19 +168,19 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 		else:
 			other_count += 1
 	
-	print("\n=== OBJ DEBUG INFO ===")
-	print("File: ", file_path)
-	print("Total lines parsed: ", line_number)
-	print("Raw vertex lines found: ", debug_info.raw_vertices.size())
-	print("Raw face lines found: ", debug_info.raw_faces.size())
-	print("Vertices parsed: ", vertex_count)
-	print("Normals parsed: ", normal_count)
-	print("UVs parsed: ", uv_count)
-	print("Faces parsed: ", face_count)
-	print("Triangle count: ", triangle_count)
-	print("Quad count: ", quad_count)
-	print("Other polygon count: ", other_count)
-	print("Invalid faces: ", debug_info.invalid_faces.size())
+	Debug.log("\n=== OBJ DEBUG INFO ===")
+	Debug.log("File: ", file_path)
+	Debug.log("Total lines parsed: ", line_number)
+	Debug.log("Raw vertex lines found: ", debug_info.raw_vertices.size())
+	Debug.log("Raw face lines found: ", debug_info.raw_faces.size())
+	Debug.log("Vertices parsed: ", vertex_count)
+	Debug.log("Normals parsed: ", normal_count)
+	Debug.log("UVs parsed: ", uv_count)
+	Debug.log("Faces parsed: ", face_count)
+	Debug.log("Triangle count: ", triangle_count)
+	Debug.log("Quad count: ", quad_count)
+	Debug.log("Other polygon count: ", other_count)
+	Debug.log("Invalid faces: ", debug_info.invalid_faces.size())
 	
 	var active_part_idx = model_data.get_active_part_index()
 	

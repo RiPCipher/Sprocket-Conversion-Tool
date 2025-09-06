@@ -1,5 +1,6 @@
 class_name ConversionEngine
 extends Node
+# No Longer in Use / Replaced by Format Handlers/Worker Logic
 
 signal conversion_started(source_path, target_path)
 signal conversion_progress(progress)
@@ -54,28 +55,29 @@ func _process_conversion(task):
 		return
 
 	emit_signal("conversion_progress", 0.3)
-	print("30%")
+	print("30%%%%%%%%%%%%%%")
+	Debug.log("30%")
 	
 	debug_model_topology(model_data)
 	
 	_apply_transformations(model_data, task.options)
 
 	emit_signal("conversion_progress", 0.6)
-	print("60% - About to save with format: " + task.target_format)
-	print("Available export formats: " + str(_format_registry.get_supported_export_extensions()))
+	Debug.log("60% - About to save with format: " + task.target_format)
+	Debug.log("Available export formats: " + str(_format_registry.get_supported_export_extensions()))
 
 
 	var save_result = _format_registry.save(model_data, task.target_path, task.target_format, task.options)
-	print("65% - Save result: " + str(save_result))
+	Debug.log("65% - Save result: " + str(save_result))
 	if not save_result.success:
-		print("ERROR during export: " + save_result.error)
+		Debug.log("ERROR during export: " + save_result.error)
 		result.error = save_result.error
 		emit_signal("conversion_error", result.error)
 		_finalize_conversion()
 		return
 	
 	emit_signal("conversion_progress", 1.0)
-	print("100%")
+	Debug.log("100%")
 	result.success = true
 	result.statistics = {
 		"vertex_count": model_data.vertices.size(),
@@ -105,16 +107,16 @@ func _finalize_conversion():
 
 
 func debug_model_topology(model_data: ModelData) -> void:
-	print("=== MODEL TOPOLOGY DEBUG ===")
-	print("Vertex count: ", model_data.vertices.size())
-	print("Index count: ", model_data.indices.size())
-	print("Is quad mesh: ", model_data.topology.is_quad_mesh)
-	print("Quad count: ", model_data.topology.quads.size())
-	print("Has original faces: ", model_data.has_metadata("original_faces"))
+	Debug.log("=== MODEL TOPOLOGY DEBUG ===")
+	Debug.log("Vertex count: ", model_data.vertices.size())
+	Debug.log("Index count: ", model_data.indices.size())
+	Debug.log("Is quad mesh: ", model_data.topology.is_quad_mesh)
+	Debug.log("Quad count: ", model_data.topology.quads.size())
+	Debug.log("Has original faces: ", model_data.has_metadata("original_faces"))
 	
 	if model_data.has_metadata("original_faces"):
 		var faces = model_data.get_metadata("original_faces")
-		print("Original face count: ", faces.size())
+		Debug.log("Original face count: ", faces.size())
 		
 		var tri_count = 0
 		var quad_count = 0
@@ -131,4 +133,4 @@ func debug_model_topology(model_data: ModelData) -> void:
 		print("Face types - Triangles: ", tri_count, 
 			  ", Quads: ", quad_count, 
 			  ", Other: ", other_count)
-	print("==========================")
+	Debug.log("==========================")

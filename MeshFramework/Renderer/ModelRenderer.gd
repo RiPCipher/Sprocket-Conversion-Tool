@@ -113,7 +113,7 @@ func _create_wireframe():
 	var format_handler = null
 	
 	if _current_model_data and _current_model_data.source_format:
-		print("Model source format: " + _current_model_data.source_format)
+		Debug.log("Model source format: " + _current_model_data.source_format)
 		format_handler = FormatRegistry.get_format_handler_for_extension(_current_model_data.source_format)
 		
 		if format_handler:

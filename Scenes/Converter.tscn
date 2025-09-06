@@ -171,6 +171,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v2331")
 
+[node name="Mods" type="Node" parent="."]
+
 [node name="ConfigManager" type="Node" parent="."]
 script = ExtResource("3_nsb7e")
 
@@ -223,7 +225,7 @@ offset_top = 84.0
 offset_right = 397.0
 offset_bottom = 97.0
 theme_override_font_sizes/font_size = 9
-text = "v0.4.4"
+text = "v0.4.4rc3"
 
 [node name="MainPanel" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -269,10 +271,9 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/tab_hovered = SubResource("StyleBoxEmpty_qlaan")
 tab_alignment = 1
-current_tab = 1
+current_tab = 0
 
 [node name="Conversion" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -357,6 +358,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
 text = "Convert"
 
 [node name="Model Preview" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -430,7 +432,7 @@ msaa_3d = 2
 screen_space_aa = 1
 use_debanding = true
 size = Vector2i(700, 389)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="3DView" type="Camera3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00127649, -2.38419e-07, 0.0135078)
