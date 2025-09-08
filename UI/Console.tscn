@@ -1,0 +1,82 @@
+[gd_scene load_steps=8 format=3 uid="uid://ckf5ek4srmi1n"]
+
+[ext_resource type="Script" uid="uid://bnc1qilb2liol" path="res://Components/Console.gd" id="1_07xl4"]
+[ext_resource type="Script" uid="uid://bkoh3vv16adal" path="res://Tests/Models.gd" id="2_oqoe4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oqoe4"]
+bg_color = Color(0.158472, 0.158472, 0.158472, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_07xl4"]
+bg_color = Color(0.20871, 0.20871, 0.20871, 1)
+expand_margin_top = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_07xl4"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_igyqd"]
+bg_color = Color(0.226707, 0.226708, 0.226707, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_igyqd"]
+
+[node name="Console" type="Window"]
+title = "Console"
+position = Vector2i(0, 36)
+size = Vector2i(750, 400)
+script = ExtResource("1_07xl4")
+
+[node name="TextBasedModels" type="Node" parent="."]
+script = ExtResource("2_oqoe4")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_oqoe4")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="OutputArea" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MarginContainer/VBoxContainer/OutputArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/separator = SubResource("StyleBoxFlat_07xl4")
+
+[node name="InputArea" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/InputArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/focus = SubResource("StyleBoxEmpty_07xl4")
+theme_override_styles/normal = SubResource("StyleBoxFlat_igyqd")
+caret_blink = true
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/InputArea"]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_igyqd")
+text = "Enter"
