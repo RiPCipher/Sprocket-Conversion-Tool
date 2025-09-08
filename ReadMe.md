@@ -1,6 +1,5 @@
 # Debugger for the Conversion Tool
 
-### Changes ###
 # Last Version - 0444
 # Current Version - 0451
 # Additions:
