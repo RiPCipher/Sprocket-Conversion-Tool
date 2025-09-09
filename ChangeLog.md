@@ -1,15 +1,52 @@
-Changes for 0.3:
-- Previewer:
-		Added a Previewer section that loads both blueprints and .obj files
-		Previewer Section features full 3D camera orbiting with WASD as well as Left Click / Scroll Wheel
-		Previewer has sliders for background and lighting brightness
-		Added Anti-Aliasing to preview section for a smoothing display
-- Settings:
-		Added Preview filepath saving
-		(Defaults to .exe folder where the object and blueprint folders are located)
-		Added toggle to auto-load file into preview mode
-- UI:
-		Cleaned up rotating sprocket icon to look a little newer / Added a slight background glow
+Changes for 0.4.4:
+# Previewer
+-Added Wireframe Mesh view with toggle
+-Added Wireframe Overlay that displays both Mesh and Wireframe
+-Added a WIP internals view
+-Added Camera panning
+-Added SDFGI / SSIL / SSAO to Previewer world space for better lighting
+-Adjusted Brightness Slider Min/Max Values
+-Lighting adjusts itself based on the size of the model,
+ resulting in more consistent lighting
+-Added a Freecam mode
 
-Changes for 0.3.1:
-- Implemented fix that caused models to not convert correctly
+# Keybinds:
+-Shift + Left Click Pans camera instead of rotating camera
+-R - recenter camera to the model
+-Q/E keys for Camera Zoom (Q = Zoom out E = Zoom in) / Scroll remains similar to 0.3
+-F toggles freecam / Shift for faster movement speed
+-WASD freecam movement / Q and E for vertical movement
+-Escape closes settings menu if opened. If closed, closes application
+- -/= for FOV (- decreases FOV and = Increases FOV) / 30 minimun, 120 maximum, 75 Default
+	
+# Utility:
+-Removed limits toggle
+-Added Drag and Drop functionality
+ drop the file anywhere in the app window and it will load the file.
+ if auto-preview is on, it will open the preview tab
+ if on previewer tab, it wont switch tabs but will still load the file
+
+# Settings/Config:
+-Program will now save current settings when you exit the application
+ it now also saves the current window size, so you can resize it to how you want it
+-Added Color Options settings for both Wireframe and Mesh
+-Added themes drop list
+
+# Code Stuff:
+-Completely restructured projects rendering, importing, data handling, and threading  logic
+-Entirety of Mesh related functions are seperated from main codebase
+-Added Debugging Capability in release builds
+-Added a Robust Error logging and popup system
+-Tool now rejects files that contain N-Gons
+
+# UI:
+-Merged individual conversion tabs into a single "Conversion" tab
+-Updated external menus to be detached from the application
+-Implemented proper theme resources, which will make future ui adjustments much more simple
+-Implemented custom file search window
+-Added Advanced Settings Menu where keybinds/Settings can be modified
+-Added Reusable Popup menu
+
+# Fixes:
+- Fixed the Auto-Preview setting to correctly save in the config
+- Fixed Models X-Axis being flipped accidentally
