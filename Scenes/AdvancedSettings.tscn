@@ -1,0 +1,334 @@
+[gd_scene load_steps=5 format=3 uid="uid://dkirffdjigoxq"]
+
+[ext_resource type="Script" uid="uid://cx5htftmuwpa6" path="res://Script/UI/AdvancedSettings.gd" id="1_r2k6d"]
+[ext_resource type="Texture2D" uid="uid://dpesayqwft4g7" path="res://Textures/2D/Settings/Icons/Arrow20pxWhite.png" id="2_r2k6d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aew1t"]
+bg_color = Color(0.25098, 0.34902, 0.521569, 0.901961)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r2k6d"]
+bg_color = Color(0.85, 0.3, 0.3, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.9, 0.4, 0.4, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Window" type="Window"]
+position = Vector2i(0, 36)
+size = Vector2i(740, 440)
+script = ExtResource("1_r2k6d")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Advanced Settings"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "*work in Progress*"
+horizontal_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="ScrollContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+current_tab = 1
+
+[node name="Keybinds" type="MarginContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 5
+metadata/_tab_index = 0
+
+[node name="CameraBindsContainer" type="VBoxContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds"]
+layout_mode = 2
+
+[node name="Camera Binds" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+layout_mode = 2
+text = "Camera Keybinds"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+layout_mode = 2
+
+[node name="BindsGridContainer" type="GridContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+custom_minimum_size = Vector2(680, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 195
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Recenter" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Recenter Camera"
+
+[node name="RecenterCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "R"
+horizontal_alignment = 1
+
+[node name="RecenterChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="PanCamera" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Pan Camera       "
+
+[node name="PanCameraCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Shift"
+horizontal_alignment = 1
+
+[node name="PanCameraChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="ZoomIn" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Zoom In                "
+
+[node name="ZoomInCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "E"
+horizontal_alignment = 1
+
+[node name="ZoomInChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="ZoomOut" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Zoom Out            "
+
+[node name="ZoomOutCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Q"
+horizontal_alignment = 1
+
+[node name="ZoomOutChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="FreeCam" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Free Cam"
+
+[node name="FreeCamCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "F"
+horizontal_alignment = 1
+
+[node name="FreeCamChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="FOVIncrease" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Increase FOV"
+
+[node name="FOVIncreaseCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "="
+horizontal_alignment = 1
+
+[node name="FOVIncreaseChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="FOVDecrease" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "Decrease FOV"
+
+[node name="FOVDecreaseCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+layout_mode = 2
+text = "-"
+horizontal_alignment = 1
+
+[node name="FOVDecreaseChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="Label" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+layout_mode = 2
+text = "Other Keybinds"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+layout_mode = 2
+
+[node name="OtherBindsContainer" type="GridContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+custom_minimum_size = Vector2(680, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 186
+theme_override_constants/v_separation = 8
+columns = 3
+
+[node name="Exit" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+layout_mode = 2
+text = "Exit                         "
+
+[node name="ExitCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+layout_mode = 2
+text = "Escape"
+horizontal_alignment = 1
+
+[node name="ExitChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="None" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+layout_mode = 2
+text = "None"
+
+[node name="NoneCurrent" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+layout_mode = 2
+text = "None"
+horizontal_alignment = 1
+
+[node name="NoneChange" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = SubResource("StyleBoxFlat_aew1t")
+text = "Change"
+
+[node name="Reset Button" type="Button" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_r2k6d")
+text = "Reset Keybinds"
+
+[node name="Base Controls" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "List of non-editable controls
+
+1 = Top View
+2 = Side View
+
+Orbit-Cam:
+W = Rotate up
+S = Rotate down
+A = Rotate left
+D = Rotate right
+Left Click = Rotate any direction
+
+Free-cam:
+W = Forward
+S = Backwards
+A = Left
+D = Right
+Q = Up
+E = Down
+Shift = Increase speed
+Mouse Movement = Rotate camera
+"
+metadata/_tab_index = 1
+
+[node name="Previewer" type="MarginContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+metadata/_tab_index = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 15
+columns = 3
+
+[node name="CameraFOV" type="Label" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Camera FOV:"
+
+[node name="CameraFOVSlider" type="HSlider" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer/GridContainer"]
+show_behind_parent = true
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_icons/grabber = ExtResource("2_r2k6d")
+theme_override_icons/grabber_highlight = ExtResource("2_r2k6d")
+min_value = 30.0
+max_value = 120.0
+value = 75.0
+
+[node name="FOVEdit" type="LineEdit" parent="ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer/GridContainer"]
+layout_mode = 2
+theme_override_constants/minimum_character_width = 3
+placeholder_text = "75"

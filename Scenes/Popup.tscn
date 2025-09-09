@@ -1,0 +1,57 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6xjixddwq2bo"]
+
+[ext_resource type="Script" uid="uid://d2tfp4etktsdp" path="res://Script/UI/Popup.gd" id="1_y3ocv"]
+
+[node name="Window" type="Window"]
+position = Vector2i(0, 36)
+size = Vector2i(500, 300)
+script = ExtResource("1_y3ocv")
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="."]
+custom_minimum_size = Vector2(80, 35)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -31.0
+offset_top = -41.0
+offset_right = 32.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Default"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(500, 250)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Spacer" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+
+[node name="TitleBox" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Title"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="BodyText" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(445.76, 30.455)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Body"
+horizontal_alignment = 1
