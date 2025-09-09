@@ -10,6 +10,7 @@
 # Compatable with Tool Versions:
 - 0.4.4rc3 (Certain Console Commands do not function)
 - 0.4.4rc4
+- 0.4.44
 
 # Usage:
 - Drop the .pck file either next to the .exe file, or inside of a "debug" folder thats next to the .exe. either option will work.
