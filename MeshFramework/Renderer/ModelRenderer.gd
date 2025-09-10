@@ -4,13 +4,19 @@ extends Node3D
 signal rendering_completed()
 signal rendering_started()
 
+# Import view classes
+const DefaultView = preload("res://MeshFramework/Renderer/Views/DefaultView.gd")
+const WireframeView = preload("res://MeshFramework/Renderer/Views/WireframeView.gd")
+const OverlayView = preload("res://MeshFramework/Renderer/Views/OverlayView.gd")
+const ArmorView = preload("res://MeshFramework/Renderer/Views/ArmorView.gd")
+const ModelMaterials = preload("res://MeshFramework/Renderer/ModelMaterials.gd")
+
 enum RenderMode {
 	SOLID,
-	WIREFRAME,
-	TEXTURED,
+	WIREFRAME, 
 	WIREFRAME_OVERLAY,
-	NORMALS,
-	VERTEX_COLORS
+	ARMOR,
+	TEXTURED  # Keep for compatibility, maps to SOLID // delete??
 }
 
 # Properties
@@ -20,48 +26,44 @@ enum RenderMode {
 @export var wireframe_color: Color = Color(0.0, 0.8, 1.0, 1.0)
 @export_range(0.1, 3.0) var wireframe_thickness: float = 1.0
 
-# References
+# Core components
 var _current_model_data = null
 var _model_root: Node3D = null
 var _mesh_instances: Array[MeshInstance3D] = []
 var _wireframe_instances: Array[Node3D] = []
 var target_viewport = null
 
-# Materials
-var _default_material: StandardMaterial3D = null
-var _wireframe_material: StandardMaterial3D = null
-var _internal_material: StandardMaterial3D = null
+var _model_materials: ModelMaterials = null
+var _views: Dictionary = {}
+var _current_view: BaseView = null
 
 func _init():
-	_initialize_materials()
-	
 	_model_root = Node3D.new()
 	_model_root.name = "ModelRoot"
 	add_child(_model_root)
+	_model_materials = ModelMaterials.new()
+	
+	_initialize_views()
 
-func _initialize_materials():
-	_default_material = StandardMaterial3D.new()
-	_default_material.albedo_color = Color.BEIGE
-	_default_material.roughness = 0.5
-	_default_material.cull_mode = BaseMaterial3D.CULL_DISABLED
-	_default_material.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
-	_default_material.backlight_enabled = true
-	_default_material.backlight = Color(1,1,1,0.1)
+func _initialize_views() -> void:
+	"""Create and initialize all view instances"""
+	print("ModelRenderer: Initializing view system...")
 	
-	_internal_material = StandardMaterial3D.new()
-	_internal_material.albedo_color = Color.WHITE
-	_internal_material.roughness = 0.5
-	_internal_material.cull_mode = BaseMaterial3D.CULL_BACK
+	_views["solid"] = DefaultView.new()
+	_views["wireframe"] = WireframeView.new()
+	_views["overlay"] = OverlayView.new()
+	_views["armor"] = ArmorView.new()
 	
-	_wireframe_material = StandardMaterial3D.new()
-	_wireframe_material.albedo_color = wireframe_color
-	_wireframe_material.roughness = 1.0
-	_wireframe_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	_wireframe_material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
-	_wireframe_material.render_priority = 1
+	# Set up view references
+	for view_name in _views:
+		var view = _views[view_name]
+		view.set_references(self, _model_materials, _current_model_data)
+		
+		# Connect signals
+		view.connect("view_activated", Callable(self, "_on_view_activated").bind(view_name))
+		view.connect("view_deactivated", Callable(self, "_on_view_deactivated").bind(view_name))
 	
-	_wireframe_material.params_line_width = wireframe_thickness
-	_wireframe_material.params_depth_bias = 0.01
+	print("ModelRenderer: Initialized ", _views.size(), " views")
 
 func set_target_viewport(viewport):
 	target_viewport = viewport
@@ -73,6 +75,7 @@ func render_model(model_data: ModelData) -> bool:
 	
 	emit_signal("rendering_started")
 	
+	# Clear existing display meshes
 	for child in _model_root.get_children():
 		child.queue_free()
 	
@@ -81,6 +84,7 @@ func render_model(model_data: ModelData) -> bool:
 	
 	_current_model_data = model_data
 	
+	# Create mesh instances from model data
 	var part_count = model_data.get_mesh_part_count()
 	
 	for i in range(part_count):
@@ -94,11 +98,20 @@ func render_model(model_data: ModelData) -> bool:
 			_model_root.add_child(mesh_instance)
 			_mesh_instances.append(mesh_instance)
 	
+	# Meshes are ready for display with their original normals
+	print("ModelRenderer: Created ", _mesh_instances.size(), " display meshes")
+	
+	# Auto-center if enabled
 	if auto_center and not model_data.has_metadata("disable_auto_center"):
 		center_model()
 	
+	# Create wireframe representation
 	_create_wireframe()
-	set_wireframe_color(wireframe_color)
+	
+	# Update view references with new data
+	_update_view_references()
+	
+	# Apply current render mode
 	set_render_mode(render_mode)
 	
 	emit_signal("rendering_completed")
@@ -128,19 +141,21 @@ func _create_wireframe():
 			else:
 				print("Format handler returned null wireframe, falling back to default")
 	
-	# If no format handler or it failed, create basic wireframes for mesh
+	# Fallback wireframe creation
 	for mesh_instance in _mesh_instances:
 		if mesh_instance and mesh_instance.mesh:
 			var wireframe_mesh = _create_wireframe_for_mesh(mesh_instance.mesh)
 			_model_root.add_child(wireframe_mesh)
 			_wireframe_instances.append(wireframe_mesh)
 
-# Create wireframe as a fallback in case the original fails
 func _create_wireframe_for_mesh(mesh: Mesh) -> MeshInstance3D:
 	var imm = ImmediateMesh.new()
 	var wireframe_mesh = MeshInstance3D.new()
 	wireframe_mesh.mesh = imm
-	wireframe_mesh.material_override = _wireframe_material.duplicate()
+	
+	# Use materials system for wireframe material
+	var wireframe_material = _model_materials.create_wireframe_material(wireframe_color, wireframe_thickness)
+	wireframe_mesh.material_override = wireframe_material
 	
 	imm.clear_surfaces()
 	imm.surface_begin(Mesh.PRIMITIVE_LINES)
@@ -196,73 +211,87 @@ func _create_wireframe_for_mesh(mesh: Mesh) -> MeshInstance3D:
 	
 	return wireframe_mesh
 
-func _add_wireframe_edge(imm: ImmediateMesh, vertices: PackedVector3Array, idx1: int, idx2: int, edges_added: Dictionary) -> bool:
-	if idx1 < 0 or idx2 < 0 or idx1 >= vertices.size() or idx2 >= vertices.size():
-		return false
-	
-	var low = min(idx1, idx2)
-	var high = max(idx1, idx2)
-	var edge_key = str(low) + "_" + str(high)
-	
-	if edges_added.has(edge_key):
-		return false
-	
-	edges_added[edge_key] = true
-	imm.surface_add_vertex(vertices[idx1])
-	imm.surface_add_vertex(vertices[idx2])
-	return true
+func _update_view_references() -> void:
+	for view_name in _views:
+		var view = _views[view_name]
+		view.set_references(self, _model_materials, _current_model_data)
 
-func set_render_mode(mode: RenderMode):
+func set_render_mode(mode: RenderMode) -> void:
 	render_mode = mode
 	
-	if _mesh_instances.size() == 0 or _wireframe_instances.size() == 0:
-		return
+	# Deactivate current view
+	if _current_view:
+		_current_view.deactivate()
+		_current_view = null
 	
+	# Activate new view
 	match mode:
 		RenderMode.SOLID:
-			for mesh in _mesh_instances:
-				mesh.visible = true
-				mesh.material_override = _default_material
-			
-			for wireframe in _wireframe_instances:
-				wireframe.visible = false
-			
+			_current_view = _views["solid"]
 		RenderMode.WIREFRAME:
-			for mesh in _mesh_instances:
-				mesh.visible = false
-			
-			for wireframe in _wireframe_instances:
-				wireframe.visible = true
-			
-		RenderMode.TEXTURED:
-			for mesh in _mesh_instances:
-				mesh.visible = true
-				mesh.material_override = _internal_material #_default_material
-			
-			for wireframe in _wireframe_instances:
-				wireframe.visible = false
-			
+			_current_view = _views["wireframe"]
 		RenderMode.WIREFRAME_OVERLAY:
-			for mesh in _mesh_instances:
-				mesh.visible = true
-			
-			for wireframe in _wireframe_instances:
-				wireframe.visible = true
-			
-		RenderMode.NORMALS, RenderMode.VERTEX_COLORS:
-			for mesh in _mesh_instances:
-				mesh.visible = true
-				
-				var material = StandardMaterial3D.new()
-				if mode == RenderMode.VERTEX_COLORS:
-					material.vertex_color_use_as_albedo = true
-				else:
-					material.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
-				
-				mesh.material_override = material
-			
-			for wireframe in _wireframe_instances:
-				wireframe.visible = false
+			_current_view = _views["overlay"]
+		RenderMode.ARMOR:
+			_current_view = _views["armor"]
+	
+	if _current_view:
+		_current_view.activate()
+		print("ModelRenderer: Activated ", _current_view.get_view_name(), " view")
+
+func set_wireframe_color(color: Color) -> void:
+	wireframe_color = color
+	
+	# Update wireframe views
+	if _views.has("wireframe"):
+		_views["wireframe"].set_color(color)
+	
+	if _views.has("overlay"):
+		_views["overlay"].set_wireframe_color(color)
+
+func set_wireframe_thickness(thickness: float) -> void:
+	wireframe_thickness = thickness
+	
+	# Update wireframe views
+	if _views.has("wireframe"):
+		_views["wireframe"].set_wireframe_thickness(thickness)
+	
+	if _views.has("overlay"):
+		_views["overlay"].set_wireframe_thickness(thickness)
+
+func set_mesh_color(color: Color) -> void:
+	if _views.has("solid"):
+		_views["solid"].set_color(color)
+	
+	if _views.has("overlay"):
+		_views["overlay"].set_color(color)
+
+# compatibility methods // Delete??
+func set_default_material_color(color: Color) -> void:
+	print("set default material: compatability")
+	set_mesh_color(color)
+
+# View information methods
+func get_current_view() -> BaseView:
+	return _current_view
+
+func get_view_by_name(name: String) -> BaseView:
+	if _views.has(name):
+		return _views[name]
+	return null
+
+func get_available_views() -> Array[String]:
+	return _views.keys()
+
+func supports_color_selection() -> bool:
+	if _current_view:
+		return _current_view.supports_color_selection()
+	return false
+
+func get_supported_colors() -> Dictionary:
+	if _current_view:
+		return _current_view.get_supported_colors()
+	return {}
 
 func center_model():
 	if _mesh_instances.size() == 0:
@@ -273,7 +302,6 @@ func center_model():
 	
 	for mesh in _mesh_instances:
 		var mesh_aabb = mesh.get_aabb()
-		
 		var transform = mesh.global_transform
 		var transformed_aabb = _transform_aabb(mesh_aabb, transform)
 		
@@ -284,7 +312,6 @@ func center_model():
 			combined_aabb = combined_aabb.merge(transformed_aabb)
 	
 	var center = combined_aabb.position + (combined_aabb.size / 2)
-
 	_model_root.position = -center
 
 func _transform_aabb(aabb: AABB, transform: Transform3D) -> AABB:
@@ -313,28 +340,9 @@ func _transform_aabb(aabb: AABB, transform: Transform3D) -> AABB:
 	
 	return AABB(min_pos, max_pos - min_pos)
 
-func set_wireframe_color(color: Color):
-	wireframe_color = color
-	if _wireframe_material:
-		_wireframe_material.albedo_color = color
-		
-		for wireframe in _wireframe_instances:
-			if wireframe is MeshInstance3D and wireframe.material_override:
-				wireframe.material_override = wireframe.material_override.duplicate()
-				wireframe.material_override.albedo_color = color
-				
-				# The color change might not be immediately visible without this
-				# I hate materials
-				wireframe.material_override.emission_enabled = true
-				wireframe.material_override.emission = color
-				wireframe.material_override.emission_energy_multiplier = 0.4
+# Signal callbacks
+func _on_view_activated(view_name: String) -> void:
+	print("ModelRenderer: View activated: ", view_name)
 
-func set_default_material_color(color: Color):
-	if _default_material:
-		_default_material.albedo_color = color
-		
-		if render_mode == RenderMode.SOLID:
-			for mesh in _mesh_instances:
-				if mesh.material_override == _default_material:
-					mesh.material_override = _default_material.duplicate()
-					mesh.material_override.albedo_color = color
+func _on_view_deactivated(view_name: String) -> void:
+	print("ModelRenderer: View deactivated: ", view_name)
