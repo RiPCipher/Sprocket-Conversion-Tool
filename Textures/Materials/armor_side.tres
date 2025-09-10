@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://d3dxx05qbbhjk"]
+
+[ext_resource type="Texture2D" uid="uid://drxn7x1pqhfff" path="res://Textures/Materials/Textures/new_side_normals.png" id="1_spttu"]
+
+[resource]
+albedo_color = Color(0.180392, 0.180392, 0.180392, 1)
+metallic = 0.08
+roughness = 0.5
+normal_enabled = true
+normal_texture = ExtResource("1_spttu")
+backlight_enabled = true
+backlight = Color(0.560955, 0.560955, 0.560955, 1)

@@ -1,0 +1,14 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://vfd0ysvoeu86"]
+
+[ext_resource type="Texture2D" uid="uid://dxg7hlg51pq8i" path="res://Textures/Materials/Textures/normalmap.png" id="1_1636r"]
+
+[resource]
+albedo_color = Color(0.180005, 0.180005, 0.180005, 1)
+metallic = 0.08
+roughness = 0.52
+normal_enabled = true
+normal_scale = -0.2
+normal_texture = ExtResource("1_1636r")
+subsurf_scatter_strength = 1.0
+backlight_enabled = true
+backlight = Color(0.215902, 0.215902, 0.215902, 1)
