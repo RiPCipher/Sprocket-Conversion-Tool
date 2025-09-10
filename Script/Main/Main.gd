@@ -1,12 +1,9 @@
 extends Control
 
 # Framework
-const ThreadPool = preload("res://MeshFramework/Threading/ThreadPool.gd")
 const ModelRenderer = preload("res://MeshFramework/Renderer/ModelRenderer.gd")
-
 # Camera
 const CameraController = preload("res://Script/Main/CameraController.gd")
-
 # Messages
 const Messages = preload("res://Text/Messages.gd")
 
@@ -16,6 +13,9 @@ enum BrowserMode {
 	SAVE_FILE,
 	SELECT_DIR
 }
+
+## App Variables
+var current_version
 
 # Colors
 var mesh_colors = {
@@ -37,33 +37,29 @@ var wireframe_colors = {
 	6: Color(1.0, 0.6, 0.0, 1.0) # Orange
 }
 
-# Node/Class References
+## Node/Class References ##
 @onready var config_manager = $ConfigManager
 var ui_manager = null
 var model_renderer = null
 var camera_controller = null
 var error_handler = null
-
 # File browser
 var browser_scene = null
 var browser_instance = null
 var current_browser_operation = ""
-
 # Advanced Settings
 var advanced_settings_scene = null
 var advanced_settings_instance = null
-
 # Popup
 var popup_scene = null
 var popup_instance = null
-
-# Format registry and thread pool
+# Format registry and conversion worker
 var format_registry = null
-var thread_pool = null
-var _threads = 1 # was using 4 threads, reduced to 1
+var conversion_worker = null
 
 # UI Elements - Main tabs
 @onready var tab_container = $MainPanel/VBoxContainer/TabContainer
+@onready var version_label = $Version
 
 # Progress indicator
 @onready var progress_bar = $MainPanel/VBoxContainer/StatusSection/ProgressBar
@@ -88,7 +84,7 @@ var _threads = 1 # was using 4 threads, reduced to 1
 @onready var world_grid_toggle = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/CheckButton3"
 @onready var recenter_button = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/Button"
 
-@onready var cut_view_toggle = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Button3"
+@onready var armor_view_toggle = $"MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2/Button3"
 
 # UI Elements - Settings
 @onready var wireframe_color_option = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer2/OptionButton
@@ -120,11 +116,11 @@ func _ready():
 	FormatRegistry.initialize()
 	format_registry = FormatRegistry
 	
-	thread_pool = ThreadPool.new(format_registry, _threads)
-	thread_pool.conversion_started.connect(_on_conversion_started)
-	thread_pool.conversion_progress.connect(_on_conversion_progress)
-	thread_pool.conversion_completed.connect(_on_conversion_completed)
-	thread_pool.conversion_error.connect(_on_conversion_error)
+	conversion_worker = ConversionWorker.new(format_registry)
+	conversion_worker.conversion_started.connect(_on_conversion_started)
+	conversion_worker.conversion_progress.connect(_on_conversion_progress)
+	conversion_worker.conversion_completed.connect(_on_conversion_completed)
+	conversion_worker.conversion_error.connect(_on_conversion_error)
 	
 	advanced_settings_scene = load("res://Scenes/AdvancedSettings.tscn")
 	browser_scene = load("res://Scenes/Browser.tscn")
@@ -181,6 +177,10 @@ func _ready():
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		
+	# Set Version Text
+	current_version = ProjectSettings.get_setting("application/config/version", "failed to fetch version")
+	version_label.set_text(current_version)
 
 func _connect_signals():
 	config_manager.connect("config_loaded", _on_config_loaded)
@@ -199,7 +199,7 @@ func _connect_signals():
 	world_grid_toggle.connect("toggled", _on_grid_toggle_toggled)
 	recenter_button.connect("pressed", _on_recenter_pressed)
 	browse_preview_files.connect("pressed", _on_browse_preview_files_pressed)
-	cut_view_toggle.connect("toggled", _on_cut_view_toggled)
+	armor_view_toggle.connect("toggled", _on_armor_view_toggled)
 	
 	# Viewport / Camera Stuff
 	subviewport_container.gui_input.connect(camera_controller._on_viewport_gui_input)
@@ -286,17 +286,17 @@ func _on_wireframe_toggled(enabled):
 	if model_renderer:
 		if enabled:
 			wireframe_overlay_toggle.button_pressed = false
-			cut_view_toggle.button_pressed = false
+			armor_view_toggle.button_pressed = false
 		_update_render_mode()
 
 func _on_wireframe_overlay_toggled(enabled):
 	if model_renderer:
 		if enabled:
 			wireframe_toggle.button_pressed = false
-			cut_view_toggle.button_pressed = false
+			armor_view_toggle.button_pressed = false
 		_update_render_mode()
 
-func _on_cut_view_toggled(enabled):
+func _on_armor_view_toggled(enabled):
 	if model_renderer:
 		if enabled:
 			wireframe_toggle.button_pressed = false
@@ -562,7 +562,10 @@ func _on_convert_file_pressed():
 		"smooth_shading": false
 	}
 	
-	thread_pool.queue_conversion(input_path, output_path, options)
+	if not conversion_worker.is_busy():
+		conversion_worker.start_conversion(input_path, output_path, options)  # ← FIXED
+	else:
+		ErrorHandler.show_error_popup("Operation is Busy", "Try Again")
 
 func _on_settings_preview_dir_selected(path):
 	if config_manager:
@@ -585,15 +588,15 @@ func _on_settings_output_dir_selected(path):
 #========================
 # CONVERSION HANDLING
 #========================
-func _on_conversion_started(task_id, source_path, target_path):
+func _on_conversion_started(source_path, target_path):
 	status_label.text = "Converting " + source_path.get_file() + " to " + target_path.get_file() + "..."
 
-func _on_conversion_progress(task_id, progress):
+func _on_conversion_progress(progress):
 	progress_bar.value = progress * 100
 	percent_label.text = str(int(progress * 100)) + "%"
 	await get_tree().process_frame
 
-func _on_conversion_completed(task_id, result):
+func _on_conversion_completed(result):
 	_set_buttons_enabled(true)
 	
 	if result.success:
@@ -620,7 +623,7 @@ func _on_conversion_completed(task_id, result):
 	percent_label.visible = false
 	progress_bar.value = 0
 
-func _on_conversion_error(task_id, error_message):
+func _on_conversion_error(error_message):
 	_set_buttons_enabled(true)
 	
 	ErrorHandler.popup_error("file_access_errors.unknown", {
@@ -897,16 +900,14 @@ func _on_theme_selected(index):
 	if ui_manager:
 		var theme_name = theme_dropdown.get_item_text(index)
 		ui_manager.switch_theme(theme_name)
-
+			
 func _update_render_mode():
 	if model_renderer:
-		if wireframe_toggle.button_pressed and wireframe_overlay_toggle.button_pressed:
-			model_renderer.set_render_mode(ModelRenderer.RenderMode.WIREFRAME_OVERLAY)
+		if armor_view_toggle.button_pressed:
+			model_renderer.set_render_mode(ModelRenderer.RenderMode.ARMOR)
 		elif wireframe_toggle.button_pressed:
 			model_renderer.set_render_mode(ModelRenderer.RenderMode.WIREFRAME)
 		elif wireframe_overlay_toggle.button_pressed:
 			model_renderer.set_render_mode(ModelRenderer.RenderMode.WIREFRAME_OVERLAY)
-		elif cut_view_toggle.button_pressed:
-			model_renderer.set_render_mode(ModelRenderer.RenderMode.TEXTURED)
 		else:
 			model_renderer.set_render_mode(ModelRenderer.RenderMode.SOLID)

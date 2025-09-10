@@ -225,7 +225,7 @@ offset_top = 84.0
 offset_right = 397.0
 offset_bottom = 97.0
 theme_override_font_sizes/font_size = 9
-text = "v0.4.44"
+text = "default text"
 
 [node name="MainPanel" type="MarginContainer" parent="."]
 layout_mode = 1

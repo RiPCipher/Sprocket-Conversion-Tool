@@ -1,4 +1,4 @@
-# Sprocket-Conversion-Tool 0.4.44
+# Sprocket-Conversion-Tool 0.4.5
 
 # Installation:
 - extract .zip file where ever you'd like. Although I recommend making a folder named "Sprocket Conversion Tool", and placing its contents into the folder.
