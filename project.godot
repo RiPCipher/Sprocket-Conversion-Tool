@@ -10,8 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Sprocket Conversion Tool 0.4.44"
-config/version="0.4.44"
+config/name="Sprocket Conversion Tool 0.4+"
+config/version="0.4.5"
 run/main_scene="res://Scenes/Converter.tscn"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
