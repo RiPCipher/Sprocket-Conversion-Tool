@@ -248,27 +248,30 @@ class StandardBlueprintHandler:
 			result.error = "No surfaces to export"
 			return result
 		
-		var surface_arrays = model_data.meshes[part_idx].surface_get_arrays(0)
-		var vertices = surface_arrays[Mesh.ARRAY_VERTEX]
-		
 		var blueprint_name = file_path.get_file().get_basename()
 		if model_data.has_metadata("name"):
 			blueprint_name = model_data.get_metadata("name")
 		
-		var vertex_array = []
-		for v in vertices:
-			vertex_array.append(v.x)
-			vertex_array.append(v.y)
-			vertex_array.append(v.z)
-		
+		# Use original OBJ vertices if available
+		var vertices = PackedVector3Array()
 		var faces = []
-		if model_data.has_part_metadata(part_idx, "original_faces"):
-			var original_faces = model_data.get_part_metadata(part_idx, "original_faces")
+		
+		# Check if we have original OBJ data
+		var has_original_obj_data = false
+		if part_idx < model_data.part_original_vertices.size() and \
+		   model_data.part_original_vertices[part_idx].size() > 0 and \
+		   model_data.has_part_metadata(part_idx, "original_obj_faces"):
+			vertices = model_data.part_original_vertices[part_idx]
+			var original_obj_faces = model_data.get_part_metadata(part_idx, "original_obj_faces")
+			has_original_obj_data = true
 			
-			for face in original_faces:
+			print("BlueprintFormat: Using original OBJ topology - ", vertices.size(), " vertices, ", original_obj_faces.size(), " faces")
+			
+			# Build face data using original OBJ indices
+			for face in original_obj_faces:
 				if face.size() >= 3:
 					var face_data = {
-						"v": face.duplicate(),
+						"v": face.duplicate(),  # Use original OBJ vertex indices
 						"t": [],
 						"tm": 65793 if face.size() == 3 else 16843009,
 						"te": 0
@@ -279,8 +282,37 @@ class StandardBlueprintHandler:
 					
 					faces.append(face_data)
 		else:
-			result.warnings.append("No original face data found in model - export may be incomplete")
+			# Fallback to surface arrays if no original OBJ data
+			var surface_arrays = model_data.meshes[part_idx].surface_get_arrays(0)
+			vertices = surface_arrays[Mesh.ARRAY_VERTEX]
+			
+			if model_data.has_part_metadata(part_idx, "original_faces"):
+				var original_faces = model_data.get_part_metadata(part_idx, "original_faces")
+				
+				for face in original_faces:
+					if face.size() >= 3:
+						var face_data = {
+							"v": face.duplicate(),
+							"t": [],
+							"tm": 65793 if face.size() == 3 else 16843009,
+							"te": 0
+						}
+						
+						for i in range(face.size()):
+							face_data.t.append(5)
+						
+						faces.append(face_data)
+			else:
+				result.warnings.append("No original face data found in model - export may be incomplete")
 		
+		# Convert vertices to flat array
+		var vertex_array = []
+		for v in vertices:
+			vertex_array.append(v.x)
+			vertex_array.append(v.y)
+			vertex_array.append(v.z)
+		
+		# Build edges
 		var edges = []
 		var edge_flags = []
 		var edge_map = {}
@@ -378,55 +410,64 @@ class StandardBlueprintHandler:
 		
 		output_file.store_line("\n    ],")
 		
+		# Write faces
 		output_file.store_line('    "faces": [')
 		
-		for i in range(0, faces.size()):
+		for i in range(faces.size()):
 			var face = faces[i]
 			
-			output_file.store_line("      {")
+			if i > 0:
+				output_file.store_line(",")
 			
-			output_file.store_string('        "v": [')
-			for k in range(face.v.size()):
-				if k > 0:
+			output_file.store_string('      {')
+			
+			# Write vertex indices
+			output_file.store_string('"v": [')
+			for j in range(face.v.size()):
+				if j > 0:
 					output_file.store_string(", ")
-				output_file.store_string(str(int(face.v[k])))
-			output_file.store_line("],")
+				output_file.store_string(str(int(face.v[j])))
+			output_file.store_string('], ')
 			
-			output_file.store_string('        "t": [')
-			for k in range(face.t.size()):
-				if k > 0:
+			# Write texture coordinates (placeholder0
+			output_file.store_string('"t": [')
+			for j in range(face.t.size()):
+				if j > 0:
 					output_file.store_string(", ")
-				output_file.store_string(str(int(face.t[k])))
-			output_file.store_line("],")
+				output_file.store_string(str(face.t[j]))
+			output_file.store_string('], ')
 			
-			output_file.store_line('        "tm": ' + str(face.tm) + ",")
-			output_file.store_line('        "te": ' + str(face.te))
+			# Write texture metadata
+			output_file.store_string('"tm": ' + str(face.tm) + ', ')
+			output_file.store_string('"te": ' + str(face.te))
 			
-			if i < faces.size() - 1:
-				output_file.store_line("      },")
-			else:
-				output_file.store_line("      }")
+			output_file.store_string('}')
 		
-		output_file.store_line("    ]")
-		output_file.store_line("  },")
-		
+		output_file.store_line("\n    ]")
+		output_file.store_line('  },')
 		output_file.store_line('  "rivets": {')
 		output_file.store_line('    "profiles": [')
 		output_file.store_line('      {')
 		output_file.store_line('        "model": 0,')
 		output_file.store_line('        "spacing": 0.19,')
 		output_file.store_line('        "diameter": 0.03,')
-		output_file.store_line('        "height": 0.020,')
+		output_file.store_line('        "height": 0.02,')
 		output_file.store_line('        "padding": 0.04')
 		output_file.store_line('      }')
 		output_file.store_line('    ],')
 		output_file.store_line('    "nodes": []')
 		output_file.store_line('  }')
-		output_file.store_line("}")
+		output_file.store_line('}')
 		
 		output_file.close()
 		
 		result.success = true
+		
+		if has_original_obj_data:
+			print("BlueprintFormat: Successfully exported with preserved OBJ topology")
+		else:
+			print("BlueprintFormat: Exported using standard surface arrays")
+		
 		return result
 	
 	func create_wireframe_mesh(model_data: ModelData) -> MeshInstance3D:

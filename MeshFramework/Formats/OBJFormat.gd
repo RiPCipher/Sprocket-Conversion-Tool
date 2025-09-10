@@ -33,7 +33,6 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	for key in options:
 		import_options[key] = options[key]
 	
-	# Add error checking before file access
 	var read_check = ErrorHandler.check_file_read(file_path)
 	if not read_check.success:
 		ErrorHandler.handle_file_error(read_check.error_key, read_check.error_code, "import OBJ model", file_path)
@@ -207,6 +206,11 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 		orig_verts[i] = vertices[i]
 	model_data.part_original_vertices[active_part_idx] = orig_verts
 	
+	var original_face_indices = []
+	for face in faces:
+		original_face_indices.append(face.vertices.duplicate())
+	model_data.set_part_metadata(active_part_idx, "original_obj_faces", original_face_indices)
+	
 	var topology = {
 		"is_quad_mesh": (quad_count > 0),
 		"quads": []
@@ -218,6 +222,7 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	
 	model_data.part_topology[active_part_idx] = topology
 	
+	# Build vertex map for rendering
 	var vertex_map = {} 
 	var surface_vertices = PackedVector3Array()
 	var surface_normals = PackedVector3Array()
@@ -250,6 +255,7 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 				
 				vertex_counter += 1
 	
+	# Build indices for rendering
 	for face in faces:
 		if face.vertices.size() == 3:
 			for i in range(3):
@@ -316,6 +322,7 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	
 	model_data.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
 	
+	# Store remapped faces for rendering
 	var remapped_faces = []
 	for face in faces:
 		var remapped_face = []
@@ -333,12 +340,14 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 		if remapped_face.size() >= 3:
 			remapped_faces.append(remapped_face)
 
+	# Store remapped faces for rendering/wireframe display
 	model_data.set_part_metadata(active_part_idx, "original_faces", remapped_faces)
+	
 	model_data.set_metadata("triangle_count", triangle_count)
 	model_data.set_metadata("quad_count", quad_count)
 	model_data.set_metadata("total_faces", triangle_count + quad_count)
 	
-	# Store n-gon detection results in metadata
+	# Store n-gon detection results
 	model_data.set_metadata("ngon_count", ngon_count)
 	if ngon_count > 0:
 		model_data.set_metadata("ngon_faces", ngon_faces)
@@ -490,19 +499,26 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 		
 		output_lines.append("\n".join(face_lines))
 	
-	var final_content = "\n".join(output_lines) + "\n"
-	
+	var write_check = ErrorHandler.check_file_write(file_path)
+	if not write_check.success:
+		ErrorHandler.handle_file_error(write_check.error_key, write_check.error_code, "export OBJ", file_path)
+		result.error = write_check.error_key
+		return result
+		
 	var output_file = FileAccess.open(file_path, FileAccess.WRITE)
 	if output_file == null:
 		result.error = "Failed to create output file - " + str(FileAccess.get_open_error())
 		return result
 	
-	output_file.store_string(final_content)
+	for line in output_lines:
+		output_file.store_line(line)
+	
 	output_file.close()
 	
 	result.success = true
 	return result
 
+# Never Used // Could Remove
 func _export_materials(materials: Array, output_path: String) -> bool:
 	var file = FileAccess.open(output_path, FileAccess.WRITE)
 	if not file:
