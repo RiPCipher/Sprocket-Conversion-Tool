@@ -35,3 +35,4 @@ Other:
 - Implemented Minecraft-like splash message system
 - Removed Tab saving from the tool entirely
 - Modified Checkbox Styling
+- Implemented a Gear Calculator into the tool under a new "Tools" Tab
