@@ -27,7 +27,7 @@ Keep in Mind:
 - From time to time, i will be pushing minor updates to the GitHub releases, you will see a button in the lower right hand corner of the tool informing you an update is available
 - Its entirely opt in, there is a check button in the settings tab to enable this feature
 
-- On occassion, there I will need to make "breaking" changes. these will not be pushed to the prior version (what would be your current version), 
+- On occassion, I will need to make "breaking" changes. these will not be pushed to the prior version (what would be your current version), 
 but will require manual download from the Repo if you want to continue recieving updates
 - The tool will let you know assuming you have network features enabled and will link you to the release
 - If you decide to download it, you would simply replace the existing files you already have with the downloaded files like we have done in the past
