@@ -44,9 +44,13 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 		model_data.set_metadata("blueprint_type", "standard")
 		return model_data
 	
-	# import failed
-	push_error("BlueprintFormat: Failed to import blueprint file")
-	return null
+	Debug.call_deferred("log", "BlueprintFormat: Import failed, returning model_data with error info")
+	
+	if not model_data.has_metadata("import_error_type"):
+		model_data.set_metadata("import_error_type", "blueprint_invalid_format")
+		model_data.set_metadata("import_error_file", file_path.get_file())
+	
+	return model_data 
 
 #================#
 # Export File    #
@@ -113,7 +117,6 @@ func validate_for_export(model_data: ModelData, options: Dictionary = {}) -> Dic
 #==============================#
 class StandardBlueprintHandler:
 	func import_model(file_path: String, options: Dictionary, model_data: ModelData) -> bool:
-		# Add error checking before file access
 		var read_check = ErrorHandler.check_file_read(file_path)
 		if not read_check.success:
 			ErrorHandler.handle_file_error(read_check.error_key, read_check.error_code, "import blueprint model", file_path)
@@ -131,12 +134,28 @@ class StandardBlueprintHandler:
 		var error = json.parse(json_string)
 		if error != OK:
 			push_error("StandardBlueprintHandler: Failed to parse blueprint JSON")
+			model_data.set_metadata("import_error_type", "blueprint_invalid_format")
+			model_data.set_metadata("import_error_file", file_path.get_file())
 			return false
 		
 		var blueprint_data = json.get_data()
-		
+
+		# store error
+		if !blueprint_data.has("v"):
+			model_data.set_metadata("import_error_type", "blueprint_no_version")
+			model_data.set_metadata("import_error_file", file_path.get_file())
+			return false
+
+		if blueprint_data.v != "0.2":
+			model_data.set_metadata("import_error_type", "blueprint_unsupported_version")
+			model_data.set_metadata("import_error_file", file_path.get_file())
+			model_data.set_metadata("import_error_version", str(blueprint_data.v))
+			return false
+
+		# mesh validation
 		if !blueprint_data.has("mesh") or !blueprint_data.mesh.has("vertices") or !blueprint_data.mesh.has("faces"):
-			push_error("StandardBlueprintHandler: Invalid blueprint format - missing required fields")
+			model_data.set_metadata("import_error_type", "blueprint_invalid_format")
+			model_data.set_metadata("import_error_file", file_path.get_file())
 			return false
 
 		var mesh = blueprint_data.mesh
@@ -549,7 +568,7 @@ class StandardBlueprintHandler:
 			result.warnings.append("Model has a high vertex count (" + str(vertex_count) + 
 								 "). This may cause performance issues.")
 		
-		# Check face count // Should remove entirely
+		# Check face count // Should remove entirely?
 		if model_data.meshes[part_idx].get_surface_count() > 0:
 			var surface_arrays = model_data.meshes[part_idx].surface_get_arrays(0)
 			if surface_arrays[Mesh.ARRAY_INDEX].size() > 0:

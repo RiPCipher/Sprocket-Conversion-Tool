@@ -95,10 +95,7 @@ func _thread_function():
 	
 	var result = _process_task(task)
 	
-	if result.has("error") and not result.error.is_empty():
-		call_deferred("emit_signal", "conversion_error", result.error)
-	else:
-		call_deferred("emit_signal", "conversion_completed", result)
+	call_deferred("emit_signal", "conversion_completed", result)
 	
 	_cleanup_after_completion()
 
@@ -156,32 +153,34 @@ func _process_task(task: Dictionary) -> Dictionary:
 	
 	# === IMPORT MODEL ===
 	Debug.call_deferred("log", "WORKER: Starting model import from ", task.source_format)
-	var model_data = null
-	var error = OK
-	
-	if error == OK:
-		Debug.call_deferred("log", "WORKER: Calling import_model() on source handler")
-		model_data = source_format_handler.import_model(task.source_path, task.options)
-		
-		if not model_data:
-			Debug.call_deferred("log", "WORKER: ERROR - import_model() returned null")
-			result.error = "Failed to import model from " + task.source_path
-			return result
-		else:
-			Debug.call_deferred("log", "WORKER: Model imported successfully")
-			Debug.call_deferred("log", "WORKER: Imported vertex count: ", model_data.vertices.size())
-			Debug.call_deferred("log", "WORKER: Imported face count: ", model_data.get_face_count())
-	else:
-		Debug.call_deferred("log", "WORKER: ERROR during import setup: ", str(error))
-		result.error = "Error during import: " + str(error)
-		result.error_code = error
+	Debug.call_deferred("log", "WORKER: Calling import_model() on source handler")
+
+	var model_data = source_format_handler.import_model(task.source_path, task.options)
+
+	if not model_data:
+		Debug.call_deferred("log", "WORKER: ERROR - import_model() returned null")
+		result.error = "Failed to import model"
+		result.error_already_handled = true
 		return result
-	
+
+	# Check if import had a specific error stored in metadata
+	if model_data.has_metadata("import_error_type"):
+		result.error_type = model_data.get_metadata("import_error_type")
+		result.error_file = model_data.get_metadata("import_error_file", task.source_path.get_file())
+		result.error_version = model_data.get_metadata("import_error_version", "")
+		result.error = "Import failed: " + result.error_type
+		return result
+
+	Debug.call_deferred("log", "WORKER: Model imported successfully")
+	Debug.call_deferred("log", "WORKER: Imported vertex count: ", model_data.vertices.size())
+	Debug.call_deferred("log", "WORKER: Imported face count: ", model_data.get_face_count())
+
+
 	if _should_cancel():
 		Debug.call_deferred("log", "WORKER: Task cancelled after import")
 		result.error = "Conversion cancelled"
 		return result
-	
+
 	_report_progress(0.5)
 	Debug.call_deferred("log", "WORKER: 50% - Import complete, starting transformations")
 	

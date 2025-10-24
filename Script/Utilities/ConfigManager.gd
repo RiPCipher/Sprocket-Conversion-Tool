@@ -12,7 +12,7 @@ var default_blueprint_path = ""
 var default_conversion_path = ""
 
 # Node Refernces
-@onready var status_label = $"../MainPanel/VBoxContainer/StatusSection/StatusLabel"
+@onready var status_label = get_node_or_null("../MainPanel/VBoxContainer/StatusSection/StatusLabel")
 
 # Settings dictionary
 var settings = {
@@ -39,30 +39,29 @@ var settings = {
 		"free_cam_key": KEY_F
 	},
 	"ui": {
-		"last_tab": 0,
 		"window_width": 780,
 		"window_height": 700,
 		"is_fullscreen": false,
-		"theme": "Default"
+		"theme": "Default",
+		"network_enabled": false,
 	}
 }
 
 func _init():
 	pass
-	# Set config path to be next to the executable
-	#Logic Moved to _ready
-	#var exe_path = OS.get_executable_path()
-	#var exe_dir = exe_path.get_base_dir()
-	#CONFIG_FILE_PATH = exe_dir + "/tool_settings.cfg"
-	#Debug.log("Config file location: " + CONFIG_FILE_PATH)
 
 func _ready():
 	# Get executable directory for defaults
 	var exe_path = OS.get_executable_path()
 	var exe_dir = exe_path.get_base_dir()
-	CONFIG_FILE_PATH = exe_dir + "/tool_settings.cfg"
-	Debug.log("Config file location: " + CONFIG_FILE_PATH)
+	var data_dir = exe_dir.path_join("data")
 	
+	# Ensure data folder exists
+	if not DirAccess.dir_exists_absolute(data_dir):
+		DirAccess.make_dir_recursive_absolute(data_dir)
+	
+	CONFIG_FILE_PATH = data_dir.path_join("tool_settings.cfg")
+	Debug.log("Config file location: " + CONFIG_FILE_PATH)
 	
 	load_config()
 	
@@ -119,7 +118,7 @@ func save_config() -> bool:
 	
 	for key in settings.keybinds:
 		config.set_value("keybinds", key, settings.keybinds[key])
-	
+		
 	# Save with error handling
 	var error = config.save(CONFIG_FILE_PATH)
 	if error != OK:
@@ -179,7 +178,7 @@ func load_config() -> bool:
 	for key in settings.keybinds:
 		if config.has_section_key("keybinds", key):
 			settings.keybinds[key] = config.get_value("keybinds", key, settings.keybinds[key])
-	
+			
 	emit_signal("config_loaded")
 	return true
 
@@ -196,12 +195,6 @@ func set_saved_path(path_name: String, value: String) -> void:
 func save_last_directory(operation: String, path: String) -> void:
 	var dir = path.get_base_dir()
 	set_saved_path(operation, dir)
-
-func get_last_tab() -> int:
-	return settings.ui.last_tab if settings.ui.has("last_tab") else 0
-
-func set_last_tab(tab_index: int) -> void:
-	settings.ui.last_tab = tab_index
 
 func get_input_dir() -> String:
 	return settings.paths.input_dir if settings.paths.has("input_dir") else ""
@@ -248,21 +241,28 @@ func get_keybind(keybind_name: String) -> int:
 	
 	# Return default values if not found
 	match keybind_name:
-		"recenter_key": return KEY_R
-		"pan_key": return KEY_SHIFT
-		"zoom_in_key": return KEY_E
-		"zoom_out_key": return KEY_Q
-		"exit_key": return KEY_ESCAPE
-		"increase_fov_key": return KEY_PLUS
-		"decrease_fov_key": return KEY_MINUS
-		"free_cam_key": return KEY_F
-		_: return 0
+		"recenter_key":
+			return KEY_R
+		"pan_key":
+			return KEY_SHIFT
+		"zoom_in_key":
+			return KEY_E
+		"zoom_out_key":
+			return KEY_Q
+		"exit_key":
+			return KEY_ESCAPE
+		"increase_fov_key":
+			return KEY_PLUS
+		"decrease_fov_key":
+			return KEY_MINUS
+		"free_cam_key":
+			return KEY_F
+		_:
+			return 0
 
-func set_keybind(keybind_name: String, keycode: int) -> void:
-	if not settings.has("keybinds"):
-		settings["keybinds"] = {}
-	
-	settings.keybinds[keybind_name] = keycode
+func set_keybind(keybind_name: String, value: int) -> void:
+	if settings.keybinds.has(keybind_name):
+		settings.keybinds[keybind_name] = value
 
 func get_grid_visible() -> bool:
 	return settings.preview.grid_visible if settings.preview.has("grid_visible") else true
@@ -276,8 +276,14 @@ func get_camera_fov() -> float:
 func set_camera_fov(value: float) -> void:
 	settings.preview.camera_fov = value
 
-func set_fullscreen_state(is_full: bool) -> void:
-	settings.ui.is_fullscreen = is_full
-
 func get_fullscreen_state() -> bool:
 	return settings.ui.is_fullscreen if settings.ui.has("is_fullscreen") else false
+
+func set_fullscreen_state(value: bool) -> void:
+	settings.ui.is_fullscreen = value
+
+func get_theme() -> String:
+	return settings.ui.theme if settings.ui.has("theme") else "Default"
+
+func set_theme(value: String) -> void:
+	settings.ui.theme = value

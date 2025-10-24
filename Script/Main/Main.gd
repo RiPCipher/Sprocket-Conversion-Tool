@@ -38,7 +38,7 @@ var wireframe_colors = {
 }
 
 ## Node/Class References ##
-@onready var config_manager = $ConfigManager
+var config_manager = ConfigManager #@onready var config_manager = $ConfigManager
 var ui_manager = null
 var model_renderer = null
 var camera_controller = null
@@ -60,6 +60,7 @@ var conversion_worker = null
 # UI Elements - Main tabs
 @onready var tab_container = $MainPanel/VBoxContainer/TabContainer
 @onready var version_label = $Version
+@onready var splash_text = $SplashText
 
 # Progress indicator
 @onready var progress_bar = $MainPanel/VBoxContainer/StatusSection/ProgressBar
@@ -101,6 +102,7 @@ var conversion_worker = null
 @onready var auto_preview_toggle = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/CheckButton
 @onready var theme_dropdown = $MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/GridContainer/OptionButton
 
+
 # UI Elements - Conversion tab
 @onready var conversion_input_path = $MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer/PathInput
 @onready var conversion_output_path = $MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer/OutputPathInput
@@ -108,6 +110,12 @@ var conversion_worker = null
 @onready var conversion_browse_output = $MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer/BrowseButton
 @onready var conversion_button = $MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/ConvertButton
 @onready var status_label = $MainPanel/VBoxContainer/StatusSection/StatusLabel
+
+# Update Related
+@onready var update_manager = $UpdateManager
+@onready var update_button = $Update
+@onready var network_checkbutton = $"MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/EnableNetwork/CheckButton"
+
 #========================
 # INITIALIZATION
 #========================
@@ -115,6 +123,7 @@ var conversion_worker = null
 func _ready():
 	FormatRegistry.initialize()
 	format_registry = FormatRegistry
+	error_handler = ErrorHandler
 	
 	conversion_worker = ConversionWorker.new(format_registry)
 	conversion_worker.conversion_started.connect(_on_conversion_started)
@@ -169,6 +178,14 @@ func _ready():
 	
 	config_manager.load_config()
 	
+	# Set network CheckButton state from config
+	if ConfigManager.settings.ui.has("network_enabled"):
+		network_checkbutton.set_pressed_no_signal(ConfigManager.settings.ui["network_enabled"])
+	else:
+		ConfigManager.settings.ui["network_enabled"] = false
+		network_checkbutton.set_pressed_no_signal(false)
+	
+	
 	# Window size settings
 	var saved_size = config_manager.get_window_size()
 	DisplayServer.window_set_size(saved_size)
@@ -180,8 +197,12 @@ func _ready():
 		
 	# Set Version Text
 	current_version = ProjectSettings.get_setting("application/config/version", "failed to fetch version")
-	version_label.set_text(current_version)
-
+	version_label.set_text(update_manager.CURRENT_VERSION)
+	
+	# Set Spash Text
+	if splash_text:
+		_select_random_splash_message()
+	
 func _connect_signals():
 	config_manager.connect("config_loaded", _on_config_loaded)
 	config_manager.connect("config_saved", _on_config_saved)
@@ -215,6 +236,16 @@ func _connect_signals():
 	save_settings_button.connect("pressed", _on_save_settings_pressed)
 	auto_preview_toggle.connect("toggled", _on_auto_preview_toggled)
 	
+	# UpdateManager signals
+	update_manager.update_available.connect(_on_update_available)
+	update_manager.launcher_outdated.connect(_on_launcher_outdated)
+	update_manager.download_progress.connect(_on_download_progress)
+	update_manager.download_complete.connect(_on_download_complete)
+	update_manager.download_failed.connect(_on_download_failed)
+	update_button.pressed.connect(_on_update_button_pressed)
+	# Network CheckButton
+	network_checkbutton.toggled.connect(_on_network_toggled)
+	
 	# Setup tab change signal
 	call_deferred("_connect_tab_changed_signal")
 	
@@ -238,16 +269,6 @@ func _input(event):
 		if exit_key != 0 and event.keycode == exit_key:
 			config_manager.save_config()
 			get_tree().quit()
-	
-	# Test Popup
-	if Input.is_action_just_pressed("0") and Input.is_action_just_pressed("5"):
-		error_handler.popup_error("test.test")
-		
-	if Input.is_action_just_pressed("0") and Input.is_action_just_pressed("9"):
-		error_handler.popup_error("file_errors.unknown")
-		
-	if Input.is_action_just_pressed("0") and Input.is_action_just_pressed("7"):
-		error_handler.popup_error("file_access_errors.bad_drive")
 
 func _on_files_dropped(files):
 	if files.size() > 0:
@@ -272,8 +293,6 @@ func _on_files_dropped(files):
 # UI EVENT HANDLERS
 #========================
 func _on_tab_changed(tab_index):
-	config_manager.set_last_tab(tab_index)
-	
 	if tab_index == 2:
 		if camera_controller:
 			camera_controller.reset_camera()
@@ -615,8 +634,17 @@ func _on_conversion_completed(result):
 		if config_manager.get_auto_preview() and result.has("target_path"):
 			_preview_file(result.target_path)
 	else:
-		var error_key = "file_access_errors." + ErrorHandler._get_error_key_from_code(result.get("error_code", 0))
-		ErrorHandler.popup_error(error_key, {"FILENAME": result.target_path.get_file()})
+		if result.has("error_type"):
+			var replacements = {
+				"FILENAME": result.get("error_file", "file"),
+				"VERSION": result.get("error_version", "unknown"),
+				"REQUIRED_VERSION": "0.2"
+			}
+			ErrorHandler.popup_error("file_errors." + result.error_type, replacements)
+		elif not result.get("error_already_handled", false):
+			var error_key = "file_access_errors." + ErrorHandler._get_error_key_from_code(result.get("error_code", 0))
+			ErrorHandler.popup_error(error_key, {"FILENAME": result.get("target_path", "file").get_file()})
+		
 		status_label.text = "Conversion failed"
 	
 	progress_bar.visible = false
@@ -807,7 +835,7 @@ func _on_auto_preview_toggled(enabled):
 	if config_manager:
 		config_manager.set_auto_preview(enabled)
 		config_manager.save_config()
-
+	
 #-----------------------------------------------------------------
 # CONFIGURATION MANAGEMENT
 #-----------------------------------------------------------------
@@ -829,8 +857,7 @@ func _on_config_loaded():
 		preview_dir_path_field.text = preview_dir
 		browse_preview_files_path.text = preview_dir
 	
-	var last_tab = config_manager.get_last_tab()
-	tab_container.current_tab = last_tab
+	tab_container.current_tab = 0
 	
 	_on_grid_toggle_toggled(config_manager.get_grid_visible())
 	_setup_wireframe_color_options()
@@ -911,3 +938,93 @@ func _update_render_mode():
 			model_renderer.set_render_mode(ModelRenderer.RenderMode.WIREFRAME_OVERLAY)
 		else:
 			model_renderer.set_render_mode(ModelRenderer.RenderMode.SOLID)
+
+
+
+# Random stuff #
+func _select_random_splash_message() -> void:
+	var total_weight = 0
+	for key in Messages.splash_messages:
+		total_weight += Messages.splash_messages[key].weight
+	
+	var random_value = randf() * total_weight
+	
+	var cumulative_weight = 0
+	for key in Messages.splash_messages:
+		cumulative_weight += Messages.splash_messages[key].weight
+		if random_value <= cumulative_weight:
+			splash_text.text = Messages.splash_messages[key].text
+			break
+	
+	var tween = create_tween().set_loops()
+	tween.tween_property(splash_text, "scale", Vector2(1.05, 1.05), 1.5)
+	tween.tween_property(splash_text, "scale", Vector2(1.0, 1.0), 1.5)
+	
+	var color_tween = create_tween().set_loops()
+	color_tween.tween_property(splash_text, "modulate", Color.RED, 2.5)
+	color_tween.tween_property(splash_text, "modulate", Color.DARK_ORANGE, 2.5)
+	color_tween.tween_property(splash_text, "modulate", Color.DEEP_PINK, 2.5)
+
+### NETWORK ###
+func _on_network_toggled(button_pressed: bool):
+	ConfigManager.settings.ui["network_enabled"] = button_pressed
+	ConfigManager.save_config()
+	
+	if button_pressed:
+		update_manager.check_for_updates()
+	else:
+		update_button.visible = false
+
+func _on_launcher_outdated(new_version: String, download_url: String):
+	update_button.visible = true
+	update_button.disabled = true
+	update_button.text = "Launcher Update Required"
+	status_label.text = "New version " + new_version + " requires updated launcher. Click to download."
+	
+	# Store the download URL for when button is clicked
+	update_button.set_meta("launcher_download_url", download_url)
+	
+	# Disconnect the old pressed signal and connect new one for opening browser
+	if update_button.pressed.is_connected(_on_update_button_pressed):
+		update_button.pressed.disconnect(_on_update_button_pressed)
+	update_button.pressed.connect(_on_launcher_download_button_pressed)
+	update_button.disabled = false 
+
+func _on_launcher_download_button_pressed():
+	var download_url = update_button.get_meta("launcher_download_url", "")
+	if download_url != "":
+		OS.shell_open(download_url)
+		status_label.text = "Opening download page in browser..."
+	else:
+		status_label.text = "Error: No download URL available"
+
+func _on_update_available(new_version: String):
+	update_button.visible = true
+	update_button.text = "Download Update (" + new_version + ")"
+	status_label.text = "Update available: " + new_version
+
+func _on_update_button_pressed():
+	update_button.disabled = true
+	update_button.text = "Downloading..."
+	progress_bar.visible = true
+	percent_label.visible = true
+	status_label.text = "Downloading update..."
+	update_manager.download_update()
+
+func _on_download_progress(percent: float):
+	progress_bar.value = percent
+	percent_label.text = "%.1f%%" % percent
+
+func _on_download_complete():
+	progress_bar.value = 100
+	percent_label.text = "100%"
+	status_label.text = "Update downloaded! Restarting in 2 seconds..."
+	await get_tree().create_timer(2.0).timeout
+	update_manager.restart_to_apply_update()
+
+func _on_download_failed(error: String):
+	status_label.text = "Download failed: " + error
+	update_button.disabled = false
+	update_button.text = "Download Update (" + update_manager.latest_version + ")"
+	progress_bar.visible = false
+	percent_label.visible = false

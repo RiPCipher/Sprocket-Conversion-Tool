@@ -20,16 +20,16 @@ func _setup_debug_system():
 	
 	print("Debug: Checking for debugger at: " + _debug_folder_path)
 	
-	# Only proceed if debug folder exists OR if debugger.pck exists
-	if _should_load_debugger():
-		_try_load_debugger_pck()
+	return ### Do Not uncomment until issue with debugger is resolved ###
+	#if _should_load_debugger():
+		#_try_load_debugger_pck()
 
 func _should_load_debugger() -> bool:
 	# Check if debug folder exists
 	if DirAccess.dir_exists_absolute(_debug_folder_path):
 		return true
 	
-	# Or check if debugger.pck exists next to executable
+	# check if debugger.pck exists next to executable
 	var pck_path = _exe_dir + "/debugger.pck"
 	if FileAccess.file_exists(pck_path):
 		return true
@@ -37,7 +37,6 @@ func _should_load_debugger() -> bool:
 	return false
 
 func _try_load_debugger_pck():
-	# Try multiple locations for the PCK
 	var pck_paths = [
 		_debug_folder_path + "/debugger.pck",  # Inside debug folder
 		_exe_dir + "/debugger.pck"             # Next to executable
@@ -54,7 +53,7 @@ func _try_load_debugger_pck():
 				# Create debug folder
 				_ensure_debug_folder_exists()
 				
-				# Manually create the debugger instance
+				# create the debugger instance
 				await get_tree().process_frame
 				_create_debugger_instance()
 				
@@ -122,7 +121,7 @@ func _buffer_message(message_type: String, text: String):
 		"type": message_type,
 		"text": text,
 		"timestamp": timestamp,
-		"original_time": Time.get_ticks_msec()  # For precise ordering
+		"original_time": Time.get_ticks_msec()
 	})
 
 func _replay_buffered_messages():
@@ -155,7 +154,6 @@ func _replay_buffered_messages():
 func _clear_message_buffer():
 	_message_buffer.clear()
 
-# Main logging functions
 func log(text = "", arg2 = null, arg3 = null, arg4 = null, arg5 = null):
 	var combined_text = str(text)
 	
@@ -188,7 +186,7 @@ func error(text = "", arg2 = null, arg3 = null, arg4 = null, arg5 = null):
 	if arg5 != null:
 		combined_text += str(arg5)
 	
-	# Always show errors immediately
+	# Always show errors immediately (Editor Only)
 	push_error(combined_text)
 	
 	if _debugger_instance and _debugger_ready:
@@ -208,7 +206,7 @@ func warn(text = "", arg2 = null, arg3 = null, arg4 = null, arg5 = null):
 	if arg5 != null:
 		combined_text += str(arg5)
 	
-	# Always show warnings immediately
+	# Always show warnings immediately (Editor Only)
 	push_warning(combined_text)
 	
 	if _debugger_instance and _debugger_ready:

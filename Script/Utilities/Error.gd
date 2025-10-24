@@ -162,8 +162,10 @@ func can_access_directory(dir_path: String) -> bool:
 #= Generic Errors ===========================
 func popup_error(message_path: String, replacements: Dictionary = {}) -> void:
 	# example usage: popup_error("file_errors.ngons", {"COUNT": 5}) or pop_error("file_errors.ngons")
-	var title = "Error"
-	var body = "An unknown error occurred"
+	
+	### Default Error Message
+	var title = "Undefined Error"
+	var body = "An unknown error occurred. \n\n This could be due to a number of issues, but the primary cause is using an unsupported blueprint type. \n\nExamples include: Vehicle Blueprints, Track Blueprints, Anything other than Plate Structure Blueprints"
 	
 	# Parse the message path
 	var path_parts = message_path.split(".")

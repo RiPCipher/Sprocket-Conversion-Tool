@@ -1,15 +1,18 @@
-# Sprocket-Conversion-Tool 0.4.5
+# Sprocket-Conversion-Tool 0.5.0
 
 # Installation:
 - extract .zip file where ever you'd like. Although I recommend making a folder named "Sprocket Conversion Tool", and placing its contents into the folder.
-- It will contain the .exe, a config file where filepaths are saved, an Output folder, and a copy of this readme
+- It will contain the executable, a data folder with a config file where filepaths are saved and the actual applications data, an Output folder, and a copy of this readme
 
 
 # How To Use:
+- Ensure you are using at least the 0.2 version of Sprocket (As of 10/16/2025, its the Experimental Branch)
 - Simply save the part you'd like to modify as a plate structure, open tool, navigate to the "Conversion" tab and select your file.
 - The Previewer can load both .obj and .blueprint files and display them prior to actual import/export. 
   A toggle to auto-preview loaded models is located in the settings, 
   if turned on it will swap to the preview tab everytime you load a file in the converison tab and load the model
+- The Gear Calculator is equalvalent to the located on the SprocketTools Page (https://sprockettools.github.io/TopGearCalculator.html),
+although there are some slight (incredibly minor) deviations
 
 Keep in Mind:
 - It doesnt retain armor values when exporting to .obj
@@ -17,9 +20,16 @@ Keep in Mind:
 - keep performance expectation's in mind when importing and loading it into Sprocket
 - If you to set a custom Output filepath , you can safely delete the "Output" folder.
 - If you wipe the custom filepaths from the config, it will regenerate the default folders in whatever directory you place the executable.
-- If you decide to move the executable and dont move the config with it, it will regenerate the config with default values and you will need to resave your filepaths again
 
-# Debugging
-- There is a seperate debugger.pck file you can download.
-  add the .pck to the .exe directory or make a folder named "debug" and place it there to turn on debug logging
-- Its not needed for anything, it will simply create a debug_log file that saves various bit of information
+- Do not delete the Sprocket_Conversion_Tool.pck file from the data folder. doing so will break the tool and require a fresh download from the repo.
+
+# Updating
+- From time to time, i will be pushing minor updates to the GitHub releases, you will see a button in the lower right hand corner of the tool informing you an update is available
+- Its entirely opt in, there is a check button in the settings tab to enable this feature
+
+- On occassion, there I will need to make "breaking" changes. these will not be pushed to the prior version (what would be your current version), 
+but will require manual download from the Repo if you want to continue recieving updates
+- The tool will let you know assuming you have network features enabled and will link you to the release
+- If you decide to download it, you would simply replace the existing files you already have with the downloaded files like we have done in the past
+
+Link to the Conversion Tools Releases: https://github.com/RiPCipher/Sprocket-Conversion-Tool/releases

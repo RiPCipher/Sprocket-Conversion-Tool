@@ -11,11 +11,27 @@ static var test = {
 static var file_errors = {
 	"unknown": {
 		"title": "Error",
-		"body": "An unknown error occurred"
+		"body": "An unknown error occurred."
 	},
 	"ngons": {
 		"title": "N-Gons Detected in File",
 		"body": "This OBJ file contains [COUNT] polygon(s) with more than 4 sides (n-gons).\n\nIf converted, Sprocket will not be able to load the blueprint file.\n\nPlease use a 3D modeling tool to triangulate the problematic face or remove it before attempting conversion."
+	},
+	"blueprint_no_version": {
+		"title": "No Version Present",
+		"body": "No version data is present in the file. \n\n This could indicate its from the pre-0.2 Version of Sprocket and is incompatable with the Conversion Tool"
+	},
+	"blueprint_unsupported_verison": {
+		"title": "Unsupported Version",
+		"body": "Only blueprints with a version number of 0.2 can be converted to OBJ"
+	},
+	"blueprint_invalid_format": {
+		"title": "Invalid Formatting",
+		"body": "Blueprint in invalid, malformed, or otherwise unable to be read by the tool"
+	},
+	"blueprint_unsupported_type": {
+		"title": "Unsupport Type",
+		"body": "Blueprint is an unsupported Type. \n\n Examples include: Vehicle Blueprints, Track Blueprints, Posture Blueprints"
 	}
 }
 
@@ -83,5 +99,13 @@ static var file_access_errors = {
 	"directory_not_found": {
 		"title": "Directory Not Found",
 		"body": "Directory does not exist: [FILEPATH]"
+	}
+}
+
+# Weightings can go from 1-100 (100 being the most likely)
+static var splash_messages = {
+	"experimental_warning": {
+		"text": "Tool only works for Sprockets 0.2 Update!",
+		"weight": 100 
 	}
 }

@@ -8,6 +8,7 @@ signal button_pressed()
 @onready var close_button = $Button
 
 var callback_function: Callable
+var pending_popup_data: Dictionary = {}
 
 func _ready():
 	title = "Sprocket Conversion Tool"
@@ -20,17 +21,32 @@ func _ready():
 	close_button.pressed.connect(_on_button_pressed)
 	
 	visible = false
+	
+	if not pending_popup_data.is_empty():
+		_apply_popup_data(pending_popup_data)
+		pending_popup_data = {}
 
 func show_popup(title_text: String, body_text: String, button_text: String = "OK", callback: Callable = Callable()):
-	title_label.text = title_text
-	body_label.text = body_text
-	close_button.text = button_text
-	callback_function = callback
+	var data = {
+		"title": title_text,
+		"body": body_text,
+		"button": button_text,
+		"callback": callback
+	}
 	
-	# Auto-resize body text to fit content
+	if is_node_ready():
+		_apply_popup_data(data)
+	else:
+		pending_popup_data = data
+
+func _apply_popup_data(data: Dictionary):
+	title_label.text = data.title
+	body_label.text = data.body
+	close_button.text = data.button
+	callback_function = data.callback
+	
 	body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	
-	# Center on main window
 	_center_on_main_window()
 	
 	show()
