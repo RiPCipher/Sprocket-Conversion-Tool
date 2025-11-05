@@ -6,7 +6,6 @@
 
 
 # How To Use:
-- Ensure you are using at least the 0.2 version of Sprocket (As of 10/16/2025, its the Experimental Branch)
 - Simply save the part you'd like to modify as a plate structure, open tool, navigate to the "Conversion" tab and select your file.
 - The Previewer can load both .obj and .blueprint files and display them prior to actual import/export. 
   A toggle to auto-preview loaded models is located in the settings, 
