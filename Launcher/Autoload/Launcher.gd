@@ -1,7 +1,9 @@
 extends Node
 
 # Launcher executable version - UPDATE THIS WHEN RELEASING NEW LAUNCHER!!!
-const LAUNCHER_VERSION = "v1.0"
+const LAUNCHER_VERSION = "v2.0"
+
+var is_ready : bool = false
 
 func _ready():
 	# Get the directory where the launcher executable is located
@@ -53,9 +55,12 @@ func _ready():
 	
 	print("Successfully loaded: " + pck_name)
 	
-	# Change to the main entry scene
-	get_tree().change_scene_to_file.call_deferred("res://Scenes/Converter.tscn")
+	# Set Ready
+	is_ready = true
 
+func _boot():
+	get_tree().change_scene_to_file.call_deferred("res://Scenes/Converter.tscn")
+	
 func apply_update(old_pck_path: String, new_pck_path: String):
 	print("Applying update...")
 	print("Old .pck: ", old_pck_path)

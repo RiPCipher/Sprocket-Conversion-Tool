@@ -1,0 +1,8 @@
+[gd_resource type="CanvasTexture" format=3 uid="uid://dxq5yupn4ivbf"]
+
+[ext_resource type="Texture2D" uid="uid://c7huueehnmyq0" path="res://Textures/Resources/DefaultThemeResources/TabContainer/TabContainer_albedo.png" id="1_26s47"]
+[ext_resource type="Texture2D" uid="uid://dj1v8qhgwfvio" path="res://Textures/Resources/DefaultThemeResources/TabContainer/TabContainer_normal.png" id="2_1ly5f"]
+
+[resource]
+diffuse_texture = ExtResource("1_26s47")
+normal_texture = ExtResource("2_1ly5f")

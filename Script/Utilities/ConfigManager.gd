@@ -11,9 +11,6 @@ var default_obj_path = ""
 var default_blueprint_path = ""
 var default_conversion_path = ""
 
-# Node Refernces
-@onready var status_label = get_node_or_null("../MainPanel/VBoxContainer/StatusSection/StatusLabel")
-
 # Settings dictionary
 var settings = {
 	"paths": {
@@ -44,6 +41,7 @@ var settings = {
 		"is_fullscreen": false,
 		"theme": "Default",
 		"network_enabled": false,
+		"force_native_windows": false,
 	}
 }
 
@@ -287,3 +285,9 @@ func get_theme() -> String:
 
 func set_theme(value: String) -> void:
 	settings.ui.theme = value
+	
+func set_native(value: bool) -> void:
+	settings.ui.force_native_windows = value
+
+func get_native() -> bool:
+	return settings.ui.force_native_windows if settings.ui.has("force_native_windows") else false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://do1hoi86qemi1"]
+[gd_scene format=3 uid="uid://do1hoi86qemi1"]
 
 [ext_resource type="Script" uid="uid://r7kq4cp735dg" path="res://Script/UI/BrowserWindow.gd" id="1_s60xn"]
 [ext_resource type="Texture2D" uid="uid://cyblx3w2t2bbt" path="res://Textures/2D/Settings/Icons/LeftArrow16px.png" id="2_ayhgc"]
@@ -8,81 +8,91 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gnndi"]
 
-[node name="Window" type="Window"]
+[node name="Window" type="Window" unique_id=1181492161]
+oversampling_override = 1.0
 position = Vector2i(0, 36)
-size = Vector2i(800, 500)
+size = Vector2i(807, 500)
 script = ExtResource("1_s60xn")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=532646039]
 offset_right = 800.0
 offset_bottom = 500.0
 theme_override_constants/separation = -1
 
-[node name="SearchSection" type="PanelContainer" parent="VBoxContainer"]
+[node name="SearchSection" type="PanelContainer" parent="VBoxContainer" unique_id=1880526354]
 custom_minimum_size = Vector2(0, 59)
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SearchSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/SearchSection" unique_id=959481644]
 layout_mode = 2
 
-[node name="Spacing" type="Control" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="Spacing" type="Control" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=696004762]
 custom_minimum_size = Vector2(10.275, 0)
 layout_mode = 2
 
-[node name="LastPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="LastPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1116673793]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 icon = ExtResource("2_ayhgc")
 
-[node name="NextPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="NextPage" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1599843574]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 icon = ExtResource("3_v548x")
 
-[node name="ParentFolder" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="ParentFolder" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1974157586]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 icon = ExtResource("4_mim6l")
 
-[node name="PathLabel" type="Label" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="PathLabel" type="Label" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1617889842]
 layout_mode = 2
 text = "Path:"
 
-[node name="OptionButton" type="OptionButton" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="PathOptions" type="OptionButton" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=11976856]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/SearchSection/HBoxContainer"]
-custom_minimum_size = Vector2(600, 0)
+[node name="PathInput" type="LineEdit" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1576957116]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(590, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 text = "wddqwdqwdqwdqwdqwdqwdq"
 caret_blink = true
 
-[node name="Refresh" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer"]
+[node name="Refresh" type="Button" parent="VBoxContainer/SearchSection/HBoxContainer" unique_id=1415303004]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(35, 0)
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 tooltip_text = "Currently does nothing "
 icon = ExtResource("5_gnndi")
+icon_alignment = 1
 
-[node name="FileListContainer" type="PanelContainer" parent="VBoxContainer"]
+[node name="FileListContainer" type="PanelContainer" parent="VBoxContainer" unique_id=676680610]
 custom_minimum_size = Vector2(0, 350)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/FileListContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/FileListContainer" unique_id=1333515254]
 layout_mode = 2
 
-[node name="Spacing" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+[node name="Spacing" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer" unique_id=290267824]
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
-[node name="FileList" type="ItemList" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+[node name="FileList" type="ItemList" parent="VBoxContainer/FileListContainer/HBoxContainer" unique_id=1522554604]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/focus = SubResource("StyleBoxEmpty_gnndi")
@@ -91,51 +101,56 @@ wraparound_items = false
 same_column_width = true
 fixed_icon_size = Vector2i(16, 16)
 
-[node name="Spacing2" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer"]
+[node name="Spacing2" type="Control" parent="VBoxContainer/FileListContainer/HBoxContainer" unique_id=1019087146]
 custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
 
-[node name="UserSection" type="PanelContainer" parent="VBoxContainer"]
+[node name="UserSection" type="PanelContainer" parent="VBoxContainer" unique_id=1939731274]
 custom_minimum_size = Vector2(0, 77.99)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/UserSection"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/UserSection" unique_id=223259087]
 layout_mode = 2
 theme_override_constants/separation = 7
 
-[node name="TopSpacing" type="Control" parent="VBoxContainer/UserSection/VBoxContainer"]
+[node name="TopSpacing" type="Control" parent="VBoxContainer/UserSection/VBoxContainer" unique_id=1070656784]
 custom_minimum_size = Vector2(0, 3.38)
 layout_mode = 2
 
-[node name="FileNameSection" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer"]
+[node name="FileNameSection" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer" unique_id=146044587]
+unique_name_in_owner = true
 layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+[node name="Label" type="Label" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection" unique_id=1247527617]
 layout_mode = 2
 text = "File:"
 
-[node name="LineEdit" type="LineEdit" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+[node name="FileNameInput" type="LineEdit" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection" unique_id=466363578]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
 caret_blink = true
 
-[node name="ValidExtension" type="OptionButton" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection"]
+[node name="ValidExtension" type="OptionButton" parent="VBoxContainer/UserSection/VBoxContainer/FileNameSection" unique_id=991397937]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 
-[node name="Buttons" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer"]
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer/UserSection/VBoxContainer" unique_id=1926839915]
 layout_mode = 2
 theme_override_constants/separation = 100
 alignment = 1
 
-[node name="Select" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons"]
+[node name="Select" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons" unique_id=234062454]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 text = " Select "
 
-[node name="Cancel" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons"]
+[node name="Cancel" type="Button" parent="VBoxContainer/UserSection/VBoxContainer/Buttons" unique_id=1176518095]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4

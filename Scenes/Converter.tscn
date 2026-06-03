@@ -1,6 +1,7 @@
-[gd_scene load_steps=31 format=3 uid="uid://dn1wf6k3cte06"]
+[gd_scene format=3 uid="uid://dn1wf6k3cte06"]
 
 [ext_resource type="Script" uid="uid://b8mqtsyrexhp1" path="res://Script/Main/Main.gd" id="1_v2331"]
+[ext_resource type="Script" uid="uid://cijvk3n8hecpv" path="res://Script/Utilities/ConfigManager.gd" id="2_a2d5d"]
 [ext_resource type="Script" uid="uid://cdhlv0ucek8xu" path="res://Script/Utilities/UpdateManager.gd" id="4_30d8k"]
 [ext_resource type="Shader" uid="uid://gn5jsag0jtt4" path="res://Textures/2D/Shaders/HotSteel.gdshader" id="4_dp8xd"]
 [ext_resource type="Texture2D" uid="uid://xwqxqd3kpjxv" path="res://Textures/2D/Gear.png" id="5_6dhoo"]
@@ -12,6 +13,10 @@
 [ext_resource type="Texture2D" uid="uid://gyimbv63hkmg" path="res://Textures/2D/Settings/Icons/Mixed_View_20x20.png" id="10_tb4ts"]
 [ext_resource type="Script" uid="uid://q8401xniglnh" path="res://Script/Tools/GearCalculator.gd" id="11_ditv3"]
 [ext_resource type="Texture2D" uid="uid://can37hwf3rnk8" path="res://Textures/2D/Settings/Icons/Cut_View_20x20.png" id="11_mqb3m"]
+[ext_resource type="Script" uid="uid://bjfa88gtkwpoq" path="res://Script/Controllers/BrowserController.gd" id="20_brwsr"]
+[ext_resource type="Script" uid="uid://wsi8c0pm0noi" path="res://Script/Controllers/PreviewController.gd" id="21_prvw"]
+[ext_resource type="Script" uid="uid://c5h4by7e4cbj5" path="res://Script/Controllers/ConversionController.gd" id="22_cnvrt"]
+[ext_resource type="Script" uid="uid://ccg45h5shlm8t" path="res://Script/Controllers/UpdateController.gd" id="23_updt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_on7rp"]
 shader = ExtResource("4_dp8xd")
@@ -123,36 +128,19 @@ ambient_light_energy = 0.8
 tonemap_mode = 2
 tonemap_exposure = 1.4
 tonemap_white = 3.0
-ssr_fade_in = 0.974703
-ssr_fade_out = 0.450626
-ssr_depth_tolerance = 0.01
-ssao_power = 0.989631
-ssao_detail = 5.0
-ssil_intensity = 1.2
-sdfgi_use_occlusion = true
-sdfgi_cascades = 3
-sdfgi_min_cell_size = 5.0
-sdfgi_cascade0_distance = 320.0
-sdfgi_max_distance = 2560.0
-sdfgi_energy = 0.5
-sdfgi_normal_bias = -2.5
-glow_levels/1 = 10.88
-glow_levels/2 = 9.17
-glow_levels/3 = 2.1
-glow_levels/4 = 0.9
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fiwj2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tb4ts"]
 bg_color = Color(0.212305, 0.212305, 0.212305, 1)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_30d8k"]
-
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mqb3m"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7he56"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_30d8k"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7x80q"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7he56"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progressbar_bg"]
 bg_color = Color(0.15, 0.15, 0.18, 0.7)
@@ -166,7 +154,7 @@ corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 
-[node name="OBJBlueprintConverter" type="Control"]
+[node name="ConversionTool" type="Control" unique_id=597168672]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -175,18 +163,46 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_v2331")
 
-[node name="Mods" type="Node" parent="."]
+[node name="Managers" type="Node" parent="." unique_id=90842710]
 
-[node name="Utility" type="Node" parent="."]
-script = ExtResource("5_fiwj2")
+[node name="ConfigManager" type="Node" parent="Managers" unique_id=2085538661]
+unique_name_in_owner = true
+script = ExtResource("2_a2d5d")
 
-[node name="UIManager" type="Node" parent="."]
+[node name="UIManager" type="Node" parent="Managers" unique_id=1199357935]
+unique_name_in_owner = true
 script = ExtResource("7_ditv3")
 
-[node name="UpdateManager" type="Node" parent="."]
+[node name="UpdateManager" type="Node" parent="Managers" unique_id=1032356715]
+unique_name_in_owner = true
 script = ExtResource("4_30d8k")
 
-[node name="Background" type="Panel" parent="."]
+[node name="Controllers" type="Node" parent="." unique_id=912116475]
+
+[node name="BrowserController" type="Node" parent="Controllers" unique_id=2000000001]
+unique_name_in_owner = true
+script = ExtResource("20_brwsr")
+
+[node name="PreviewController" type="Node" parent="Controllers" unique_id=2000000002]
+unique_name_in_owner = true
+script = ExtResource("21_prvw")
+
+[node name="ConversionController" type="Node" parent="Controllers" unique_id=2000000003]
+unique_name_in_owner = true
+script = ExtResource("22_cnvrt")
+
+[node name="UpdateController" type="Node" parent="Controllers" unique_id=2000000004]
+unique_name_in_owner = true
+script = ExtResource("23_updt")
+
+[node name="Utility" type="Node" parent="." unique_id=1005110950]
+unique_name_in_owner = true
+script = ExtResource("5_fiwj2")
+
+[node name="Mods" type="Node" parent="." unique_id=1974994465]
+unique_name_in_owner = true
+
+[node name="Background" type="Panel" parent="." unique_id=1297161948]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -194,44 +210,55 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Gear" type="Control" parent="Background"]
+[node name="Gear" type="Control" parent="Background" unique_id=453214657]
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Icon" type="TextureRect" parent="Background/Gear"]
+[node name="Icon" type="TextureRect" parent="Background/Gear" unique_id=1210886992]
+unique_name_in_owner = true
 material = SubResource("ShaderMaterial_on7rp")
-layout_mode = 0
-offset_left = 126.0
-offset_top = 43.0
-offset_right = 166.0
-offset_bottom = 83.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 119.0
+offset_top = 46.0
+offset_right = 119.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(3, 3)
 pivot_offset = Vector2(20, 20)
 texture = ExtResource("5_6dhoo")
 expand_mode = 4
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Background/Gear/Icon"]
-libraries = {
-&"": SubResource("AnimationLibrary_r1wue")
-}
+[node name="AnimationPlayer_U" type="AnimationPlayer" parent="Background/Gear/Icon" unique_id=2032408806]
+unique_name_in_owner = true
+libraries/ = SubResource("AnimationLibrary_r1wue")
 
-[node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon"]
+[node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon" unique_id=1495068581]
 show_behind_parent = true
 position = Vector2(20.3333, 20.3333)
 scale = Vector2(0.333333, 0.333333)
 texture = SubResource("GradientTexture2D_futdp")
 
-[node name="Version" type="Label" parent="."]
-layout_mode = 2
-offset_left = 371.0
+[node name="Version" type="Label" parent="." unique_id=994760369]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
 offset_top = 84.0
-offset_right = 397.0
+offset_right = 31.0
 offset_bottom = 97.0
+grow_horizontal = 2
 theme_override_font_sizes/font_size = 9
 text = "default text"
 
-[node name="SplashText" type="Label" parent="."]
+[node name="SplashText" type="Label" parent="." unique_id=1483712555]
+unique_name_in_owner = true
 layout_mode = 0
 offset_left = 517.91
 offset_top = 68.005
@@ -242,53 +269,56 @@ theme_override_colors/font_color = Color(0.903598, 0.903598, 0.903598, 1)
 theme_override_font_sizes/font_size = 12
 text = "TEST"
 
-[node name="MainPanel" type="MarginContainer" parent="."]
+[node name="MainPanel" type="MarginContainer" parent="." unique_id=1075486688]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 25
+theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 25
+theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel" unique_id=1037830116]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="HeaderSection" type="HBoxContainer" parent="MainPanel/VBoxContainer"]
+[node name="HeaderSection" type="HBoxContainer" parent="MainPanel/VBoxContainer" unique_id=359974411]
 layout_direction = 1
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="TitleContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/HeaderSection"]
+[node name="TitleContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/HeaderSection" unique_id=1280119567]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
 alignment = 1
 
-[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+[node name="Title" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer" unique_id=1314697479]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Sprocket Conversion Tool"
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer"]
+[node name="Subtitle" type="Label" parent="MainPanel/VBoxContainer/HeaderSection/TitleContainer" unique_id=206559819]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "Import and export models"
 horizontal_alignment = 1
 
-[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer"]
+[node name="TabContainer_U" type="TabContainer" parent="MainPanel/VBoxContainer" unique_id=1459905470]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/tab_hovered = SubResource("StyleBoxEmpty_qlaan")
 tab_alignment = 1
-current_tab = 2
+current_tab = 3
+tab_2/disabled = true
+tab_2/hidden = true
 
-[node name="Conversion" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+[node name="Conversion" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=30901756]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
@@ -297,74 +327,79 @@ theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion" unique_id=725046480]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer" unique_id=1277420075]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/InputSection" unique_id=1915974366]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Input"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/InputSection" unique_id=503129368]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/InputSection/HBoxContainer" unique_id=1571723828]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Input File:"
 
-[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/InputSection/HBoxContainer" unique_id=2132424153]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 placeholder_text = "Select input file to convert"
 editable = false
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/InputSection/HBoxContainer"]
+[node name="In_BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/InputSection/HBoxContainer" unique_id=773127770]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="OutputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+[node name="OutputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer" unique_id=2145412157]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/OutputSection" unique_id=1346408121]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Output"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/OutputSection" unique_id=1628414379]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="OutputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+[node name="OutputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/OutputSection/HBoxContainer" unique_id=2094320865]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Output File:"
 
-[node name="OutputPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+[node name="OutputPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/OutputSection/HBoxContainer" unique_id=180206798]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 placeholder_text = "Save output file to..."
 editable = false
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer/OutputSection/HBoxContainer"]
+[node name="Out_BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer/OutputSection/HBoxContainer" unique_id=336299936]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer" unique_id=1756223809]
 layout_mode = 2
 
-[node name="ConvertButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Conversion/VBoxContainer"]
+[node name="ConvertButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Conversion/VBoxContainer" unique_id=495214475]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(157.875, 40)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -373,7 +408,7 @@ theme_override_font_sizes/font_size = 20
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
 text = "Convert"
 
-[node name="Model Preview" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+[node name="Model Preview" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1831528048]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
@@ -382,23 +417,24 @@ theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 metadata/_tab_index = 1
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview" unique_id=1696419761]
 layout_mode = 2
 
-[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+[node name="InputSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer" unique_id=178586098]
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection" unique_id=1450191006]
 layout_mode = 2
 theme_override_constants/separation = 307
 
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer2" unique_id=833251005]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Input"
 
-[node name="TextureButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2"]
+[node name="PreviewAdvancedSettings" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer2" unique_id=353878241]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "*Work in Progress"
@@ -407,8 +443,8 @@ texture_normal = ExtResource("10_7he56")
 texture_pressed = ExtResource("10_7he56")
 texture_hover = ExtResource("10_30d8k")
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2/TextureButton"]
-layout_mode = 2
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer2/PreviewAdvancedSettings" unique_id=706338870]
+layout_mode = 0
 offset_left = -130.0
 offset_top = -1.0
 offset_right = -4.0
@@ -416,104 +452,111 @@ offset_bottom = 19.0
 theme_override_font_sizes/font_size = 14
 text = "Previewer Settings"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection" unique_id=1221762381]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer" unique_id=620591511]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Input File:"
 
-[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+[node name="PreviewPathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer" unique_id=1880936479]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 placeholder_text = "Select File to Preview"
 editable = false
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer"]
+[node name="PreviewBrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/InputSection/HBoxContainer" unique_id=2000220473]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer"]
+[node name="SubViewportContainer_U" type="SubViewportContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer" unique_id=733957203]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+[node name="SubViewport_U" type="SubViewport" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U" unique_id=148961648]
+unique_name_in_owner = true
 handle_input_locally = false
 msaa_3d = 2
-screen_space_aa = 1
+screen_space_aa = 2
 use_debanding = true
 size = Vector2i(2, 2)
 render_target_update_mode = 0
 
-[node name="3DView" type="Camera3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+[node name="3DView" type="Camera3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U" unique_id=1831204546]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00127649, -2.38419e-07, 0.0135078)
 
-[node name="model_root" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+[node name="model_root" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U" unique_id=1471496129]
+unique_name_in_owner = true
 
-[node name="World" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport"]
+[node name="World" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U" unique_id=1813026550]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.84469)
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World" unique_id=298044301]
 environment = SubResource("Environment_pn0qj")
 
-[node name="ReflectionProbe" type="ReflectionProbe" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+[node name="ReflectionProbe" type="ReflectionProbe" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World" unique_id=1794135251]
 size = Vector3(40, 40, 40)
 
-[node name="Omni-Lights" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World"]
+[node name="Omni-Lights" type="Node3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World" unique_id=1120004641]
 
-[node name="OmniLight3D" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=1711710002 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.07571, 2.788)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 
-[node name="OmniLight3D4" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D4" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=1760662435 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.39051, 2.78797)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 
-[node name="OmniLight3D2" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D2" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=2029153101 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 6.44097)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 
-[node name="OmniLight3D3" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D3" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=1950220954 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.24074)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 
-[node name="OmniLight3D5" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D5" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=1661345096 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.83701, 0, 2.663)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 
-[node name="OmniLight3D6" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/SubViewport/World/Omni-Lights" groups=["Lighting", "OmniLight"]]
+[node name="OmniLight3D6" type="OmniLight3D" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/SubViewport_U/World/Omni-Lights" unique_id=942344674 groups=["Lighting", "OmniLight"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85335, 0, 2.663)
 light_color = Color(0.645582, 0.628607, 0.636899, 1)
 light_specular = 0.0
 shadow_bias = 5.041
 shadow_normal_bias = 1.235
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U" unique_id=1896647518]
 custom_minimum_size = Vector2(130, 0)
 layout_direction = 3
 layout_mode = 2
 alignment = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer" unique_id=723510828]
 custom_minimum_size = Vector2(0, 170)
 layout_direction = 2
 layout_mode = 2
 
-[node name="Control" type="Control" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=401555480]
 custom_minimum_size = Vector2(0, 1.935)
 layout_mode = 2
 
-[node name="HSlider" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="BrightnessSlider" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=18654295]
+unique_name_in_owner = true
 layout_direction = 2
 layout_mode = 2
 size_flags_horizontal = 3
@@ -524,14 +567,15 @@ value = 0.7
 scrollable = false
 tick_count = 1
 
-[node name="BrightnessLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="BrightnessLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=944623070]
 layout_mode = 2
 size_flags_horizontal = 8
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 10
 text = "Background Brightness"
 
-[node name="HSlider2" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="LightingSlider" type="HSlider" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=1784639119]
+unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.01
 max_value = 1.0
@@ -539,18 +583,19 @@ step = 0.01
 value = 0.3
 scrollable = false
 
-[node name="LightingLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="LightingLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=420348502]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 10
 text = "Light Brightness"
 
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=869539557]
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxEmpty_fiwj2")
 
-[node name="Button" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="RecenterButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=119648365]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Recenters the camera
 to the center of the world, 
@@ -560,16 +605,17 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_tb4ts")
 text = " Recenter Camera "
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=1484419591]
 custom_minimum_size = Vector2(100, 20)
 layout_mode = 2
 size_flags_vertical = 10
 
-[node name="spacer" type="Control" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="spacer" type="Control" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1502676087]
 custom_minimum_size = Vector2(23.05, 0)
 layout_mode = 2
 
-[node name="Button" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="WireframeToggle" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1658534419]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 tooltip_text = "Wireframe Toggle"
@@ -578,7 +624,8 @@ icon = ExtResource("9_qlaan")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Button2" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="WireframeOverlayToggle" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1188809568]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 tooltip_text = "Wireframe Overlay"
@@ -587,7 +634,8 @@ icon = ExtResource("10_tb4ts")
 icon_alignment = 1
 expand_icon = true
 
-[node name="Button3" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="ArmorViewToggle" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer/HBoxContainer2" unique_id=1057485458]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 tooltip_text = "Internal View
@@ -597,15 +645,16 @@ icon = ExtResource("11_mqb3m")
 icon_alignment = 1
 expand_icon = true
 
-[node name="CheckButton3" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer"]
+[node name="WorldGridToggle" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer" unique_id=285920752]
+unique_name_in_owner = true
 layout_direction = 2
 layout_mode = 2
 size_flags_horizontal = 8
-theme_override_styles/hover = SubResource("StyleBoxEmpty_30d8k")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_mqb3m")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_30d8k")
 
-[node name="WorldGridLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/SubViewportContainer/HBoxContainer/VBoxContainer/CheckButton3"]
-layout_mode = 2
+[node name="WorldGridLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U/HBoxContainer/VBoxContainer/WorldGridToggle" unique_id=1018308674]
+layout_mode = 0
 offset_left = -55.0
 offset_top = 5.0
 offset_right = -0.169998
@@ -615,18 +664,20 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 10
 text = "World Grid"
 
-[node name="Tools" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
+[node name="Tools" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1365822104]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 metadata/_tab_index = 2
 
-[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools"]
+[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools" unique_id=880582472]
 layout_mode = 2
 current_tab = 1
 
-[node name="Gear Calculator" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer"]
+[node name="Gear Calculator" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer" unique_id=395541404]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 1
@@ -636,278 +687,277 @@ theme_override_constants/margin_bottom = -10
 script = ExtResource("11_ditv3")
 metadata/_tab_index = 0
 
-[node name="Main" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator"]
+[node name="Main" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator" unique_id=953434241]
 layout_mode = 2
 
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main"]
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main" unique_id=254676194]
 layout_mode = 2
 
-[node name="HBody" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main"]
+[node name="HBody" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main" unique_id=2144660742]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LeftPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody"]
+[node name="LeftPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=476906798]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="EraAndStyle" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel"]
+[node name="EraAndStyle" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=71886192]
 layout_mode = 2
 
-[node name="VehicleEra" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle"]
+[node name="VehicleEra" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=1251378714]
 layout_mode = 2
 
-[node name="WW1" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra"]
+[node name="WW1" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=1565705098]
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1" unique_id=1851773740]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1" unique_id=529968882]
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "WW1"
 
-[node name="Interwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra"]
+[node name="Interwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=1963388218]
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar" unique_id=728998034]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar" unique_id=684289281]
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Interwar"
 
-[node name="Earlywar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra"]
+[node name="Earlywar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=173272678]
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar" unique_id=1328271334]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar" unique_id=1604940986]
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Earlywar"
 
-[node name="Midwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra"]
+[node name="Midwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=857591445]
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar" unique_id=1749444407]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar" unique_id=303414268]
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Midwar"
 
-[node name="Latewar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra"]
+[node name="Latewar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=781400428]
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar" unique_id=547910902]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar" unique_id=921122636]
 custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 text = "Latewar"
 
-[node name="VSeparator" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle"]
+[node name="VSeparator" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=119138857]
 custom_minimum_size = Vector2(22.4, 0)
 layout_mode = 2
 
-[node name="TuningStyle" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle"]
+[node name="TuningStyle" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=1373188820]
 layout_mode = 2
 
-[node name="BestAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle"]
+[node name="BestAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1017239473]
 custom_minimum_size = Vector2(187.47, 0)
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel" unique_id=1386742470]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel" unique_id=1934628585]
 custom_minimum_size = Vector2(149.405, 0)
 layout_mode = 2
 text = "Best Acceleration"
 
-[node name="FavorAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle"]
+[node name="FavorAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=177255820]
 custom_minimum_size = Vector2(187.47, 0)
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel" unique_id=2017260549]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel" unique_id=375972028]
 custom_minimum_size = Vector2(149.405, 0)
 layout_mode = 2
 text = "Favor Acceleration"
 
-[node name="Balanced" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle"]
+[node name="Balanced" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=217701505]
 custom_minimum_size = Vector2(187.47, 0)
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced" unique_id=1599422838]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced" unique_id=1914419397]
 custom_minimum_size = Vector2(149.405, 0)
 layout_mode = 2
 text = "Balanced"
 
-[node name="FavorSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle"]
+[node name="FavorSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1426166959]
 custom_minimum_size = Vector2(187.47, 0)
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed" unique_id=2095886175]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed" unique_id=341521045]
 custom_minimum_size = Vector2(149.405, 0)
 layout_mode = 2
 text = "Favor Top Speed"
 
-[node name="BestSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle"]
+[node name="BestSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1924628428]
 custom_minimum_size = Vector2(187.47, 0)
 layout_mode = 2
 columns = 2
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed"]
+[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed" unique_id=847427205]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed" unique_id=2104781009]
 custom_minimum_size = Vector2(149.405, 0)
 layout_mode = 2
 text = "Best Top Speed"
 
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel"]
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=578927801]
 layout_mode = 2
 
-[node name="Configuration" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel"]
+[node name="Configuration" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=775048518]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="VehicleWeight" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration"]
+[node name="VehicleWeight" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1230746895]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight" unique_id=301068846]
 custom_minimum_size = Vector2(150, 15.925)
 layout_mode = 2
 text = " Vehicle Weight (T)"
 
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight"]
+[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight" unique_id=111968925]
 layout_mode = 2
 max_value = 999.0
 
-[node name="CylinderSize" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration"]
+[node name="CylinderSize" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1871854573]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize" unique_id=1438782962]
 custom_minimum_size = Vector2(150, 15.925)
 layout_mode = 2
 text = " Cylinder Size (L)"
 
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize"]
+[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize" unique_id=752387673]
 layout_mode = 2
 max_value = 999.0
 step = 0.01
 
-[node name="CylinderCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration"]
+[node name="CylinderCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=909808620]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount" unique_id=416103990]
 custom_minimum_size = Vector2(150, 15.925)
 layout_mode = 2
 text = " Cylinder Count"
 
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount"]
+[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount" unique_id=165540998]
 layout_mode = 2
 max_value = 999.0
 step = 2.0
 
-[node name="GearCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration"]
+[node name="GearCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1712898590]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount" unique_id=967838664]
 custom_minimum_size = Vector2(150, 15.925)
 layout_mode = 2
 text = " Gear Count"
 
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount"]
+[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount" unique_id=217316907]
 layout_mode = 2
 min_value = 2.0
 max_value = 999.0
 value = 2.0
 
-[node name="Sprocket Diameter" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration"]
+[node name="Sprocket Diameter" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=136987164]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter"]
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter" unique_id=1168942684]
 custom_minimum_size = Vector2(150, 15.925)
 layout_mode = 2
 text = " Sprocket Diameter"
 
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter"]
+[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter" unique_id=652932898]
 layout_mode = 2
 max_value = 999.0
 step = 0.01
 
-[node name="VSeparator3" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody"]
+[node name="VSeparator3" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=1870641389]
 layout_mode = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=423142199]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RightPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer"]
+[node name="RightPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer" unique_id=839837749]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 5
 
-[node name="TopSpeedKMH" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel"]
+[node name="TopSpeedKMH" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=868066433]
 layout_mode = 2
 text = "Top Speed (km/h):"
 horizontal_alignment = 1
 
-[node name="TopSpeedMPH" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel"]
+[node name="TopSpeedMPH" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=1957971383]
 layout_mode = 2
 text = "Top Speed (mph):"
 horizontal_alignment = 1
 
-[node name="Upshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel"]
+[node name="Upshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=1580575438]
 layout_mode = 2
 text = "Upshift:"
 horizontal_alignment = 1
 
-[node name="Downshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel"]
+[node name="Downshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=706458697]
 layout_mode = 2
 text = "Downshift:"
 horizontal_alignment = 1
 
-[node name="HSeparator3" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel"]
+[node name="HSeparator3" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=403232355]
 layout_mode = 2
 
-[node name="Credits" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer"]
+[node name="Credits" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer" unique_id=1083511847]
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MainPanel/VBoxContainer/TabContainer/Tools/TabContainer/Credits"]
+[node name="RichTextLabel" type="RichTextLabel" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Credits" unique_id=38524784]
 layout_mode = 2
 text = "Gear Calculator:
 Stole the implementation from SprocketTools/Colson and reworked it to work with the Conversion Tool
 
 Formulas originally provided by A1exAndro and Obihornchen in the Sprocket Discord"
 
-[node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer"]
-visible = false
+[node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1907954524]
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15
@@ -915,25 +965,26 @@ theme_override_constants/margin_right = 15
 theme_override_constants/margin_bottom = 15
 metadata/_tab_index = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings" unique_id=1901533769]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="FilepathSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="FilepathSection" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1414010145]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=1374447086]
 layout_mode = 2
 tooltip_text = "Advanced Settings Menu"
 theme_override_constants/separation = 587
 
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/HBoxContainer" unique_id=123826888]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Filepaths"
 
-[node name="TextureButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer"]
+[node name="AdvancedSettingsButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/HBoxContainer" unique_id=353942218]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "*Work in progress"
@@ -942,8 +993,8 @@ texture_normal = ExtResource("10_7he56")
 texture_pressed = ExtResource("10_7he56")
 texture_hover = ExtResource("10_30d8k")
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer/TextureButton"]
-layout_mode = 2
+[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/HBoxContainer/AdvancedSettingsButton" unique_id=1593634068]
+layout_mode = 0
 offset_left = -126.705
 offset_top = -0.795
 offset_right = -0.950005
@@ -951,181 +1002,236 @@ offset_bottom = 19.205
 theme_override_font_sizes/font_size = 14
 text = "Advanced Settings"
 
-[node name="InputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+[node name="InputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=1734289005]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/InputFilepath" unique_id=2131276183]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Input File Path:"
 
-[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+[node name="InputPath" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/InputFilepath" unique_id=625111727]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Set default path for loading files"
+editable = false
 caret_blink = true
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/InputFilepath"]
+[node name="FileInputBrowse" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/InputFilepath" unique_id=173673315]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="OutputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+[node name="OutputFilepath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=950201336]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/OutputFilepath" unique_id=691884345]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Output File Path:"
 
-[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+[node name="OutputPath" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/OutputFilepath" unique_id=1426343726]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Set default path for saving files"
+editable = false
 caret_blink = true
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/OutputFilepath"]
+[node name="FileOutputBrowse" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/OutputFilepath" unique_id=48662779]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="PreviewFilePath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection"]
+[node name="PreviewFilePath" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=665799601]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+[node name="InputLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/PreviewFilePath" unique_id=881784122]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 text = "Preview File Path:"
 
-[node name="PathInput" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+[node name="PreviewPath" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/PreviewFilePath" unique_id=863682496]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Set the path where you'll load previews from"
+editable = false
 caret_blink = true
 
-[node name="BrowseButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/PreviewFilePath"]
+[node name="FilePreviewBrowse" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/PreviewFilePath" unique_id=918273951]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="PreviewSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1799285874]
 layout_mode = 2
 
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings" unique_id=185391872]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Preview Settings"
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer"]
-layout_direction = 2
+[node name="ColorOptions" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings" unique_id=1094549245]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "Auto-preview loaded files:"
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
-text = "
-"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="LeftPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions" unique_id=691478438]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="AutoPreviewLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/LeftPanel" unique_id=414956796]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Auto-preview:"
+vertical_alignment = 1
+
+[node name="WireframeColorLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/LeftPanel" unique_id=1659335505]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Wireframe Color:"
+vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
-layout_mode = 2
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+[node name="MeshColorLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/LeftPanel" unique_id=723895241]
+custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 15
 text = "Model Color:"
+vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+[node name="RightPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions" unique_id=57632451]
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="AutoPreviewCheck" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/RightPanel" unique_id=1206365799]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
+text = "
+"
+
+[node name="WireframeOptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/RightPanel" unique_id=1204835890]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="MeshOptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/PreviewSettings/ColorOptions/RightPanel" unique_id=445401240]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="OtherSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=186600289]
 layout_mode = 2
 
-[node name="OtherSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
-layout_mode = 2
-
-[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings"]
+[node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings" unique_id=1798653530]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
 text = "Other Settings"
 
-[node name="GridContainer" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings"]
+[node name="OtherSettingsContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings" unique_id=446120376]
 layout_mode = 2
-theme_override_constants/h_separation = 15
-columns = 2
+size_flags_vertical = 3
 
-[node name="Theme" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/GridContainer"]
+[node name="LeftPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer" unique_id=2067417248]
+layout_mode = 2
+
+[node name="ThemeLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/LeftPanel" unique_id=1397168526]
+custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
 text = "Theme:"
+vertical_alignment = 1
 
-[node name="OptionButton" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/GridContainer"]
-layout_mode = 2
-
-[node name="EnableNetwork" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings"]
-layout_mode = 2
-theme_override_constants/separation = 0
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/EnableNetwork"]
+[node name="NetworkLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/LeftPanel" unique_id=1476897831]
+custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
 tooltip_text = "Enable network features like 
 checking for updates"
 mouse_filter = 0
-text = "Enable Network Features:"
+text = "Enable Network:"
+vertical_alignment = 1
 
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/OtherSettings/EnableNetwork"]
+[node name="UseNativeLabe" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/LeftPanel" unique_id=1896263889]
+custom_minimum_size = Vector2(150, 30)
 layout_mode = 2
 tooltip_text = "Enable network features like 
 checking for updates"
-theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
+mouse_filter = 0
+text = "Use Native Menus:"
+vertical_alignment = 1
+
+[node name="RightPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer" unique_id=1139559579]
+layout_mode = 2
+alignment = 1
+
+[node name="ThemeOptions" type="OptionButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/RightPanel" unique_id=818876472]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(125, 31)
+layout_mode = 2
+alignment = 1
+
+[node name="NetworkButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/RightPanel" unique_id=993069996]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Enable network features like 
+checking for updates"
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
 text = "
 "
 
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="NativeMenusButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/OtherSettings/OtherSettingsContainer/RightPanel" unique_id=161095303]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Enable network features like 
+checking for updates"
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
+text = "
+"
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1978555631]
 layout_mode = 2
 
-[node name="SaveSettingsButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer"]
+[node name="SaveSettingsButton" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1480797356]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBoxFlat_primary_button_normal")
 text = "   Save Settings   "
 
-[node name="StatusSection" type="VBoxContainer" parent="MainPanel/VBoxContainer"]
+[node name="StatusSection" type="VBoxContainer" parent="MainPanel/VBoxContainer" unique_id=912262777]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ProgressBar" type="ProgressBar" parent="MainPanel/VBoxContainer/StatusSection"]
+[node name="ProgressBar_U" type="ProgressBar" parent="MainPanel/VBoxContainer/StatusSection" unique_id=1161879681]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progressbar_bg")
 value = 72.3
 show_percentage = false
 
-[node name="PercentLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection/ProgressBar"]
+[node name="PercentLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection/ProgressBar_U" unique_id=249289521]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -1144,13 +1250,15 @@ text = "0%"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="StatusLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection"]
+[node name="StatusLabel" type="Label" parent="MainPanel/VBoxContainer/StatusSection" unique_id=875529949]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(1, 1)
 layout_mode = 2
 text = "Ready"
 autowrap_mode = 3
 
-[node name="Update" type="Button" parent="."]
+[node name="Update" type="Button" parent="." unique_id=807859585]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -1163,3 +1271,7 @@ offset_top = -31.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "Update Available"
+
+[node name="DirectionalLight2D" type="DirectionalLight2D" parent="." unique_id=1991091783]
+blend_mode = 2
+height = 0.5

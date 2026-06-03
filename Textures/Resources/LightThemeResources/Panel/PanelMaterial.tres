@@ -1,0 +1,8 @@
+[gd_resource type="CanvasTexture" format=3 uid="uid://bup4kd6nro37w"]
+
+[ext_resource type="Texture2D" uid="uid://bkoytc0ojy4xm" path="res://Textures/Resources/LightThemeResources/Panel/Squares_Light_albedo.png" id="1_gx1ex"]
+[ext_resource type="Texture2D" uid="uid://d2nn7cjracweg" path="res://Textures/Resources/LightThemeResources/Panel/Squares_Light_normal.png" id="2_hdgxj"]
+
+[resource]
+diffuse_texture = ExtResource("1_gx1ex")
+normal_texture = ExtResource("2_hdgxj")

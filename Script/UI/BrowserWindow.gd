@@ -17,18 +17,18 @@ var selected_filter_index: int = 0
 var config_manager = null
 
 # UI References
-@onready var file_list = $VBoxContainer/FileListContainer/HBoxContainer/FileList
-@onready var path_option = $VBoxContainer/SearchSection/HBoxContainer/OptionButton
-@onready var path_input = $VBoxContainer/SearchSection/HBoxContainer/LineEdit
-@onready var filename_section = $VBoxContainer/UserSection/VBoxContainer/FileNameSection
-@onready var filename_input = $VBoxContainer/UserSection/VBoxContainer/FileNameSection/LineEdit
-@onready var extension_option = $VBoxContainer/UserSection/VBoxContainer/FileNameSection/ValidExtension
-@onready var select_button = $VBoxContainer/UserSection/VBoxContainer/Buttons/Select
-@onready var cancel_button = $VBoxContainer/UserSection/VBoxContainer/Buttons/Cancel
-@onready var parent_button = $VBoxContainer/SearchSection/HBoxContainer/ParentFolder
-@onready var refresh_button = $VBoxContainer/SearchSection/HBoxContainer/Refresh
-@onready var last_page_button = $VBoxContainer/SearchSection/HBoxContainer/LastPage
-@onready var next_page_button = $VBoxContainer/SearchSection/HBoxContainer/NextPage
+@onready var file_list = %FileList
+@onready var path_option = %PathOptions
+@onready var path_input = %PathInput
+@onready var filename_section = %FileNameSection
+@onready var filename_input = %FileNameInput
+@onready var extension_option = %ValidExtension
+@onready var select_button = %Select
+@onready var cancel_button = %Cancel
+@onready var parent_button = %ParentFolder
+@onready var refresh_button = %Refresh
+@onready var last_page_button = %LastPage
+@onready var next_page_button = %NextPage
 
 var file_icons = {}
 var folder_icon: Texture2D = null
@@ -54,7 +54,7 @@ func _ready():
 	last_page_button.pressed.connect(_on_last_page_pressed)
 	next_page_button.pressed.connect(_on_next_page_pressed)
 	
-	size = Vector2i(800, 500)
+	size = Vector2i(820, 500) ## was 800
 	title = "File Browser"
 	transient = true
 	exclusive = true

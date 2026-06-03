@@ -6,9 +6,10 @@ var current_theme_name = "Default"
 var config_manager = null
 
 var themes = {
-	"Default": preload("res://Textures/Resources/DefaultTheme.tres"),
-	"Light": preload("res://Textures/Resources/LightTheme.tres"),
-	"Purple": preload("res://Textures/Resources/RoyalPurpleTheme.tres"),
+	"Default": preload("res://Textures/Resources/DefaultThemeResources/DefaultTheme.tres"),
+	"Light": preload("res://Textures/Resources/LightThemeResources/LightTheme.tres"),
+	"Purple": preload("res://Textures/Resources/PurpleThemeResources/RoyalPurpleTheme.tres"),
+	"Legacy": preload("res://Textures/Resources/LegacyTheme.tres")
 }
 
 # Currently Handling TextureButton images since they cant be changed via resource
@@ -31,6 +32,13 @@ var theme_textures = {
 		"settings": {
 			"normal": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20.png"),
 			"hover": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20Hover.png")
+		},
+		"gear": preload("res://Textures/2D/Gear.png")
+	},
+	"Legacy": {
+		"settings": {
+			"normal": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png"),
+			"hover": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png")
 		},
 		"gear": preload("res://Textures/2D/Gear.png")
 	},
@@ -106,8 +114,8 @@ func load_theme_preference():
 
 # Improve this
 func update_all_texture_buttons():
-	var advanced_settings_button = get_parent().get_node_or_null("MainPanel/VBoxContainer/TabContainer/Settings/VBoxContainer/FilepathSection/HBoxContainer/TextureButton")
-	var advanced_preview_settings_button = get_parent().get_node_or_null("MainPanel/VBoxContainer/TabContainer/Model Preview/VBoxContainer/InputSection/HBoxContainer2/TextureButton")
+	var advanced_settings_button = get_node_or_null("%AdvancedSettingsButton")
+	var advanced_preview_settings_button = get_node_or_null("%PreviewAdvancedSettings")
 	
 	if advanced_settings_button:
 		apply_themed_textures_to_button(advanced_settings_button, "settings")

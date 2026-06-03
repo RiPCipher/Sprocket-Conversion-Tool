@@ -1,7 +1,7 @@
 extends Node
 
 # Current version - UPDATE THIS WITH EACH RELEASE
-const CURRENT_VERSION = "0.5.0"
+const CURRENT_VERSION = "0.6.0" # Previous: 0.5.0
 
 # API
 const GITHUB_API_URL = "https://api.github.com/repos/RiPCipher/Sprocket-Conversion-Tool/releases/latest"
@@ -22,7 +22,6 @@ var version_check_request: HTTPRequest
 var download_request: HTTPRequest
 
 func _ready():
-	# Create HTTPRequest nodes
 	version_check_request = HTTPRequest.new()
 	add_child(version_check_request)
 	version_check_request.request_completed.connect(_on_version_check_completed)
@@ -31,16 +30,13 @@ func _ready():
 	add_child(download_request)
 	download_request.request_completed.connect(_on_download_completed)
 	
-	# Wait for ConfigManager to be ready
 	await get_tree().process_frame
 	
-	# Check for updates if network is enabled in config
-	if ConfigManager.settings.ui.get("network_enabled", false):
+	if %ConfigManager.settings.ui.get("network_enabled", false):
 		check_for_updates()
 
 func check_for_updates():
-	# Only check if network is enabled in ConfigManager
-	if not ConfigManager.settings.ui.get("network_enabled", false):
+	if not %ConfigManager.settings.ui.get("network_enabled", false):
 		return
 	
 	Debug.log("Checking for updates...")
@@ -73,7 +69,6 @@ func _on_version_check_completed(result, response_code, headers, body):
 		Debug.log("No version found in response")
 		return
 	
-	# Parse compatible launchers from changelog
 	compatible_launchers = _parse_compatible_launchers(changelog)
 	
 	# Compare versions
@@ -84,7 +79,7 @@ func _on_version_check_completed(result, response_code, headers, body):
 		var assets = data.get("assets", [])
 		for asset in assets:
 			var asset_name = asset.get("name", "")
-			if asset_name.ends_with(".pck"):
+			if asset_name == "Sprocket_Conversion_Tool.pck":
 				pck_download_url = asset.get("browser_download_url", "")
 				break
 		
@@ -107,7 +102,7 @@ func _on_version_check_completed(result, response_code, headers, body):
 func _parse_compatible_launchers(release_body: String) -> Array:
 	var launchers = []
 	
-	# Look for the pattern "Compatible Launcher(s):"
+	# Look for "Compatible Launcher(s):"
 	var lines = release_body.split("\n")
 	for line in lines:
 		var lower_line = line.to_lower()

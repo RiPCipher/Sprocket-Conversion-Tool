@@ -1,38 +1,28 @@
-Changes for 0.5.0
+Changes for 0.6.0
+Compatable Launcher(s): v2.0
 
-# Fixes
-- Removed improper variable assignement and signaling that was causing import errors to default to code 0,
-  even when the tool had enough information to present an actual error code
-- Implemented potential crash fix (TBD)
+## Code
+- Reworked UI code to utilize unique names instead of paths. Ensures UI edits do not break the program and makes the scripts more readable
+- Refactored main.gd to slim it from being 1000+ to around 300 lines. Moved functionalities to various controller scripts (UpdateController, PreviewController, ConversionController, BrowserController)
+- Created and added an Editor Plugin that allows me to dump the editor error/warning logs on demand and all at once
+- Removed ConfigManager from the launcher and tool autoloads. Now loads along with the other managers. This change enables me to make edits without needing to update the launcher.
+- Small change to update manager to ensure it only attempts to grab .pck files named "Sprocket_Conversion_Tool.pck"
+- Removed unused hardcoded keybinds from the project 
+- Added ability to load a custom Splash Screen by adding a .png to the data folder and renaming it to "SplashScreen.png"
 
-# New Update System
-- Implemented an update system that is opt-in in the settings (Enable Network Features)
-  when toggled on, it will check the github repo for the latest updates, present a button to download, install the update, and restart the application
-  Note: This will be used for most minor updates and fixes going forward, however, any updates that affect the new launcher will get their own release and wont utilize the update system
+## UI
+- Added a custom Splash Screen to the project
+- Anchored some UI elements so they stay aligned when the screen size changes
+- Added a Use Native Windows button for the file browser that replaces the custom window with a native one
+- Minor Margin Adjustments to the Main Panel
+- Reworked Theme Textures. Some now have normal maps.
+- Added 2D Lighting
+- Adjusted various elements of the UI to improve look/usability/uniformity
+- Hid splash text
+- Temporarily hid the Tools Tab/Gear Calculator as it is currently outdated
 
-# Error system
-- added additional blueprint checks in the format handler to ensure only compatable blueprints can be handled
-- added new error messages
-- clarified certain error messages to be more explicit
+## Engine Update
+- Updated Engine to Godot 4.6.stable to keep tool in line with my other projects. Re-download of tool required
 
-# Debug System
-- Temporarily disabled until a more seamless method is implemented
-
-# Misc
-
-# Code:
-Threading/Memory: (Hopefully these changes continue to help with compatability)
-- Finished removing left over ThreadPool code, tool now runs on a single worker thread entirely
-
-Other:
-- Removed left over testing code for the error system that should not have been present in the last version
-- Moved ConfigManager to Autoload
-
-# Renderer:
-- Disabled the fancy lighting and added a reflection probe in its place
-
-# UI:
-- Implemented Minecraft-like splash message system
-- Removed Tab saving from the tool entirely
-- Modified Checkbox Styling
-- Implemented a Gear Calculator into the tool under a new "Tools" Tab
+## Graphical Settings
+- Adjusted SSAA from FXAA to SMAA

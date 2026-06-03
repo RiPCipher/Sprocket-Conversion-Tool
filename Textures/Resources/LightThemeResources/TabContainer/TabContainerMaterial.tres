@@ -1,0 +1,8 @@
+[gd_resource type="CanvasTexture" format=3 uid="uid://c0gsjdk4p0nb3"]
+
+[ext_resource type="Texture2D" uid="uid://c14l00betc0n3" path="res://Textures/Resources/LightThemeResources/TabContainer/TabContainer_Grid.tres" id="1_8u3r0"]
+[ext_resource type="Texture2D" uid="uid://birkbi164e8ty" path="res://Textures/Resources/LightThemeResources/TabContainer/TabContainer_Normal.tres" id="2_xwnvb"]
+
+[resource]
+diffuse_texture = ExtResource("1_8u3r0")
+normal_texture = ExtResource("2_xwnvb")

@@ -4,31 +4,31 @@ signal settings_saved(keybinds)
 signal settings_closed
 
 # UI References
-@onready var tab_container = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer
+@onready var tab_container = %TabContainer
 
 # Keybind UI Elements
-@onready var recenter_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/RecenterChange
-@onready var recenter_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/RecenterCurrent
-@onready var pan_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/PanCameraChange
-@onready var pan_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/PanCameraCurrent
-@onready var zoom_in_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/ZoomInChange
-@onready var zoom_in_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/ZoomInCurrent
-@onready var zoom_out_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/ZoomOutChange
-@onready var zoom_out_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/ZoomOutCurrent
-@onready var reset_button = $"ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/Reset Button"
-@onready var exit_key_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer/ExitCurrent
-@onready var _exit_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/OtherBindsContainer/ExitChange
-@onready var free_cam_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FreeCamCurrent
-@onready var free_cam_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FreeCamChange
-@onready var fov_increase_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FOVIncreaseCurrent
-@onready var fov_increase_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FOVIncreaseChange
-@onready var fov_decrease_label = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FOVDecreaseCurrent
-@onready var fov_decrease_button = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Keybinds/CameraBindsContainer/BindsGridContainer/FOVDecreaseChange
+@onready var recenter_button = %RecenterChange
+@onready var recenter_label = %RecenterCurrent
+@onready var pan_button = %PanCameraChange
+@onready var pan_label = %PanCameraCurrent
+@onready var zoom_in_button = %ZoomInChange
+@onready var zoom_in_label = %ZoomInCurrent
+@onready var zoom_out_button = %ZoomOutChange
+@onready var zoom_out_label = %ZoomOutCurrent
+@onready var reset_button = %"Reset Button"
+@onready var exit_key_label = %ExitCurrent
+@onready var _exit_button = %ExitChange
+@onready var free_cam_label = %FreeCamCurrent
+@onready var free_cam_button = %FreeCamChange
+@onready var fov_increase_label = %FOVIncreaseCurrent
+@onready var fov_increase_button = %FOVIncreaseChange
+@onready var fov_decrease_label = %FOVDecreaseCurrent
+@onready var fov_decrease_button = %FOVDecreaseChange
 
 
 # Previewer Settings
-@onready var camera_fov_slider = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer/GridContainer/CameraFOVSlider
-@onready var camera_fov_line_edit = $ScrollContainer/PanelContainer/VBoxContainer/TabContainer/Previewer/HBoxContainer/GridContainer/FOVEdit
+@onready var camera_fov_slider = %CameraFOVSlider
+@onready var camera_fov_line_edit = %FOVEdit
 
 
 # Node Reference
