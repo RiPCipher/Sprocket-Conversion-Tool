@@ -236,6 +236,10 @@ class StandardBlueprintHandler:
 		if blueprint_data.has("format"):
 			model_data.set_metadata("blueprint_format", blueprint_data.format)
 		
+		# Smothing
+		if blueprint_data.has("smoothAngle"):
+			model_data.set_metadata("smooth_angle", float(blueprint_data.smoothAngle))
+		
 		model_data.format_version = blueprint_data.get("v", "0.2")
 		
 		print("StandardBlueprintHandler: Loaded model with " + str(triangle_count) + " triangles and " + 

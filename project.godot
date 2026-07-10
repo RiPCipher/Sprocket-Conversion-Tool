@@ -14,8 +14,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="Sprocket Conversion Tool 0.6.0"
-config/version="0.6.0"
+config/name="Sprocket Conversion Tool 0.6.1"
+config/version="0.6.1"
 config/tags=PackedStringArray("sprockettooldl")
 run/main_scene="res://Scenes/Converter.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
@@ -42,3 +42,7 @@ enabled=PackedStringArray("res://addons/_editor_debug/plugin.cfg")
 Lighting=""
 OmniLight=""
 Spotlight=""
+
+[gui]
+
+timers/tooltip_delay_sec=0.3

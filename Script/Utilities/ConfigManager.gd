@@ -23,7 +23,9 @@ var settings = {
 		"wireframe_color_index": 0,
 		"mesh_color_index": 0,
 		"grid_visible": true,
-		"camera_fov": 75
+		"camera_fov": 75,
+		
+		"apply_smoothing": true
 	},
 	"keybinds": {
 		"recenter_key": KEY_R,
@@ -207,7 +209,7 @@ func set_output_dir(path: String) -> void:
 	settings.paths.output_dir = path
 
 func get_auto_preview() -> bool:
-	return settings.preview.auto_preview if settings.preview.has("auto_preview") else true
+	return settings.preview.auto_preview if settings.preview.has("auto_preview") else false
 
 func set_auto_preview(value: bool) -> void:
 	settings.preview.auto_preview = value
@@ -291,3 +293,9 @@ func set_native(value: bool) -> void:
 
 func get_native() -> bool:
 	return settings.ui.force_native_windows if settings.ui.has("force_native_windows") else false
+
+func get_apply_smoothing() -> bool:
+	return settings.preview.apply_smoothing if settings.preview.has("apply_smoothing") else true
+
+func set_apply_smoothing(value: bool) -> void:
+	settings.preview.apply_smoothing = value

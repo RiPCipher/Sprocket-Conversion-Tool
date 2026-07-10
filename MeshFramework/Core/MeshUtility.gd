@@ -355,3 +355,42 @@ static func validate_vertex_indices(model_data: ModelData) -> bool:
 		return false
 	
 	return true
+	
+static func calculate_corner_normals(
+	positions: PackedVector3Array,
+	faces: Array,
+	angle_degrees: float
+) -> Array:
+	var threshold := cos(deg_to_rad(clampf(angle_degrees, 0.0, 180.0))) - 1e-6
+
+	var face_normals: Array[Vector3] = []
+	for face in faces:
+		var n := Vector3.ZERO
+		var count = face.size()
+		for i in count:
+			var cur: Vector3 = positions[face[i]]
+			var nxt: Vector3 = positions[face[(i + 1) % count]]
+			n.x += (cur.y - nxt.y) * (cur.z + nxt.z)
+			n.y += (cur.z - nxt.z) * (cur.x + nxt.x)
+			n.z += (cur.x - nxt.x) * (cur.y + nxt.y)
+		face_normals.append(n.normalized() if n.length_squared() > 1e-12 else Vector3.UP)
+
+	var vertex_faces := {}
+	for f in faces.size():
+		for v in faces[f]:
+			if not vertex_faces.has(v):
+				vertex_faces[v] = []
+			vertex_faces[v].append(f)
+
+	var corner_normals := []
+	for f in faces.size():
+		var this_n: Vector3 = face_normals[f]
+		var row: Array[Vector3] = []
+		for v in faces[f]:
+			var acc := Vector3.ZERO
+			for other in vertex_faces[v]:
+				if this_n.dot(face_normals[other]) >= threshold:
+					acc += face_normals[other]
+			row.append(-acc.normalized() if acc.length_squared() > 1e-12 else this_n)
+		corner_normals.append(row)
+	return corner_normals

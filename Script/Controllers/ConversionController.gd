@@ -120,10 +120,11 @@ func _on_convert_pressed():
 	_set_buttons_enabled(false)
 
 	var options = {
-		"include_materials": false,
-		"include_normals": false,
-		"calculate_normals": true,
-		"smooth_shading": false
+	"include_materials": false,
+	"include_normals": false,
+	"calculate_normals": true,
+	"smooth_shading": false,
+	"apply_smoothing": config_manager.get_apply_smoothing()
 	}
 
 	if not conversion_worker.is_busy():

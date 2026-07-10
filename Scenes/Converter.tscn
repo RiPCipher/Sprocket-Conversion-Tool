@@ -3,101 +3,19 @@
 [ext_resource type="Script" uid="uid://b8mqtsyrexhp1" path="res://Script/Main/Main.gd" id="1_v2331"]
 [ext_resource type="Script" uid="uid://cijvk3n8hecpv" path="res://Script/Utilities/ConfigManager.gd" id="2_a2d5d"]
 [ext_resource type="Script" uid="uid://cdhlv0ucek8xu" path="res://Script/Utilities/UpdateManager.gd" id="4_30d8k"]
-[ext_resource type="Shader" uid="uid://gn5jsag0jtt4" path="res://Textures/2D/Shaders/HotSteel.gdshader" id="4_dp8xd"]
-[ext_resource type="Texture2D" uid="uid://xwqxqd3kpjxv" path="res://Textures/2D/Gear.png" id="5_6dhoo"]
 [ext_resource type="Script" uid="uid://xkqvo42gik8e" path="res://Script/Utilities/Utility.gd" id="5_fiwj2"]
 [ext_resource type="Script" uid="uid://b7ku71428fvl0" path="res://Script/UI/UIManager.gd" id="7_ditv3"]
 [ext_resource type="Texture2D" uid="uid://sc15jb0ul2q5" path="res://Textures/2D/Settings/Icons/Wireframe_View_20x20.png" id="9_qlaan"]
 [ext_resource type="Texture2D" uid="uid://dg31o5roymxhh" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png" id="10_7he56"]
+[ext_resource type="PackedScene" uid="uid://703p6jue40c8" path="res://Assets/gear/Gear.glb" id="10_7x80q"]
 [ext_resource type="Texture2D" uid="uid://f0naq12wblro" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png" id="10_30d8k"]
 [ext_resource type="Texture2D" uid="uid://gyimbv63hkmg" path="res://Textures/2D/Settings/Icons/Mixed_View_20x20.png" id="10_tb4ts"]
-[ext_resource type="Script" uid="uid://q8401xniglnh" path="res://Script/Tools/GearCalculator.gd" id="11_ditv3"]
+[ext_resource type="Script" uid="uid://bwswi2bxmukct" path="res://Assets/gear/gear.gd" id="11_j7rct"]
 [ext_resource type="Texture2D" uid="uid://can37hwf3rnk8" path="res://Textures/2D/Settings/Icons/Cut_View_20x20.png" id="11_mqb3m"]
 [ext_resource type="Script" uid="uid://bjfa88gtkwpoq" path="res://Script/Controllers/BrowserController.gd" id="20_brwsr"]
 [ext_resource type="Script" uid="uid://wsi8c0pm0noi" path="res://Script/Controllers/PreviewController.gd" id="21_prvw"]
 [ext_resource type="Script" uid="uid://c5h4by7e4cbj5" path="res://Script/Controllers/ConversionController.gd" id="22_cnvrt"]
 [ext_resource type="Script" uid="uid://ccg45h5shlm8t" path="res://Script/Controllers/UpdateController.gd" id="23_updt"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_on7rp"]
-shader = ExtResource("4_dp8xd")
-shader_parameter/glow_intensity = 0.6
-shader_parameter/heat_level = 0.7
-shader_parameter/pulse_speed = 1.0
-shader_parameter/pulse_amplitude = 0.18
-
-[sub_resource type="Animation" id="Animation_bt3eo"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:pivot_offset")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(20, 20)]
-}
-
-[sub_resource type="Animation" id="Animation_sd4cv"]
-resource_name = "Spin"
-length = 30.0
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 30),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 6.28319]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:pivot_offset")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 30),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(20, 20), Vector2(20, 20)]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_r1wue"]
-_data = {
-&"RESET": SubResource("Animation_bt3eo"),
-&"Spin": SubResource("Animation_sd4cv")
-}
-
-[sub_resource type="Gradient" id="Gradient_jpgft"]
-colors = PackedColorArray(1, 0.509804, 0.254902, 0.517647, 0, 0, 0, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_futdp"]
-gradient = SubResource("Gradient_jpgft")
-width = 80
-height = 80
-fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 1)
-metadata/_snap_enabled = true
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qlaan"]
 
@@ -210,38 +128,36 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Gear" type="Control" parent="Background" unique_id=453214657]
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Icon" type="TextureRect" parent="Background/Gear" unique_id=1210886992]
-unique_name_in_owner = true
-material = SubResource("ShaderMaterial_on7rp")
+[node name="3DGUI" type="SubViewportContainer" parent="Background" unique_id=670802466]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 119.0
-offset_top = 46.0
-offset_right = 119.0
-offset_bottom = 46.0
-grow_horizontal = 2
-grow_vertical = 2
-scale = Vector2(3, 3)
-pivot_offset = Vector2(20, 20)
-texture = ExtResource("5_6dhoo")
-expand_mode = 4
+offset_right = 321.0
+offset_bottom = 241.0
+stretch = true
 
-[node name="AnimationPlayer_U" type="AnimationPlayer" parent="Background/Gear/Icon" unique_id=2032408806]
-unique_name_in_owner = true
-libraries/ = SubResource("AnimationLibrary_r1wue")
+[node name="SubViewport" type="SubViewport" parent="Background/3DGUI" unique_id=1058263076]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+msaa_3d = 3
+anisotropic_filtering_level = 3
+size = Vector2i(321, 241)
+render_target_update_mode = 4
 
-[node name="Glow1" type="Sprite2D" parent="Background/Gear/Icon" unique_id=1495068581]
-show_behind_parent = true
-position = Vector2(20.3333, 20.3333)
-scale = Vector2(0.333333, 0.333333)
-texture = SubResource("GradientTexture2D_futdp")
+[node name="World" type="Node3D" parent="Background/3DGUI/SubViewport" unique_id=1002159887]
+
+[node name="Camera3D" type="Camera3D" parent="Background/3DGUI/SubViewport/World" unique_id=212151095]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1.9597819, -0.8059709)
+
+[node name="Gear" parent="Background/3DGUI/SubViewport/World" unique_id=737884901 instance=ExtResource("10_7x80q")]
+transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, -0.715, 0.99, -1.384)
+script = ExtResource("11_j7rct")
+
+[node name="SpotLight3D" type="SpotLight3D" parent="Background/3DGUI/SubViewport/World" unique_id=446722978]
+transform = Transform3D(0.6548596, 0.16228637, 0.7381207, -0.75575054, 0.14062151, 0.63958323, 3.762386e-10, -0.9766723, 0.21473533, 1.435, 5.376, -0.901)
+light_energy = 12.089
+light_indirect_energy = 0.0
+spot_attenuation = 1.4
+spot_angle_attenuation = 0.23325826
 
 [node name="Version" type="Label" parent="." unique_id=994760369]
 unique_name_in_owner = true
@@ -675,280 +591,11 @@ metadata/_tab_index = 2
 
 [node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools" unique_id=880582472]
 layout_mode = 2
-current_tab = 1
-
-[node name="Gear Calculator" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer" unique_id=395541404]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 1
-theme_override_constants/margin_top = 1
-theme_override_constants/margin_right = 1
-theme_override_constants/margin_bottom = -10
-script = ExtResource("11_ditv3")
-metadata/_tab_index = 0
-
-[node name="Main" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator" unique_id=953434241]
-layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main" unique_id=254676194]
-layout_mode = 2
-
-[node name="HBody" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main" unique_id=2144660742]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="LeftPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=476906798]
-layout_mode = 2
-size_flags_vertical = 0
-
-[node name="EraAndStyle" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=71886192]
-layout_mode = 2
-
-[node name="VehicleEra" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=1251378714]
-layout_mode = 2
-
-[node name="WW1" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=1565705098]
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1" unique_id=1851773740]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/WW1" unique_id=529968882]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-text = "WW1"
-
-[node name="Interwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=1963388218]
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar" unique_id=728998034]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Interwar" unique_id=684289281]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-text = "Interwar"
-
-[node name="Earlywar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=173272678]
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar" unique_id=1328271334]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Earlywar" unique_id=1604940986]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-text = "Earlywar"
-
-[node name="Midwar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=857591445]
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar" unique_id=1749444407]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Midwar" unique_id=303414268]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-text = "Midwar"
-
-[node name="Latewar" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra" unique_id=781400428]
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar" unique_id=547910902]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/VehicleEra/Latewar" unique_id=921122636]
-custom_minimum_size = Vector2(75, 0)
-layout_mode = 2
-text = "Latewar"
-
-[node name="VSeparator" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=119138857]
-custom_minimum_size = Vector2(22.4, 0)
-layout_mode = 2
-
-[node name="TuningStyle" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle" unique_id=1373188820]
-layout_mode = 2
-
-[node name="BestAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1017239473]
-custom_minimum_size = Vector2(187.47, 0)
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel" unique_id=1386742470]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestAccel" unique_id=1934628585]
-custom_minimum_size = Vector2(149.405, 0)
-layout_mode = 2
-text = "Best Acceleration"
-
-[node name="FavorAccel" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=177255820]
-custom_minimum_size = Vector2(187.47, 0)
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel" unique_id=2017260549]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorAccel" unique_id=375972028]
-custom_minimum_size = Vector2(149.405, 0)
-layout_mode = 2
-text = "Favor Acceleration"
-
-[node name="Balanced" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=217701505]
-custom_minimum_size = Vector2(187.47, 0)
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced" unique_id=1599422838]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/Balanced" unique_id=1914419397]
-custom_minimum_size = Vector2(149.405, 0)
-layout_mode = 2
-text = "Balanced"
-
-[node name="FavorSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1426166959]
-custom_minimum_size = Vector2(187.47, 0)
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed" unique_id=2095886175]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/FavorSpeed" unique_id=341521045]
-custom_minimum_size = Vector2(149.405, 0)
-layout_mode = 2
-text = "Favor Top Speed"
-
-[node name="BestSpeed" type="GridContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle" unique_id=1924628428]
-custom_minimum_size = Vector2(187.47, 0)
-layout_mode = 2
-columns = 2
-
-[node name="CheckButton" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed" unique_id=847427205]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/EraAndStyle/TuningStyle/BestSpeed" unique_id=2104781009]
-custom_minimum_size = Vector2(149.405, 0)
-layout_mode = 2
-text = "Best Top Speed"
-
-[node name="HSeparator" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=578927801]
-layout_mode = 2
-
-[node name="Configuration" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel" unique_id=775048518]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="VehicleWeight" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1230746895]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight" unique_id=301068846]
-custom_minimum_size = Vector2(150, 15.925)
-layout_mode = 2
-text = " Vehicle Weight (T)"
-
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/VehicleWeight" unique_id=111968925]
-layout_mode = 2
-max_value = 999.0
-
-[node name="CylinderSize" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1871854573]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize" unique_id=1438782962]
-custom_minimum_size = Vector2(150, 15.925)
-layout_mode = 2
-text = " Cylinder Size (L)"
-
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderSize" unique_id=752387673]
-layout_mode = 2
-max_value = 999.0
-step = 0.01
-
-[node name="CylinderCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=909808620]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount" unique_id=416103990]
-custom_minimum_size = Vector2(150, 15.925)
-layout_mode = 2
-text = " Cylinder Count"
-
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/CylinderCount" unique_id=165540998]
-layout_mode = 2
-max_value = 999.0
-step = 2.0
-
-[node name="GearCount" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=1712898590]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount" unique_id=967838664]
-custom_minimum_size = Vector2(150, 15.925)
-layout_mode = 2
-text = " Gear Count"
-
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/GearCount" unique_id=217316907]
-layout_mode = 2
-min_value = 2.0
-max_value = 999.0
-value = 2.0
-
-[node name="Sprocket Diameter" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration" unique_id=136987164]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter" unique_id=1168942684]
-custom_minimum_size = Vector2(150, 15.925)
-layout_mode = 2
-text = " Sprocket Diameter"
-
-[node name="SpinBox" type="SpinBox" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/LeftPanel/Configuration/Sprocket Diameter" unique_id=652932898]
-layout_mode = 2
-max_value = 999.0
-step = 0.01
-
-[node name="VSeparator3" type="VSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=1870641389]
-layout_mode = 2
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody" unique_id=423142199]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="RightPanel" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer" unique_id=839837749]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 5
-
-[node name="TopSpeedKMH" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=868066433]
-layout_mode = 2
-text = "Top Speed (km/h):"
-horizontal_alignment = 1
-
-[node name="TopSpeedMPH" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=1957971383]
-layout_mode = 2
-text = "Top Speed (mph):"
-horizontal_alignment = 1
-
-[node name="Upshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=1580575438]
-layout_mode = 2
-text = "Upshift:"
-horizontal_alignment = 1
-
-[node name="Downshift" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=706458697]
-layout_mode = 2
-text = "Downshift:"
-horizontal_alignment = 1
-
-[node name="HSeparator3" type="HSeparator" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Gear Calculator/Main/HBody/ScrollContainer/RightPanel" unique_id=403232355]
-layout_mode = 2
+current_tab = 0
 
 [node name="Credits" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer" unique_id=1083511847]
 layout_mode = 2
-metadata/_tab_index = 1
+metadata/_tab_index = 0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Credits" unique_id=38524784]
 layout_mode = 2
@@ -981,7 +628,7 @@ theme_override_constants/separation = 587
 [node name="SectionLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/HBoxContainer" unique_id=123826888]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.8, 1, 1)
-text = "Filepaths"
+text = "File Management"
 
 [node name="AdvancedSettingsButton" type="TextureButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/HBoxContainer" unique_id=353942218]
 unique_name_in_owner = true
@@ -1071,6 +718,21 @@ custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "Browse..."
 
+[node name="SmoothContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=823001043]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="SmoothingLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/SmoothContainer" unique_id=412607410]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Apply Smoothing:"
+
+[node name="SmoothToggle" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/SmoothContainer" unique_id=308140920]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Attempts to match Sprockets smoothing when exporting to .obj"
+button_pressed = true
+
 [node name="PreviewSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1799285874]
 layout_mode = 2
 
@@ -1113,6 +775,7 @@ size_flags_horizontal = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
+tooltip_text = "Autoloads models into the previewer"
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
 text = "
@@ -1196,8 +859,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 size_flags_horizontal = 0
-tooltip_text = "Enable network features like 
-checking for updates"
+tooltip_text = "Use Windows Native Menus instead of the custom menus"
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_7x80q")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_7he56")
 text = "
