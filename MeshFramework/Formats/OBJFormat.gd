@@ -380,6 +380,7 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 		export_options[key] = options[key]
 	
 	var part_idx = model_data.get_active_part_index()
+	var reverse_winding: bool = model_data.source_format == "blueprint"
 	
 	if model_data.meshes[part_idx].get_surface_count() == 0:
 		result.error = "No surfaces to export"
@@ -406,17 +407,37 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 			uv_lines.append("vt " + str(uv.x) + " " + str(1.0 - uv.y))
 		output_lines.append("\n".join(uv_lines))
 	
-	if export_options.get("include_normals", false) and normals.size() > 0:
+	#findthe smoothing-angle path
+	var smooth_angle_meta = null
+	if model_data.has_metadata("smooth_angle"):
+		smooth_angle_meta = float(model_data.get_metadata("smooth_angle"))
+	var use_smooth_normals: bool = export_options.get("apply_smoothing", true) and smooth_angle_meta != null and model_data.has_part_metadata(part_idx, "original_faces")
+	
+	var corner_vn := []
+	
+	if use_smooth_normals:
+		var smooth_faces = model_data.get_part_metadata(part_idx, "original_faces")
+		var corner_normals = MeshUtility.calculate_corner_normals(vertices, smooth_faces, smooth_angle_meta)
+		var normal_lines = []
+		var normal_lookup = {}
+		
+		for f in range(corner_normals.size()):
+			var row := []
+			for n in corner_normals[f]:
+				var key = "%d_%d_%d" % [roundi(n.x * 10000), roundi(n.y * 10000), roundi(n.z * 10000)]
+				if not normal_lookup.has(key):
+					normal_lines.append("vn %.6f %.6f %.6f" % [n.x, n.y, n.z])
+					normal_lookup[key] = normal_lines.size()
+				row.append(normal_lookup[key])
+			corner_vn.append(row)
+		
+		output_lines.append("\n".join(normal_lines))
+		
+	elif export_options.get("include_normals", false) and normals.size() > 0:
 		var normal_lines = []
 		for n in normals:
 			normal_lines.append("vn " + str(n.x) + " " + str(n.y) + " " + str(n.z))
 		output_lines.append("\n".join(normal_lines))
-	
-	if export_options.get("include_materials", false) and model_data.materials.size() > 0:
-		var mtl_filename = file_path.get_file().get_basename() + ".mtl"
-		output_lines.append("mtllib " + mtl_filename)
-		
-		_export_materials(model_data.materials, file_path.get_base_dir() + "/" + mtl_filename)
 
 	var has_uvs = uvs.size() > 0
 	var has_normals = normals.size() > 0
@@ -430,6 +451,9 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 		var materials = model_data.materials
 		var material_indices = model_data.part_material_indices[part_idx]
 		
+		if use_smooth_normals:
+			face_lines.append("s 1" if smooth_angle_meta > 0.0 else "s off")
+		
 		for face_idx in range(original_faces.size()):
 			var face = original_faces[face_idx]
 			
@@ -441,13 +465,24 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 					current_material = material.resource_name if material.resource_name else "material_" + str(material_index)
 					face_lines.append("usemtl " + current_material)
 			
+			var corner_order := range(face.size())
+			if reverse_winding:
+				corner_order.reverse()
+			
 			var face_parts = []
 			face_parts.append("f")
 			
-			for idx in face:
+			for corner_i in corner_order:
+				var idx = face[corner_i]
 				var obj_idx = str(int(idx) + 1)
 				
-				if has_both:
+				if use_smooth_normals:
+					var vn_idx = str(corner_vn[face_idx][corner_i])
+					if has_uvs:
+						face_parts.append(obj_idx + "/" + obj_idx + "/" + vn_idx)
+					else:
+						face_parts.append(obj_idx + "//" + vn_idx)
+				elif has_both:
 					face_parts.append(obj_idx + "/" + obj_idx + "/" + obj_idx)
 				elif has_uvs:
 					face_parts.append(obj_idx + "/" + obj_idx)
@@ -518,49 +553,6 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 	result.success = true
 	return result
 
-# Never Used // Could Remove
-func _export_materials(materials: Array, output_path: String) -> bool:
-	var file = FileAccess.open(output_path, FileAccess.WRITE)
-	if not file:
-		push_warning("OBJFormat: Failed to create material file: " + output_path)
-		return false
-	
-	file.store_line("# Material file exported from Mesh Framework")
-	file.store_line("# " + Time.get_datetime_string_from_system())
-	
-	for i in range(materials.size()):
-		var material = materials[i]
-		var material_name = material.resource_name if material.resource_name else "material_" + str(i)
-		
-		file.store_line("newmtl " + material_name)
-		
-		if material is StandardMaterial3D:
-			var albedo_color = material.albedo_color
-			file.store_line("Kd " + str(albedo_color.r) + " " + str(albedo_color.g) + " " + str(albedo_color.b))
-			file.store_line("d " + str(albedo_color.a))
-			
-			var roughness = material.roughness
-			file.store_line("Ns " + str((1.0 - roughness) * 100.0))
-			
-			var metallic = material.metallic
-			var spec_value = metallic * 0.8 + 0.2
-			file.store_line("Ks " + str(spec_value) + " " + str(spec_value) + " " + str(spec_value))
-			
-			if material.albedo_texture:
-				var texture_path = material.albedo_texture.resource_path
-				if texture_path.is_empty():
-					texture_path = output_path.get_base_dir() + "/" + material_name + ".png"
-				
-				file.store_line("map_Kd " + texture_path.get_file())
-		else:
-			file.store_line("Kd 0.8 0.8 0.8")
-			file.store_line("Ks 0.2 0.2 0.2")
-			file.store_line("Ns 10.0")
-		
-		file.store_line("")
-	
-	file.close()
-	return true
 
 func create_wireframe_mesh(model_data: ModelData) -> MeshInstance3D:
 	print("Create Wireframe Mesh OBJ called")

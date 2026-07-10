@@ -4,12 +4,15 @@ signal theme_changed(theme_name)
 
 var current_theme_name = "Default"
 var config_manager = null
-
 var themes = {
 	"Default": preload("res://Textures/Resources/DefaultThemeResources/DefaultTheme.tres"),
 	"Light": preload("res://Textures/Resources/LightThemeResources/LightTheme.tres"),
 	"Purple": preload("res://Textures/Resources/PurpleThemeResources/RoyalPurpleTheme.tres"),
 	"Legacy": preload("res://Textures/Resources/LegacyTheme.tres")
+}
+
+var theme_resources = {
+	"tooltip_panel": preload("res://Textures/Resources/UniversalThemeResources/tooltip_panel.tres")
 }
 
 # Currently Handling TextureButton images since they cant be changed via resource
@@ -19,34 +22,31 @@ var theme_textures = {
 			"normal": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png"),
 			"hover": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png")
 		},
-		"gear": preload("res://Textures/2D/Gear.png")
 	},
 	"Light": {
 		"settings": {
 			"normal": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20.png"),
 			"hover": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20Hover.png")
 		},
-		"gear": preload("res://Textures/2D/Gear.png")
 	},
 	"Purple": {
 		"settings": {
 			"normal": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20.png"),
 			"hover": preload("res://Textures/2D/Settings/LightTheme/AdvancedSettingsDark20x20Hover.png")
 		},
-		"gear": preload("res://Textures/2D/Gear.png")
 	},
 	"Legacy": {
 		"settings": {
 			"normal": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png"),
 			"hover": preload("res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png")
 		},
-		"gear": preload("res://Textures/2D/Gear.png")
 	},
 }
 
 func initialize(p_config_manager):
 	config_manager = p_config_manager
 	load_theme_preference()
+	_apply_tooltip()
 
 func get_current_theme():
 	return themes[current_theme_name]
@@ -112,7 +112,7 @@ func load_theme_preference():
 			
 			call_deferred("update_all_texture_buttons")
 
-# Improve this
+# Improve this (hint: I Wont)
 func update_all_texture_buttons():
 	var advanced_settings_button = get_node_or_null("%AdvancedSettingsButton")
 	var advanced_preview_settings_button = get_node_or_null("%PreviewAdvancedSettings")
@@ -122,7 +122,12 @@ func update_all_texture_buttons():
 		
 	if advanced_preview_settings_button:
 		apply_themed_textures_to_button(advanced_preview_settings_button, "settings")
+
+func yeeeeeeee():
+	print("haaaaw")
 	
-	var gear_icon = get_parent().get_node_or_null("Background/Gear/Icon")
-	if gear_icon:
-		gear_icon.texture = get_themed_texture("gear")
+func _apply_tooltip():
+	for theme_res in themes.values():
+		theme_res.set_stylebox("panel", "TooltipPanel", theme_resources.tooltip_panel)
+		theme_res.set_color("font_color", "TooltipLabel", Color(0, 0, 0, 1))
+	

@@ -1,4 +1,4 @@
-# Sprocket-Conversion-Tool 0.6.0
+# Sprocket-Conversion-Tool 0.6.1
 
 # Installation:
 - extract .zip file where ever you'd like. Although I recommend making a folder named "Sprocket Conversion Tool", and placing its contents into the folder.
@@ -20,7 +20,7 @@ Keep in Mind:
 - If you to set a custom Output filepath , you can safely delete the "Output" folder.
 - If you wipe the custom filepaths from the config, it will regenerate the default folders in whatever directory you place the executable.
 
-- Do not delete the Sprocket_Conversion_Tool.pck file from the data folder. doing so will break the tool and require a fresh download from the repo.
+- DO NOT delete the Sprocket_Conversion_Tool.pck file from the data folder. doing so will break the tool and require a fresh download from the repo.
 
 # Updating
 - From time to time, I will be pushing minor updates to the GitHub releases, you will see a button in the lower right hand corner of the tool informing you an update is available

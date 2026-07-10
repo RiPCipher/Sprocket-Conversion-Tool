@@ -26,7 +26,6 @@ var popup_instance = null
 @onready var status_label = %StatusLabel
 @onready var progress_bar = %ProgressBar_U
 @onready var percent_label = %PercentLabel
-@onready var sprocket_animation_player = %AnimationPlayer_U
 @onready var tools_tab = %Tools
 
 # Settings tab
@@ -42,6 +41,7 @@ var popup_instance = null
 @onready var auto_preview_toggle = %AutoPreviewCheck
 @onready var native_windows_toggle = %NativeMenusButton
 @onready var theme_dropdown = %ThemeOptions
+@onready var smoothing_toggle = %SmoothToggle
 
 # Update-related
 @onready var update_manager = %UpdateManager
@@ -85,8 +85,6 @@ func _ready():
 	progress_bar.visible = false
 	percent_label.visible = false
 
-	sprocket_animation_player.play("Spin")
-
 	config_manager.load_config()
 
 	# Window size settings
@@ -129,6 +127,7 @@ func _connect_signals():
 	save_settings_button.pressed.connect(_on_save_settings_pressed)
 	auto_preview_toggle.toggled.connect(_on_auto_preview_toggled)
 	native_windows_toggle.toggled.connect(_on_native_windows_toggled)
+	smoothing_toggle.toggled.connect(_on_smoothing_toggled)
 
 	# Drag/drop
 	get_viewport().files_dropped.connect(_on_files_dropped)
@@ -140,8 +139,21 @@ func _input(event):
 	if event is InputEventKey and event.pressed and not event.is_echo():
 		var exit_key = config_manager.get_keybind("exit_key")
 		if exit_key != 0 and event.keycode == exit_key:
+			_save_window_state()
 			config_manager.save_config()
 			get_tree().quit()
+
+func _notification(what):
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		_save_window_state()
+		config_manager.save_config()
+
+func _save_window_state():
+	var is_fullscreen = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
+	config_manager.set_fullscreen_state(is_fullscreen)
+	# Only remember the size when windowed, so fullscreen doesn't clobber it
+	if not is_fullscreen:
+		config_manager.set_window_size(DisplayServer.window_get_size())
 
 func _on_files_dropped(files):
 	if files.size() == 0:
@@ -162,7 +174,7 @@ func _on_files_dropped(files):
 		conversion_controller.set_input_file(file_path)
 
 #========================
-# Settings tab directory browsing
+# Settings tab / directory browsing
 #========================
 func _on_browse_input_dir_pressed():
 	var input_dir = config_manager.get_input_dir()
@@ -220,6 +232,10 @@ func _on_native_windows_toggled(enabled):
 		config_manager.set_native(enabled)
 		config_manager.save_config()
 
+func _on_smoothing_toggled(enabled):
+	if config_manager:
+		config_manager.set_apply_smoothing(enabled)
+		config_manager.save_config()
 #========================
 # ADVANCED SETTINGS
 #========================
@@ -286,6 +302,8 @@ func _on_config_loaded():
 		preview_controller.set_preview_path_text(preview_dir)
 
 	native_windows_toggle.set_pressed_no_signal(config_manager.get_native())
+	auto_preview_toggle.set_pressed_no_signal(config_manager.get_auto_preview())
+	smoothing_toggle.set_pressed_no_signal(config_manager.get_apply_smoothing())
 
 	tab_container.current_tab = 0
 
@@ -316,7 +334,6 @@ func _on_theme_selected(index):
 func _on_theme_changed(theme_name):
 	ui_manager.apply_themed_textures_to_button(advanced_settings_button, "settings")
 	ui_manager.apply_themed_textures_to_button(advanced_preview_settings_button, "settings")
-	%Icon.texture = ui_manager.get_themed_texture("gear")
 
 #========================
 # SPLASH
