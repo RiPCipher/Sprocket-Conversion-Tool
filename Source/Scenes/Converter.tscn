@@ -600,6 +600,7 @@ theme_override_constants/margin_right = 10
 metadata/_tab_index = 2
 
 [node name="BundledContentContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content" unique_id=880582472]
+unique_name_in_owner = true
 layout_mode = 2
 current_tab = 0
 tab_1/disabled = true
@@ -610,6 +611,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="SprocketTools Decals" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer" unique_id=254476884]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 script = ExtResource("19_0gpc5")
