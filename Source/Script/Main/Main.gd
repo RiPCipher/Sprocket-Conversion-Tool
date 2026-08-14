@@ -22,6 +22,7 @@ var popup_instance = null
 
 # UI Elements
 @onready var tab_container = %TabContainer_U
+@onready var content_container = %BundledContentContainer
 @onready var splash_text = %SplashText
 @onready var status_label = %StatusLabel
 @onready var progress_bar = %ProgressBar_U
@@ -104,6 +105,8 @@ func _ready():
 
 ## Elements that need hidden due to being incomplete or outdated should go here
 func _hide_elements():
+	if %"SprocketTools Decals":
+		content_container.set_tab_hidden(content_container.get_tab_idx_from_control(%"SprocketTools Decals"), true)
 	
 	# Hide Splash Text
 	if splash_text:
