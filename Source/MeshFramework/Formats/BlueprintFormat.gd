@@ -246,10 +246,15 @@ class StandardBlueprintHandler:
 			  str(quad_count) + " quads")
 		
 		var original_faces = []
+		var corner_thickness = []
 		for face in faces:
 			if face.has("v"):
 				original_faces.append(face.v.duplicate())
+				var face_t = face.get("t", [])
+				for i in range(face.v.size()):
+					corner_thickness.append(roundi(float(face_t[i])) if i < face_t.size() else 5)
 		model_data.set_part_metadata(part_idx, "original_faces", original_faces)
+		model_data.set_part_metadata(part_idx, "cnv_thickness", corner_thickness)
 		
 		# Store topology statistics in metadata for display in previewer
 		model_data.set_part_metadata(part_idx, "triangle_count", triangle_count)
@@ -311,7 +316,13 @@ class StandardBlueprintHandler:
 			
 			if model_data.has_part_metadata(part_idx, "original_faces"):
 				var original_faces = model_data.get_part_metadata(part_idx, "original_faces")
-				
+				var stored_thickness = model_data.get_part_metadata(part_idx, "cnv_thickness", [])
+				var total_corners = 0
+				for face in original_faces:
+					total_corners += face.size()
+				var have_thickness: bool = stored_thickness.size() == total_corners
+
+				var corner_offset = 0
 				for face in original_faces:
 					if face.size() >= 3:
 						var face_data = {
@@ -320,11 +331,15 @@ class StandardBlueprintHandler:
 							"tm": 65793 if face.size() == 3 else 16843009,
 							"te": 0
 						}
-						
+
 						for i in range(face.size()):
-							face_data.t.append(5)
-						
+							if have_thickness:
+								face_data.t.append(roundi(float(stored_thickness[corner_offset + i])))
+							else:
+								face_data.t.append(5)
+
 						faces.append(face_data)
+					corner_offset += face.size()
 			else:
 				result.warnings.append("No original face data found in model - export may be incomplete")
 		

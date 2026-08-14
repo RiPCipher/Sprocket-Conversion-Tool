@@ -47,14 +47,18 @@ var settings = {
 	}
 }
 
+var exe_path
+var exe_dir
+var data_dir
+
 func _init():
 	pass
 
 func _ready():
 	# Get executable directory for defaults
-	var exe_path = OS.get_executable_path()
-	var exe_dir = exe_path.get_base_dir()
-	var data_dir = exe_dir.path_join("data")
+	exe_path = OS.get_executable_path()
+	exe_dir = exe_path.get_base_dir()
+	data_dir = exe_dir.path_join("data")
 	
 	# Ensure data folder exists
 	if not DirAccess.dir_exists_absolute(data_dir):

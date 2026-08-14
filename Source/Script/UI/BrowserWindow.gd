@@ -34,10 +34,7 @@ var file_icons = {}
 var folder_icon: Texture2D = null
 var default_file_icon: Texture2D = null
 var parent_folder_icon: Texture2D = null
-var framework_formats = ["obj", "gltf", "glb"]
-var framework_format_icons = {}
-var additional_format_icons = {}
-var additional_formats = []
+var format_icons = {}
 
 var history = []
 var history_index = -1
@@ -75,7 +72,6 @@ func initialize(p_config_manager = null):
 	config_manager = p_config_manager
 	
 
-	_scan_format_extensions()
 	_load_icons()
 	_populate_drives()
 
@@ -84,13 +80,8 @@ func _load_icons():
 	parent_folder_icon = preload("res://Textures/2D/Settings/Icons/Folder_Icon16px.png") 
 	default_file_icon = preload("res://Textures/2D/Settings/Icons/File_Icon16px.png")
 
-	framework_format_icons["obj"] = preload("res://Textures/2D/Settings/Icons/OBJ_Icon16px.png")
-	
-	for extension in additional_formats:
-		if extension == "blueprint":
-			additional_format_icons[extension] = preload("res://Textures/2D/Settings/Icons/Blueprint_Icon16px.png")
-		else:
-			additional_format_icons[extension] = preload("res://Textures/2D/Settings/Icons/File_Icon16px.png")
+	format_icons["obj"] = preload("res://Textures/2D/Settings/Icons/OBJ_Icon16px.png")
+	format_icons["blueprint"] = preload("res://Textures/2D/Settings/Icons/Blueprint_Icon16px.png")
 
 func open(mode: int, path: String = "", filters: PackedStringArray = [], initial_name: String = ""):
 	current_mode = mode
@@ -170,6 +161,20 @@ func _navigate_to(path: String):
 			path_option.select(i)
 			break
 
+func _ext_from_filter(filter_text: String) -> String:
+	var star = filter_text.find("*.")
+	if star == -1:
+		return ""
+	var rest = filter_text.substr(star + 2)
+	var ext = ""
+	for i in rest.length():
+		var c = rest[i]
+		if (c >= "a" and c <= "z") or (c >= "A" and c <= "Z") or (c >= "0" and c <= "9"):
+			ext += c
+		else:
+			break
+	return ext.to_lower()
+
 func _populate_file_list():
 	file_list.clear()
 	
@@ -206,29 +211,12 @@ func _populate_file_list():
 			
 			if selected_filter.begins_with("All Files") or selected_filter.is_empty():
 				file_matches = true
-			elif selected_filter.contains("*.obj") and file_ext == "obj":
-				file_matches = true
-			elif selected_filter.contains("*.blueprint") and file_ext == "blueprint":
-				file_matches = true
-			elif not selected_filter.begins_with("All Files"):
-				var parts = selected_filter.split("*.", true, 1)
-				if parts.size() > 1:
-					var ext = parts[1].split(" ", true, 1)[0]
-					if ext == file_ext:
-						file_matches = true
+			else:
+				var filter_ext = _ext_from_filter(selected_filter)
+				file_matches = filter_ext.is_empty() or filter_ext == file_ext
 			
 			if file_matches:
-				var icon = default_file_icon
-				var format_type = _get_format_type(file_ext)
-				
-				match format_type:
-					"framework":
-						if framework_format_icons.has(file_ext):
-							icon = framework_format_icons[file_ext]
-					"additional":
-						if additional_format_icons.has(file_ext):
-							icon = additional_format_icons[file_ext]
-				
+				var icon = format_icons.get(file_ext, default_file_icon)
 				file_list.add_item(file_name, icon, false)
 				
 				if filename_input.text == file_name:
@@ -279,14 +267,11 @@ func _on_extension_selected(index: int):
 	
 	if not filename_input.text.is_empty() and current_mode == BrowserMode.SAVE_FILE:
 		var basename = filename_input.text.get_basename()
-		var filter_text = extension_option.get_item_text(index)
-		
-		if filter_text.contains("*.obj"):
-			filename_input.text = basename + ".obj"
-		elif filter_text.contains("*.blueprint"):
-			filename_input.text = basename + ".blueprint"
-		else:
+		var ext = _ext_from_filter(extension_option.get_item_text(index))
+		if ext.is_empty():
 			filename_input.text = basename
+		else:
+			filename_input.text = basename + "." + ext
 	
 	_populate_file_list()
 	
@@ -322,10 +307,7 @@ func _update_extension_for_file(filename: String):
 	var file_ext = filename.get_extension().to_lower()
 	
 	for i in range(extension_option.get_item_count()):
-		var filter_text = extension_option.get_item_text(i)
-		
-		if (file_ext == "obj" and filter_text.contains("*.obj")) or \
-		   (file_ext == "blueprint" and filter_text.contains("*.blueprint")):
+		if _ext_from_filter(extension_option.get_item_text(i)) == file_ext:
 			extension_option.select(i)
 			selected_filter_index = i
 			break
@@ -365,12 +347,9 @@ func _on_select_pressed():
 			var file_path = current_path.path_join(filename_input.text)
 			
 			if not file_path.get_extension():
-				var filter_text = extension_option.get_item_text(extension_option.selected)
-				
-				if filter_text.contains("*.obj"):
-					file_path += ".obj"
-				elif filter_text.contains("*.blueprint"):
-					file_path += ".blueprint"
+				var ext = _ext_from_filter(extension_option.get_item_text(extension_option.selected))
+				if not ext.is_empty():
+					file_path += "." + ext
 			
 			emit_signal("file_selected", file_path)
 			hide()
@@ -426,41 +405,6 @@ func _save_last_used_path():
 						config_manager.save_last_directory("preview_dir", current_path)
 			BrowserMode.SELECT_DIR:
 				pass
-
-func _scan_format_extensions():
-	var dir = DirAccess.open("res://MeshFramework/Formats/AdditionalFormats/")
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		
-		while file_name != "":
-			if file_name.ends_with("Format.gd") and not file_name.begins_with("."):
-				var format_name = file_name.replace("Format.gd", "").to_lower()
-				
-				var script_path = "res://MeshFramework/Formats/AdditionalFormats/" + file_name
-				var script = load(script_path)
-				
-				if script and script.can_instantiate():
-					var instance = script.new()
-					if instance.has_method("get_format_extension"):
-						var extension = instance.get_format_extension()
-						additional_formats.append(extension)
-			
-			file_name = dir.get_next()
-	
-	print("Additional formats found: ", additional_formats)
-
-func _get_format_type(extension: String) -> String:
-	extension = extension.to_lower()
-	
-	if framework_formats.has(extension):
-		return "framework"
-	
-	if additional_formats.has(extension):
-		return "additional"
-	
-	return "unknown"
-
 
 func _on_file_list_gui_input(event):
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:

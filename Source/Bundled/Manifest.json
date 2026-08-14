@@ -1,0 +1,10 @@
+{
+	"Blueprints": {
+		"Icosphere": "Icosphere.blueprint",
+		"Torus": "Torus.blueprint",
+		"Tube": "Tube.blueprint",
+		"Sphere_1": "Sphere_1.blueprint",
+		"Sphere_2": "Sphere_2.blueprint",
+		"Hemisphere": "Hemisphere.blueprint",
+	},
+}

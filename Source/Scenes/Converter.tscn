@@ -7,15 +7,21 @@
 [ext_resource type="Script" uid="uid://b7ku71428fvl0" path="res://Script/UI/UIManager.gd" id="7_ditv3"]
 [ext_resource type="Texture2D" uid="uid://sc15jb0ul2q5" path="res://Textures/2D/Settings/Icons/Wireframe_View_20x20.png" id="9_qlaan"]
 [ext_resource type="Texture2D" uid="uid://dg31o5roymxhh" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20.png" id="10_7he56"]
-[ext_resource type="PackedScene" uid="uid://703p6jue40c8" path="res://Assets/gear/Gear.glb" id="10_7x80q"]
 [ext_resource type="Texture2D" uid="uid://f0naq12wblro" path="res://Textures/2D/Settings/DarkTheme/AdvancedSettings20x20Hover.png" id="10_30d8k"]
 [ext_resource type="Texture2D" uid="uid://gyimbv63hkmg" path="res://Textures/2D/Settings/Icons/Mixed_View_20x20.png" id="10_tb4ts"]
-[ext_resource type="Script" uid="uid://bwswi2bxmukct" path="res://Assets/gear/gear.gd" id="11_j7rct"]
+[ext_resource type="Script" uid="uid://bwswi2bxmukct" path="res://Assets/sprocket/gear.gd" id="11_j7rct"]
 [ext_resource type="Texture2D" uid="uid://can37hwf3rnk8" path="res://Textures/2D/Settings/Icons/Cut_View_20x20.png" id="11_mqb3m"]
+[ext_resource type="PackedScene" uid="uid://c0j1fjprfdu8w" path="res://Assets/sprocket/Sprocket.glb" id="12_a2d5d"]
+[ext_resource type="Script" uid="uid://bqlvvxbvhre4p" path="res://Bundled/Bundled_Content.gd" id="17_a2d5d"]
+[ext_resource type="PackedScene" uid="uid://by8f7fgleobjq" path="res://Bundled/Blueprints/blueprints.tscn" id="18_7qven"]
+[ext_resource type="Script" uid="uid://c7cvv27vmi1vf" path="res://Bundled/Decals/SprocketTools_Decals.gd" id="19_0gpc5"]
 [ext_resource type="Script" uid="uid://bjfa88gtkwpoq" path="res://Script/Controllers/BrowserController.gd" id="20_brwsr"]
 [ext_resource type="Script" uid="uid://wsi8c0pm0noi" path="res://Script/Controllers/PreviewController.gd" id="21_prvw"]
 [ext_resource type="Script" uid="uid://c5h4by7e4cbj5" path="res://Script/Controllers/ConversionController.gd" id="22_cnvrt"]
 [ext_resource type="Script" uid="uid://ccg45h5shlm8t" path="res://Script/Controllers/UpdateController.gd" id="23_updt"]
+
+[sub_resource type="Environment" id="Environment_7qven"]
+ambient_light_source = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_qlaan"]
 
@@ -55,6 +61,8 @@ bg_color = Color(0.212305, 0.212305, 0.212305, 1)
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mqb3m"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_30d8k"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7qven"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7x80q"]
 
@@ -113,12 +121,13 @@ script = ExtResource("22_cnvrt")
 unique_name_in_owner = true
 script = ExtResource("23_updt")
 
+[node name="PackedContent" type="Node" parent="." unique_id=645996007]
+unique_name_in_owner = true
+script = ExtResource("17_a2d5d")
+
 [node name="Utility" type="Node" parent="." unique_id=1005110950]
 unique_name_in_owner = true
 script = ExtResource("5_fiwj2")
-
-[node name="Mods" type="Node" parent="." unique_id=1974994465]
-unique_name_in_owner = true
 
 [node name="Background" type="Panel" parent="." unique_id=1297161948]
 layout_mode = 1
@@ -148,16 +157,19 @@ render_target_update_mode = 4
 [node name="Camera3D" type="Camera3D" parent="Background/3DGUI/SubViewport/World" unique_id=212151095]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1.9597819, -0.8059709)
 
-[node name="Gear" parent="Background/3DGUI/SubViewport/World" unique_id=737884901 instance=ExtResource("10_7x80q")]
-transform = Transform3D(0.49999997, 0, 0.86602545, 0, 1, 0, -0.86602545, 0, 0.49999997, -0.715, 0.99, -1.384)
-script = ExtResource("11_j7rct")
-
 [node name="SpotLight3D" type="SpotLight3D" parent="Background/3DGUI/SubViewport/World" unique_id=446722978]
 transform = Transform3D(0.6548596, 0.16228637, 0.7381207, -0.75575054, 0.14062151, 0.63958323, 3.762386e-10, -0.9766723, 0.21473533, 1.435, 5.376, -0.901)
 light_energy = 12.089
 light_indirect_energy = 0.0
 spot_attenuation = 1.4
 spot_angle_attenuation = 0.23325826
+
+[node name="Sprocket" parent="Background/3DGUI/SubViewport/World" unique_id=722872106 instance=ExtResource("12_a2d5d")]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -1.19, 0.695, -1.165)
+script = ExtResource("11_j7rct")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Background/3DGUI/SubViewport/World" unique_id=986194758]
+environment = SubResource("Environment_7qven")
 
 [node name="Version" type="Label" parent="." unique_id=994760369]
 unique_name_in_owner = true
@@ -230,9 +242,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/tab_hovered = SubResource("StyleBoxEmpty_qlaan")
 tab_alignment = 1
-current_tab = 3
-tab_2/disabled = true
-tab_2/hidden = true
+current_tab = 2
 
 [node name="Conversion" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=30901756]
 visible = false
@@ -399,6 +409,7 @@ stretch = true
 
 [node name="SubViewport_U" type="SubViewport" parent="MainPanel/VBoxContainer/TabContainer_U/Model Preview/VBoxContainer/SubViewportContainer_U" unique_id=148961648]
 unique_name_in_owner = true
+own_world_3d = true
 handle_input_locally = false
 msaa_3d = 2
 screen_space_aa = 2
@@ -580,31 +591,77 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 10
 text = "World Grid"
 
-[node name="Tools" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1365822104]
+[node name="Content" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1365822104]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 metadata/_tab_index = 2
 
-[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools" unique_id=880582472]
+[node name="BundledContentContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content" unique_id=880582472]
+layout_mode = 2
+current_tab = 0
+tab_1/disabled = true
+tab_1/hidden = true
+
+[node name="Blueprints" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer" unique_id=1450037063 instance=ExtResource("18_7qven")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SprocketTools Decals" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer" unique_id=254476884]
+visible = false
+layout_mode = 2
+script = ExtResource("19_0gpc5")
+metadata/_tab_index = 1
+
+[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals" unique_id=2071202974]
 layout_mode = 2
 current_tab = 0
 
-[node name="Credits" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer" unique_id=1083511847]
+[node name="Anime" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=111609250]
+unique_name_in_owner = true
 layout_mode = 2
+item_count = 1
+max_columns = 15
+same_column_width = true
+fixed_column_width = 70
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+item_0/text = "Test"
+item_0/icon = SubResource("NoiseTexture2D_7qven")
 metadata/_tab_index = 0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="MainPanel/VBoxContainer/TabContainer_U/Tools/TabContainer/Credits" unique_id=38524784]
+[node name="Basic Shapes" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=611816122]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
-text = "Gear Calculator:
-Stole the implementation from SprocketTools/Colson and reworked it to work with the Conversion Tool
+item_count = 1
+max_columns = 15
+same_column_width = true
+fixed_column_width = 70
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+item_0/text = "Test"
+item_0/icon = SubResource("NoiseTexture2D_7qven")
+metadata/_tab_index = 1
 
-Formulas originally provided by A1exAndro and Obihornchen in the Sprocket Discord"
+[node name="Chalk" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=1242493887]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+item_count = 1
+max_columns = 15
+same_column_width = true
+fixed_column_width = 70
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+item_0/text = "Test"
+item_0/icon = SubResource("NoiseTexture2D_7qven")
+metadata/_tab_index = 2
 
 [node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1907954524]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 15
 theme_override_constants/margin_top = 15

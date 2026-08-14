@@ -44,10 +44,9 @@ func set_input_file(path: String) -> void:
 	if output_dir.is_empty():
 		output_dir = path.get_base_dir()
 
-	if extension == "obj":
-		output_path_field.text = output_dir + "/" + path.get_file().get_basename() + ".blueprint"
-	elif extension == "blueprint":
-		output_path_field.text = output_dir + "/" + path.get_file().get_basename() + ".obj"
+	var target_ext = _default_target_ext(extension)
+	if !target_ext.is_empty():
+		output_path_field.text = output_dir + "/" + path.get_file().get_basename() + "." + target_ext
 
 	if config_manager.get_auto_preview() and preview_controller:
 		preview_controller.set_preview_path_text(path)
@@ -56,9 +55,15 @@ func set_input_file(path: String) -> void:
 #========================
 # BROWSE HANDLERS
 #========================
+func _default_target_ext(input_ext: String) -> String:
+	match input_ext.to_lower():
+		"obj": return "blueprint"
+		"blueprint": return "obj"
+		_: return ""
+
 func _on_browse_input_pressed():
 	var input_dir = config_manager.get_input_dir()
-	var filters = PackedStringArray(["*.obj", "*.blueprint"])
+	var filters = format_registry.get_import_file_dialog_filters()
 	if !input_dir.is_empty() && DirAccess.dir_exists_absolute(input_dir):
 		browser_controller.browse_open_file(input_dir, filters, set_input_file)
 	else:
@@ -67,24 +72,31 @@ func _on_browse_input_pressed():
 func _on_browse_output_pressed():
 	var input_path = input_path_field.text.strip_edges()
 	var current_output_path = output_path_field.text.strip_edges()
-	var initial_filename = ""
+	var target_ext = ""
+	if !current_output_path.is_empty():
+		target_ext = current_output_path.get_extension().to_lower()
+	elif !input_path.is_empty():
+		target_ext = _default_target_ext(input_path.get_extension().to_lower())
 
+	var initial_filename = ""
 	if !current_output_path.is_empty():
 		initial_filename = current_output_path.get_file()
-	elif !input_path.is_empty():
-		var basename = input_path.get_file().get_basename()
-		var extension = input_path.get_extension().to_lower()
-		if extension == "obj":
-			initial_filename = basename + ".blueprint"
-		elif extension == "blueprint":
-			initial_filename = basename + ".obj"
+	elif !input_path.is_empty() && !target_ext.is_empty():
+		initial_filename = input_path.get_file().get_basename() + "." + target_ext
 
-	var filters = PackedStringArray(["*.blueprint"])
-	var output_dir = config_manager.get_output_dir()
-	if !output_dir.is_empty() && DirAccess.dir_exists_absolute(output_dir):
-		browser_controller.browse_save_file(output_dir, filters, initial_filename, _on_output_file_selected)
-	else:
-		browser_controller.browse_save_file(input_path.get_base_dir(), filters, initial_filename, _on_output_file_selected)
+	# List every export format so users can switch target (obj/blueprint);
+	# the suggested filename above still defaults to the swap target.
+	var filters = format_registry.get_export_file_dialog_filters()
+
+	var output_dir = ""
+	if !current_output_path.is_empty():
+		output_dir = current_output_path.get_base_dir()
+	if output_dir.is_empty() || !DirAccess.dir_exists_absolute(output_dir):
+		output_dir = config_manager.get_output_dir()
+	if output_dir.is_empty() || !DirAccess.dir_exists_absolute(output_dir):
+		output_dir = input_path.get_base_dir()
+
+	browser_controller.browse_save_file(output_dir, filters, initial_filename, _on_output_file_selected)
 
 func _on_output_file_selected(path):
 	output_path_field.text = path

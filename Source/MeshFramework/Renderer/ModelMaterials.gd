@@ -151,6 +151,5 @@ func register_shader(name: String, shader: Shader) -> void:
 	print("ModelMaterials: Registered new shader: ", name)
 
 func scan_for_additional_materials(base_path: String = "res://Textures/Materials/") -> void:
-	# This would scan for .tres files and auto-register them
-	# Implementation for future when pck support is added
+	# prolly should remove this 
 	pass
