@@ -1,7 +1,7 @@
 extends Node
 
 # Current version - UPDATE THIS WITH EACH RELEASE
-const CURRENT_VERSION = "0.6.1" # Previous: 0.6
+const CURRENT_VERSION = "0.6.2" # Previous: 0.6.1
 
 # API
 const GITHUB_API_URL = "https://api.github.com/repos/RiPCipher/Sprocket-Conversion-Tool/releases/latest"

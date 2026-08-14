@@ -26,7 +26,6 @@ var popup_instance = null
 @onready var status_label = %StatusLabel
 @onready var progress_bar = %ProgressBar_U
 @onready var percent_label = %PercentLabel
-@onready var tools_tab = %Tools
 
 # Settings tab
 @onready var advanced_settings_button = %AdvancedSettingsButton
@@ -71,7 +70,6 @@ func _ready():
 		_setup_theme_dropdown()
 
 	# Window setup
-	# Coming from the launcher the window is borderless + transparent + always-on-top.
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_ALWAYS_ON_TOP, false)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_TRANSPARENT, false, 0)
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
@@ -90,7 +88,7 @@ func _ready():
 	# Window size settings
 	var saved_size = config_manager.get_window_size()
 	DisplayServer.window_set_size(saved_size)
-	# Re-center now that the window is at its final size (single positioning, no jump).
+	
 	var screen_size = DisplayServer.screen_get_size(DisplayServer.window_get_current_screen())
 	DisplayServer.window_set_position((screen_size - saved_size) / 2)
 
@@ -106,9 +104,6 @@ func _ready():
 
 ## Elements that need hidden due to being incomplete or outdated should go here
 func _hide_elements():
-	# Hide Tools Tabs
-	if tools_tab:
-		tab_container.set_tab_hidden(tab_container.get_tab_idx_from_control(tools_tab), true)
 	
 	# Hide Splash Text
 	if splash_text:
@@ -161,7 +156,7 @@ func _on_files_dropped(files):
 
 	var file_path = files[0]
 	var extension = file_path.get_extension().to_lower()
-	if extension != "obj" and extension != "blueprint":
+	if not FormatRegistry.get_supported_import_extensions().has(extension):
 		return
 
 	Debug.log("File dropped: ", file_path)

@@ -15,15 +15,13 @@ func initialize(user_format_path: String = "") -> int:
 	_import_handlers.clear()
 	_export_handlers.clear()
 	_extension_to_handler.clear()
-	
-	# Force both classes to be included in the export
-	var obj_test = OBJ_FORMAT_CLASS.new() 
+
+	var obj_test = OBJ_FORMAT_CLASS.new()
 	var blueprint_test = BLUEPRINT_FORMAT_CLASS.new()
-	
-	# Register the formats
+
 	register_format(OBJ_FORMAT_CLASS)
 	register_format(BLUEPRINT_FORMAT_CLASS)
-	
+
 	return _extension_to_handler.size()
 
 func register_formats(format_classes: Array) -> void:
@@ -32,19 +30,19 @@ func register_formats(format_classes: Array) -> void:
 
 func register_format(format_class):
 	var format_instance = format_class.new()
-	
+
 	if not format_instance is BaseFormat:
 		push_error("FormatRegistry: Class is not a BaseFormat")
 		return
-		
+
 	var extension = format_instance.get_format_extension().to_lower()
-	
+
 	if format_instance.can_import:
 		_import_handlers[extension] = format_class
-	
+
 	if format_instance.can_export:
 		_export_handlers[extension] = format_class
-	
+
 	_extension_to_handler[extension] = format_class
 	print("Registered format handler for ." + extension + ": " + format_instance.get_format_name())
 
@@ -101,24 +99,24 @@ func detect_format(file_path: String) -> String:
 func load(file_path: String, format_extension: String = "", options: Dictionary = {}) -> ModelData:
 	if format_extension.is_empty():
 		format_extension = file_path.get_extension().to_lower()
-	
+
 	var handler = get_import_handler_for_extension(format_extension)
 	if not handler:
 		push_error("FormatRegistry: No import handler found for format: " + format_extension)
 		print("Available import formats: ", get_supported_import_extensions())
 		return null
-	
+
 	print("Using import handler for format: " + format_extension)
 	return handler.import_model(file_path, options)
 
 func save(model_data: ModelData, file_path: String, format_extension: String, options: Dictionary = {}) -> Dictionary:
 	format_extension = format_extension.to_lower()
 	var handler = get_export_handler_for_extension(format_extension)
-	
+
 	if not handler:
 		push_error("FormatRegistry: No export handler found for format: " + format_extension)
 		print("Available export formats: ", get_supported_export_extensions())
 		return {"success": false, "error": "No export handler found for format: " + format_extension}
-	
+
 	print("Using export handler for format: " + format_extension)
 	return handler.export_model(model_data, file_path, options)

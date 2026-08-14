@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://by8f7fgleobjq"]
+
+[ext_resource type="Script" uid="uid://brtvekwlyolif" path="res://Bundled/Blueprints/Bundled_Blueprints.gd" id="1_6onat"]
+
+[node name="Blueprints" type="MarginContainer" unique_id=1450037063]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6onat")
+metadata/_tab_index = 0
+
+[node name="VList" type="VBoxContainer" parent="." unique_id=794401196]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="VList" unique_id=2080363358]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VList" unique_id=286424826]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="List" type="HBoxContainer" parent="VList/ScrollContainer" unique_id=1390616518]
+layout_mode = 2
+
+[node name="BP_Left" type="VBoxContainer" parent="VList/ScrollContainer/List" unique_id=1696525017]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+
+[node name="BP_Center" type="VBoxContainer" parent="VList/ScrollContainer/List" unique_id=517909655]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+
+[node name="BP_Right" type="VBoxContainer" parent="VList/ScrollContainer/List" unique_id=2047390114]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+size_flags_horizontal = 0
