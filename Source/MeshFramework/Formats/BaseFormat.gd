@@ -28,8 +28,7 @@ func export_model(model_data: ModelData, file_path: String, options: Dictionary 
 static func get_default_import_options() -> Dictionary:
 	return {
 		"calculate_normals": true,
-		"generate_uvs": true,
-		"optimize": false
+		"generate_uvs": true
 	}
 
 static func get_default_export_options() -> Dictionary:

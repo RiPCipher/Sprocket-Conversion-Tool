@@ -103,6 +103,19 @@ func _on_output_file_selected(path):
 	status_label.text = "Output will be saved to: " + path
 
 #========================
+# KEYBIND
+#========================
+func request_open() -> void:
+	if browse_input_button.disabled:
+		return
+	_on_browse_input_pressed()
+
+func request_convert() -> void:
+	if convert_button.disabled:
+		return
+	_on_convert_pressed()
+
+#========================
 # CONVERSION
 #========================
 func _on_convert_pressed():
@@ -136,7 +149,8 @@ func _on_convert_pressed():
 	"include_normals": false,
 	"calculate_normals": true,
 	"smooth_shading": false,
-	"apply_smoothing": config_manager.get_apply_smoothing()
+	"apply_smoothing": config_manager.get_apply_smoothing(),
+	"weld_vertices": config_manager.get_weld_vertices()
 	}
 
 	if not conversion_worker.is_busy():
@@ -165,6 +179,9 @@ func _on_conversion_completed(result):
 			stats_text += ", Triangles: " + str(triangle_count) + ", Quads: " + str(quad_count)
 		else:
 			stats_text += ", Faces: " + str(result.statistics.get("face_count", 0))
+		var welded = result.statistics.get("welded_vertex_count", 0)
+		if welded > 0:
+			stats_text += ", Welded: " + str(welded)
 
 		status_label.text = "Success: Conversion completed. " + stats_text
 

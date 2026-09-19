@@ -49,7 +49,9 @@ var default_keybinds = {
 	"exit_key": KEY_ESCAPE,
 	"increase_fov_key": KEY_EQUAL,
 	"decrease_fov_key": KEY_MINUS,
-	"free_cam_key": KEY_F
+	"free_cam_key": KEY_F,
+	"open_key": KEY_TAB,
+	"convert_key": KEY_SPACE
 }
 
 var current_keybinds = {}

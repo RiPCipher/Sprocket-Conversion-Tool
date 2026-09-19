@@ -31,6 +31,24 @@ size_flags_horizontal = 0
 size_flags_vertical = 4
 text = "Default"
 
+[node name="CancelButton" type="Button" parent="."]
+visible = false
+custom_minimum_size = Vector2(80, 35)
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -88.0
+offset_top = -41.0
+offset_right = -8.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 0
+size_flags_vertical = 4
+text = "Cancel"
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(500, 250)
 offset_right = 40.0
