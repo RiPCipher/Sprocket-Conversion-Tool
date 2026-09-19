@@ -1,4 +1,4 @@
-# Sprocket-Conversion-Tool 0.6.2
+# Sprocket-Conversion-Tool 0.6.3
 
 # Installation:
 - extract .zip file where ever you'd like. Although I recommend making a folder named "Sprocket Conversion Tool", and placing its contents into the folder.
@@ -29,6 +29,6 @@ Keep in Mind:
 - On occassion, there I will need to make "breaking" changes. These will not be pushed to the prior version (what would be your current version), 
 but will require manual download from the Repo if you want to continue recieving updates
 - The tool will let you know assuming you have network features enabled and will link you to the release
-- If you decide to download it, you would simply replace the existing files you already have with the downloaded files like we have done in the past
+- If you decide to download it, you would simply replace the existing files you already have with the downloaded files
 
-Link to the Conversion Tools Releases: https://github.com/RiPCipher/Sprocket-Conversion-Tool/releases
+[Conversion Tools Releases](https://github.com/RiPCipher/Sprocket-Conversion-Tool/releases):

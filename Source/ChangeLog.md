@@ -1,11 +1,18 @@
-Changes for 0.6.2
+Changes for 0.6.3
 Compatible Launcher(s): v2.0
 
-## Blueprints
-- Added multiple basic shape blueprints to project
-	- Save/Preview them via the content tab
+## Decals from SprocketTools
+- Added Ability to use Decals from SprocketTools from within the tool.
+	- same concept as the webpage, click to copy and then paste in Sprocket
+	- caches a small icon file for each decal in your appdata folder
+		- Means you dont have to refresh and can turn off the network feature and still use the decals
+		- Cache can be cleared in the app
+	
 
-## General Changes
-- Changed gear to a new model
-- Removed some older/unused code
-- Re-named Tools Tab to Content and made is visible again
+## Vertex Welding on OBJ Import
+- Duplicate vertices are now merged when importing .obj files (default on, toggle in Settings).
+	- Vertices within 0.1mm of each other are merged
+	
+## Added New Keybinds
+- Tab will open the file load Dialogue
+- CTRL + Space will convert whatever file is loaded in the conversion tab

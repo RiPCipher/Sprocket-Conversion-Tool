@@ -61,6 +61,13 @@ func _show(mode: int, path: String, filters: PackedStringArray, initial_name: St
 func _use_native() -> bool:
 	return config_manager != null and config_manager.get_native()
 
+func is_open() -> bool:
+	if _native_dialog and _native_dialog.visible:
+		return true
+	if _browser_instance and _browser_instance.visible:
+		return true
+	return false
+
 func _ensure_native_dialog() -> void:
 	if _native_dialog:
 		return

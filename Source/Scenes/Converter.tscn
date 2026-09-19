@@ -602,26 +602,53 @@ metadata/_tab_index = 2
 [node name="BundledContentContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content" unique_id=880582472]
 unique_name_in_owner = true
 layout_mode = 2
-current_tab = 0
-tab_1/disabled = true
-tab_1/hidden = true
+current_tab = 1
 
 [node name="Blueprints" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer" unique_id=1450037063 instance=ExtResource("18_7qven")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="SprocketTools Decals" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer" unique_id=254476884]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 script = ExtResource("19_0gpc5")
 metadata/_tab_index = 1
 
-[node name="TabContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals" unique_id=2071202974]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals" unique_id=866009687]
 layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer" unique_id=1729681807]
+custom_minimum_size = Vector2(457.21, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 8
+
+[node name="filter_edit" type="LineEdit" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer/HBoxContainer" unique_id=1740865375]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "filter decals..."
+
+[node name="refresh_button" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer/HBoxContainer" unique_id=1581092043]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(75, 0)
+layout_mode = 2
+text = "Refresh"
+
+[node name="Clear_Cache_Button" type="Button" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer/HBoxContainer" unique_id=267520498]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Clear Cache"
+
+[node name="DecalsContainer" type="TabContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer" unique_id=2071202974]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 current_tab = 0
 
-[node name="Anime" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=111609250]
+[node name="Decals" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer/DecalsContainer" unique_id=111609250]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 1
@@ -634,33 +661,9 @@ item_0/text = "Test"
 item_0/icon = SubResource("NoiseTexture2D_7qven")
 metadata/_tab_index = 0
 
-[node name="Basic Shapes" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=611816122]
+[node name="DecalStatusLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/VBoxContainer" unique_id=1540826466]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
-item_count = 1
-max_columns = 15
-same_column_width = true
-fixed_column_width = 70
-icon_mode = 0
-fixed_icon_size = Vector2i(64, 64)
-item_0/text = "Test"
-item_0/icon = SubResource("NoiseTexture2D_7qven")
-metadata/_tab_index = 1
-
-[node name="Chalk" type="ItemList" parent="MainPanel/VBoxContainer/TabContainer_U/Content/BundledContentContainer/SprocketTools Decals/TabContainer" unique_id=1242493887]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-item_count = 1
-max_columns = 15
-same_column_width = true
-fixed_column_width = 70
-icon_mode = 0
-fixed_icon_size = Vector2i(64, 64)
-item_0/text = "Test"
-item_0/icon = SubResource("NoiseTexture2D_7qven")
-metadata/_tab_index = 2
 
 [node name="Settings" type="MarginContainer" parent="MainPanel/VBoxContainer/TabContainer_U" unique_id=1907954524]
 visible = false
@@ -790,6 +793,21 @@ text = "Apply Smoothing:"
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Attempts to match Sprockets smoothing when exporting to .obj"
+button_pressed = true
+
+[node name="WeldContainer" type="HBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection" unique_id=908459671]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="WeldLabel" type="Label" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/WeldContainer" unique_id=522851360]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Weld Vertices:"
+
+[node name="WeldToggle" type="CheckButton" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer/FilepathSection/WeldContainer" unique_id=1430929143]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Merges duplicate vertices when importing .obj files so plate edges connect in Sprocket"
 button_pressed = true
 
 [node name="PreviewSettings" type="VBoxContainer" parent="MainPanel/VBoxContainer/TabContainer_U/Settings/VBoxContainer" unique_id=1799285874]

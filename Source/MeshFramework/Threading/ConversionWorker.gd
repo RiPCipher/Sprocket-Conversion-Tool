@@ -239,7 +239,9 @@ func _process_task(task: Dictionary) -> Dictionary:
 		"face_count": model_data.get_face_count(),
 		"material_count": model_data.metadata.get("material_count", 0),
 		"triangle_count": model_data.metadata.get("triangle_count", 0),
-		"quad_count": model_data.metadata.get("quad_count", 0)
+		"quad_count": model_data.metadata.get("quad_count", 0),
+		"welded_vertex_count": model_data.metadata.get("welded_vertex_count", 0),
+		"dropped_face_count": model_data.metadata.get("dropped_face_count", 0)
 	}
 	
 	Debug.call_deferred("log", "WORKER: Final statistics:")
@@ -248,6 +250,7 @@ func _process_task(task: Dictionary) -> Dictionary:
 	Debug.call_deferred("log", "  - Materials: ", result.statistics.material_count)
 	Debug.call_deferred("log", "  - Triangles: ", result.statistics.triangle_count)
 	Debug.call_deferred("log", "  - Quads: ", result.statistics.quad_count)
+	Debug.call_deferred("log", "  - Welded vertices: ", result.statistics.welded_vertex_count)
 	
 	for key in export_result:
 		if key != "success" and key != "error":

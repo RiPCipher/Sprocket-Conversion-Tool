@@ -194,85 +194,81 @@ static func calculate_bounds(model_data: ModelData) -> AABB:
 	
 	return aabb
 
-# Remove duplicate vertices // No longer used
-static func optimize_mesh(model_data: ModelData, epsilon: float = 0.0001) -> void:
-	var part_idx = model_data.get_active_part_index()
+static func weld_vertices(vertices: Array, faces: Array, epsilon: float = 0.0001) -> Dictionary:
+	var result = {
+		"vertices": [],
+		"faces": [],
+		"remap": PackedInt32Array(),
+		"merged_count": 0,
+		"dropped_faces": 0
+	}
 	
-	if model_data.meshes[part_idx].get_surface_count() == 0:
-		return
-		
-	var surface_arrays = model_data.meshes[part_idx].surface_get_arrays(0)
-	if surface_arrays.size() <= Mesh.ARRAY_VERTEX:
-		return
-		
-	var vertices = surface_arrays[Mesh.ARRAY_VERTEX]
-	var indices = surface_arrays[Mesh.ARRAY_INDEX]
+	if vertices.is_empty():
+		return result
+	
+	epsilon = max(epsilon, 0.0)
+	var cell_size = epsilon if epsilon > 0.0 else 1e-9
+	var epsilon_sq = epsilon * epsilon
 	
 	var unique_vertices = []
-	var vertex_map = {}
-	var new_indices = PackedInt32Array()
+	var remap = PackedInt32Array()
+	remap.resize(vertices.size())
+	var grid = {}
 	
-	for i in range(indices.size()):
-		var old_idx = indices[i]
-		var vertex = vertices[old_idx]
-		var normal = Vector3.ZERO
-		if surface_arrays.size() > Mesh.ARRAY_NORMAL and surface_arrays[Mesh.ARRAY_NORMAL].size() > old_idx:
-			normal = surface_arrays[Mesh.ARRAY_NORMAL][old_idx]
-			
-		var uv = Vector2.ZERO
-		if surface_arrays.size() > Mesh.ARRAY_TEX_UV and surface_arrays[Mesh.ARRAY_TEX_UV].size() > old_idx:
-			uv = surface_arrays[Mesh.ARRAY_TEX_UV][old_idx]
+	for i in range(vertices.size()):
+		var v: Vector3 = vertices[i]
+		var cx = floori(v.x / cell_size)
+		var cy = floori(v.y / cell_size)
+		var cz = floori(v.z / cell_size)
 		
-		# Create a key from vertex position, normal, and uv
-		var key = "%d,%d,%d,%d,%d,%d,%d,%d" % [
-			int(vertex.x / epsilon),
-			int(vertex.y / epsilon),
-			int(vertex.z / epsilon),
-			int(normal.x / epsilon) if normal != Vector3.ZERO else 0,
-			int(normal.y / epsilon) if normal != Vector3.ZERO else 0,
-			int(normal.z / epsilon) if normal != Vector3.ZERO else 0,
-			int(uv.x / epsilon) if uv != Vector2.ZERO else 0,
-			int(uv.y / epsilon) if uv != Vector2.ZERO else 0
-		]
+		var found = -1
+		for dx in range(-1, 2):
+			if found >= 0: break
+			for dy in range(-1, 2):
+				if found >= 0: break
+				for dz in range(-1, 2):
+					var key = Vector3i(cx + dx, cy + dy, cz + dz)
+					if not grid.has(key):
+						continue
+					for candidate in grid[key]:
+						if unique_vertices[candidate].distance_squared_to(v) <= epsilon_sq:
+							found = candidate
+							break
+					if found >= 0: break
 		
-		if not vertex_map.has(key):
+		if found >= 0:
+			remap[i] = found
+			result.merged_count += 1
+		else:
 			var new_idx = unique_vertices.size()
-			vertex_map[key] = new_idx
-			unique_vertices.append({
-				"position": vertex,
-				"normal": normal,
-				"uv": uv,
-				"old_idx": old_idx
-			})
+			unique_vertices.append(v)
+			remap[i] = new_idx
+			var home = Vector3i(cx, cy, cz)
+			if not grid.has(home):
+				grid[home] = []
+			grid[home].append(new_idx)
+	
+	var new_faces = []
+	for face in faces:
+		var remapped = []
+		for old_idx in face:
+			if old_idx < 0 or old_idx >= remap.size():
+				continue
+			var new_idx = remap[old_idx]
+			if remapped.is_empty() or remapped[-1] != new_idx:
+				remapped.append(new_idx)
+		while remapped.size() > 1 and remapped[-1] == remapped[0]:
+			remapped.pop_back()
 		
-		new_indices.append(vertex_map[key])
+		if remapped.size() >= 3:
+			new_faces.append(remapped)
+		else:
+			result.dropped_faces += 1
 	
-	# Create new arrays
-	var new_vertices = PackedVector3Array()
-	var new_normals = PackedVector3Array()
-	var new_uvs = PackedVector2Array()
-	
-	for v in unique_vertices:
-		new_vertices.append(v.position)
-		if surface_arrays.size() > Mesh.ARRAY_NORMAL:
-			new_normals.append(v.normal)
-		if surface_arrays.size() > Mesh.ARRAY_TEX_UV:
-			new_uvs.append(v.uv)
-	
-	# Update surface arrays
-	surface_arrays[Mesh.ARRAY_VERTEX] = new_vertices
-	surface_arrays[Mesh.ARRAY_INDEX] = new_indices
-	
-	if surface_arrays.size() > Mesh.ARRAY_NORMAL:
-		surface_arrays[Mesh.ARRAY_NORMAL] = new_normals
-	
-	if surface_arrays.size() > Mesh.ARRAY_TEX_UV:
-		surface_arrays[Mesh.ARRAY_TEX_UV] = new_uvs
-	
-	# Update mesh
-	model_data.meshes[part_idx].clear_surfaces()
-	model_data.meshes[part_idx].add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
-
+	result.vertices = unique_vertices
+	result.faces = new_faces
+	result.remap = remap
+	return result
 
 #====================#
 # Validation         #

@@ -25,7 +25,8 @@ var settings = {
 		"grid_visible": true,
 		"camera_fov": 75,
 		
-		"apply_smoothing": true
+		"apply_smoothing": true,
+		"weld_vertices": true
 	},
 	"keybinds": {
 		"recenter_key": KEY_R,
@@ -35,7 +36,9 @@ var settings = {
 		"exit_key": KEY_ESCAPE,
 		"increase_fov_key": KEY_PLUS,
 		"decrease_fov_key": KEY_MINUS,
-		"free_cam_key": KEY_F
+		"free_cam_key": KEY_F,
+		"open_key": KEY_TAB,
+		"convert_key": KEY_SPACE
 	},
 	"ui": {
 		"window_width": 780,
@@ -43,7 +46,7 @@ var settings = {
 		"is_fullscreen": false,
 		"theme": "Default",
 		"network_enabled": false,
-		"force_native_windows": false,
+		"force_native_windows": true,
 	}
 }
 
@@ -261,6 +264,10 @@ func get_keybind(keybind_name: String) -> int:
 			return KEY_MINUS
 		"free_cam_key":
 			return KEY_F
+		"open_key":
+			return KEY_TAB
+		"convert_key":
+			return KEY_SPACE
 		_:
 			return 0
 
@@ -303,3 +310,9 @@ func get_apply_smoothing() -> bool:
 
 func set_apply_smoothing(value: bool) -> void:
 	settings.preview.apply_smoothing = value
+
+func get_weld_vertices() -> bool:
+	return settings.preview.weld_vertices if settings.preview.has("weld_vertices") else true
+
+func set_weld_vertices(value: bool) -> void:
+	settings.preview.weld_vertices = value

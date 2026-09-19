@@ -2,6 +2,10 @@ extends Control
 
 const Messages = preload("res://Text/Messages.gd")
 
+# TabContainer_U tab indices
+const TAB_CONVERSION := 0
+const TAB_PREVIEW := 1
+
 @onready var config_manager = %ConfigManager
 var ui_manager = null
 var error_handler = null
@@ -42,6 +46,7 @@ var popup_instance = null
 @onready var native_windows_toggle = %NativeMenusButton
 @onready var theme_dropdown = %ThemeOptions
 @onready var smoothing_toggle = %SmoothToggle
+@onready var weld_toggle = %WeldToggle
 
 # Update-related
 @onready var update_manager = %UpdateManager
@@ -105,9 +110,9 @@ func _ready():
 
 ## Elements that need hidden due to being incomplete or outdated should go here
 func _hide_elements():
-	if %"SprocketTools Decals":
-		content_container.set_tab_hidden(content_container.get_tab_idx_from_control(%"SprocketTools Decals"), true)
-	
+	#if %"SprocketTools Decals":
+		#content_container.set_tab_hidden(content_container.get_tab_idx_from_control(%"SprocketTools Decals"), true)
+	#
 	# Hide Splash Text
 	if splash_text:
 		splash_text.visible = false
@@ -126,6 +131,7 @@ func _connect_signals():
 	auto_preview_toggle.toggled.connect(_on_auto_preview_toggled)
 	native_windows_toggle.toggled.connect(_on_native_windows_toggled)
 	smoothing_toggle.toggled.connect(_on_smoothing_toggled)
+	weld_toggle.toggled.connect(_on_weld_toggled)
 
 	# Drag/drop
 	get_viewport().files_dropped.connect(_on_files_dropped)
@@ -134,12 +140,36 @@ func _connect_signals():
 # Input handling
 #========================
 func _input(event):
-	if event is InputEventKey and event.pressed and not event.is_echo():
-		var exit_key = config_manager.get_keybind("exit_key")
-		if exit_key != 0 and event.keycode == exit_key:
-			_save_window_state()
-			config_manager.save_config()
-			get_tree().quit()
+	if not (event is InputEventKey and event.pressed and not event.is_echo()):
+		return
+
+	var exit_key = config_manager.get_keybind("exit_key")
+	if exit_key != 0 and event.keycode == exit_key:
+		_save_window_state()
+		config_manager.save_config()
+		get_tree().quit()
+		return
+
+	var open_key = config_manager.get_keybind("open_key")
+	if open_key != 0 and event.keycode == open_key:
+		if _conversion_tab_active():
+			conversion_controller.request_open()
+			get_viewport().set_input_as_handled()
+		return
+
+	var convert_key = config_manager.get_keybind("convert_key")
+	if convert_key != 0 and event.keycode == convert_key and event.ctrl_pressed:
+		if _conversion_tab_active():
+			conversion_controller.request_convert()
+			get_viewport().set_input_as_handled()
+		return
+
+func _conversion_tab_active() -> bool:
+	if tab_container.current_tab != TAB_CONVERSION:
+		return false
+	if browser_controller and browser_controller.is_open():
+		return false
+	return true
 
 func _notification(what):
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
@@ -149,7 +179,6 @@ func _notification(what):
 func _save_window_state():
 	var is_fullscreen = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	config_manager.set_fullscreen_state(is_fullscreen)
-	# Only remember the size when windowed, so fullscreen doesn't clobber it
 	if not is_fullscreen:
 		config_manager.set_window_size(DisplayServer.window_get_size())
 
@@ -165,10 +194,10 @@ func _on_files_dropped(files):
 	Debug.log("File dropped: ", file_path)
 
 	var tab = tab_container.current_tab
-	if tab == 1:
+	if tab == TAB_PREVIEW:
 		preview_controller.set_preview_path_text(file_path)
 		preview_controller.preview_file(file_path)
-	elif tab == 0:
+	elif tab == TAB_CONVERSION:
 		conversion_controller.set_input_file(file_path)
 
 #========================
@@ -234,6 +263,11 @@ func _on_smoothing_toggled(enabled):
 	if config_manager:
 		config_manager.set_apply_smoothing(enabled)
 		config_manager.save_config()
+
+func _on_weld_toggled(enabled):
+	if config_manager:
+		config_manager.set_weld_vertices(enabled)
+		config_manager.save_config()
 #========================
 # ADVANCED SETTINGS
 #========================
@@ -273,6 +307,16 @@ func _show_error_popup(title_text: String, body_text: String, button_text: Strin
 
 	popup_instance.show_popup(title_text, body_text, button_text, callback)
 
+func _show_confirm_popup(title_text: String, body_text: String, confirm_text: String = "Yes", cancel_text: String = "Cancel", on_confirm: Callable = Callable(), on_cancel: Callable = Callable()):
+	_load_popup_scene()
+
+	if not popup_instance:
+		popup_instance = popup_scene.instantiate()
+		get_tree().current_scene.add_child(popup_instance)
+		popup_instance.popup_closed.connect(_on_popup_closed)
+
+	popup_instance.show_confirm(title_text, body_text, confirm_text, cancel_text, on_confirm, on_cancel)
+
 func _load_popup_scene():
 	if not popup_scene:
 		popup_scene = load("res://Scenes/Popup.tscn")
@@ -302,6 +346,7 @@ func _on_config_loaded():
 	native_windows_toggle.set_pressed_no_signal(config_manager.get_native())
 	auto_preview_toggle.set_pressed_no_signal(config_manager.get_auto_preview())
 	smoothing_toggle.set_pressed_no_signal(config_manager.get_apply_smoothing())
+	weld_toggle.set_pressed_no_signal(config_manager.get_weld_vertices())
 
 	tab_container.current_tab = 0
 

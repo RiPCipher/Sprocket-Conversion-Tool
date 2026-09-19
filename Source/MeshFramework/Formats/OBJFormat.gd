@@ -1,6 +1,8 @@
 class_name OBJFormat
 extends BaseFormat
 
+const DEFAULT_WELD_DISTANCE: float = 0.0001
+
 func _init():
 	can_import = true
 	can_export = true
@@ -172,6 +174,72 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 				faces.append(face)
 				face_count += 1
 	
+	var welded_count = 0
+	var dropped_face_count = 0
+	if import_options.get("weld_vertices", true) and vertices.size() > 0:
+		var weld_distance = float(import_options.get("weld_distance", DEFAULT_WELD_DISTANCE))
+		var weld = MeshUtility.weld_vertices(vertices, [], weld_distance)
+		welded_count = weld.merged_count
+		
+		if welded_count > 0:
+			var remap: PackedInt32Array = weld.remap
+			vertices = weld.vertices
+			
+			var welded_faces = []
+			for face in faces:
+				var new_face = {
+					"vertices": [],
+					"normals": [],
+					"uvs": [],
+					"line_number": face.line_number
+				}
+				for i in range(face.vertices.size()):
+					var old_idx = face.vertices[i]
+					if old_idx < 0 or old_idx >= remap.size():
+						continue
+					var new_idx = remap[old_idx]
+					if new_face.vertices.is_empty() or new_face.vertices[-1] != new_idx:
+						new_face.vertices.append(new_idx)
+						new_face.normals.append(face.normals[i] if i < face.normals.size() else -1)
+						new_face.uvs.append(face.uvs[i] if i < face.uvs.size() else -1)
+				while new_face.vertices.size() > 1 and new_face.vertices[-1] == new_face.vertices[0]:
+					new_face.vertices.pop_back()
+					new_face.normals.pop_back()
+					new_face.uvs.pop_back()
+				
+				if new_face.vertices.size() >= 3:
+					welded_faces.append(new_face)
+				else:
+					dropped_face_count += 1
+			faces = welded_faces
+			
+			var used = PackedInt32Array()
+			used.resize(vertices.size())
+			used.fill(-1)
+			var compact_vertices = []
+			for face in faces:
+				for i in range(face.vertices.size()):
+					var idx = face.vertices[i]
+					if used[idx] < 0:
+						used[idx] = compact_vertices.size()
+						compact_vertices.append(vertices[idx])
+					face.vertices[i] = used[idx]
+			vertices = compact_vertices
+			
+			face_count = faces.size()
+			vertex_count = vertices.size()
+			
+			ngon_count = 0
+			ngon_faces.clear()
+			for face in faces:
+				if face.vertices.size() > 4:
+					ngon_count += 1
+					ngon_faces.append({
+						"line": face.line_number,
+						"vertex_count": face.vertices.size(),
+						"content": "(welded face from line " + str(face.line_number) + ")"
+					})
+	
 	var triangle_count = 0
 	var quad_count = 0
 	var other_count = 0
@@ -197,6 +265,8 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	Debug.call_deferred("log", "Quad count: ", quad_count)
 	Debug.call_deferred("log", "Other polygon count: ", other_count)
 	Debug.call_deferred("log", "Invalid faces: ", debug_info.invalid_faces.size())
+	Debug.call_deferred("log", "Welded vertices: ", welded_count)
+	Debug.call_deferred("log", "Dropped degenerate faces: ", dropped_face_count)
 	
 	var active_part_idx = model_data.get_active_part_index()
 	
@@ -222,7 +292,6 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	
 	model_data.part_topology[active_part_idx] = topology
 	
-	# Build vertex map for rendering
 	var vertex_map = {} 
 	var surface_vertices = PackedVector3Array()
 	var surface_normals = PackedVector3Array()
@@ -255,7 +324,6 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 				
 				vertex_counter += 1
 	
-	# Build indices for rendering
 	for face in faces:
 		if face.vertices.size() == 3:
 			for i in range(3):
@@ -322,7 +390,6 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 	
 	model_data.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
 	
-	# Store remapped faces for rendering
 	var remapped_faces = []
 	for face in faces:
 		var remapped_face = []
@@ -340,12 +407,13 @@ func import_model(file_path: String, options: Dictionary = {}) -> ModelData:
 		if remapped_face.size() >= 3:
 			remapped_faces.append(remapped_face)
 
-	# Store remapped faces for rendering/wireframe display
 	model_data.set_part_metadata(active_part_idx, "original_faces", remapped_faces)
 	
 	model_data.set_metadata("triangle_count", triangle_count)
 	model_data.set_metadata("quad_count", quad_count)
 	model_data.set_metadata("total_faces", triangle_count + quad_count)
+	model_data.set_metadata("welded_vertex_count", welded_count)
+	model_data.set_metadata("dropped_face_count", dropped_face_count)
 	
 	# Store n-gon detection results
 	model_data.set_metadata("ngon_count", ngon_count)
@@ -639,7 +707,9 @@ static func get_default_import_options() -> Dictionary:
 	return {
 		"calculate_normals": true,
 		"generate_uvs": true,
-		"load_materials": true
+		"load_materials": true,
+		"weld_vertices": true,
+		"weld_distance": DEFAULT_WELD_DISTANCE
 	}
 
 static func get_default_export_options() -> Dictionary:

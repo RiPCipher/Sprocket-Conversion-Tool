@@ -142,7 +142,10 @@ func preview_file(file_path):
 	if not format_handler:
 		return
 
-	var model_data = format_handler.import_model(file_path)
+	var import_options = {}
+	if config_manager:
+		import_options["weld_vertices"] = config_manager.get_weld_vertices()
+	var model_data = format_handler.import_model(file_path, import_options)
 	if not model_data:
 		return
 
@@ -211,7 +214,11 @@ func preview_file(file_path):
 	if file_path.ends_with(".blueprint"):
 		stats_text = "Loaded blueprint: " + file_path.get_file() + " (" + str(vertex_count) + " vertices, " + str(triangle_count) + " triangles, " + str(quad_count) + " quads)"
 	else:
-		stats_text = "Loaded model: " + file_path.get_file() + " (" + str(vertex_count) + " vertices, " + str(triangle_count) + " triangles, " + str(quad_count) + " quads)"
+		stats_text = "Loaded model: " + file_path.get_file() + " (" + str(vertex_count) + " vertices, " + str(triangle_count) + " triangles, " + str(quad_count) + " quads"
+		var welded = model_data.get_metadata("welded_vertex_count", 0)
+		if welded > 0:
+			stats_text += ", " + str(welded) + " welded"
+		stats_text += ")"
 
 	status_label.text = stats_text
 
